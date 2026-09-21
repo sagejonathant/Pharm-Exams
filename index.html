@@ -58,7 +58,25 @@ header{
   margin-right:2px;white-space:nowrap;
 }
 .brand em{font-style:italic;color:var(--accent)}
-.tabs{display:flex;gap:4px;background:var(--panel-2);padding:3px;border-radius:8px;border:1px solid var(--line-soft)}
+.tabs{
+  display:flex;align-items:center;gap:4px;background:var(--panel-2);padding:3px;border-radius:8px;border:1px solid var(--line-soft);
+  max-width:100%;overflow-x:auto;scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tabsep{flex:0 0 1px;align-self:stretch;margin:4px 3px;background:var(--line)}
+.bonus-tag{
+  display:inline-block;margin-left:6px;padding:0 5px;border-radius:4px;
+  font-size:10.5px;font-weight:600;line-height:16px;vertical-align:1px;
+  color:var(--muted);border:1px solid var(--line);letter-spacing:.01em;
+}
+.linkbtn{
+  border:0;background:none;padding:0;margin-top:6px;
+  font:inherit;font-size:13.5px;font-weight:600;color:var(--accent);
+  cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;
+  touch-action:manipulation;
+}
+.linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+.linkbtn[hidden]{display:none}
 .tab{
   border:0;background:transparent;border-radius:6px;
   padding:6px 12px;font-size:13.5px;font-weight:500;color:var(--muted);
@@ -151,6 +169,8 @@ main{
   font-size:14px;font-weight:600;color:var(--ink);margin-top:0;letter-spacing:-.005em;
 }
 .tile[data-names="brand"][data-nobrand] .g{display:block}
+.tile .b .bonus-tag{display:none}
+.tile[data-names="brand"] .b .bonus-tag{display:inline-block}
 .tile:hover{box-shadow:0 2px 6px rgba(20,40,45,.11)}
 .tile:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .tile .g{display:block;font-weight:600;font-size:14px;line-height:1.25;letter-spacing:-.005em}
@@ -462,6 +482,8 @@ body.review .progwrap{visibility:hidden}
       <button class="tab" role="tab" data-round="endocrine" aria-selected="true">Endocrine</button>
       <button class="tab" role="tab" data-round="gi" aria-selected="false">GI</button>
       <button class="tab" role="tab" data-round="insulin" aria-selected="false">Insulin timing</button>
+      <span class="tabsep" aria-hidden="true"></span>
+      <button class="tab" role="tab" data-round="antiinf" aria-selected="false">Anti-infectives</button>
     </div>
     <div class="spacer"></div>
     <div class="stats">
@@ -498,6 +520,7 @@ body.review .progwrap{visibility:hidden}
     <div class="lede">
       <h1 id="round-title">Endocrine</h1>
       <p id="round-sub"></p>
+      <button type="button" class="linkbtn" id="btn-principles" hidden>Core principles for this exam</button>
     </div>
     <div id="board" class="board"></div>
     <div class="footnote" id="footnote"></div>
@@ -616,7 +639,7 @@ const GI = {
       {g:'Dimenhydrinate', b:'Dramamine', f:'Motion sickness. Works on the vestibular pathway.'},
       {g:'Diphenhydramine', b:'Benadryl', f:'Also used for cough, allergy, and sedation.'},
       {g:'Hydroxyzine', b:'Vistaril', f:'PO or IM only. Never give IV.'},
-      {g:'Meclizine', b:'Antivert', f:'Motion sickness and vertigo.'}
+      {g:'Meclizine', b:'Antivert', x:true, f:'Motion sickness and vertigo.'}
     ]},
     {id:'glucocorticoid', name:'Glucocorticoid', items:[
       {g:'Dexamethasone', b:'Decadron', f:'IV for chemo-associated emesis. Reduces tumor swelling and lifts mood and appetite.'},
@@ -1161,12 +1184,399 @@ glargine:{
   watch:'Onset 70 min, duration 24 hr, and no distinct peak. Lower hypoglycemia risk than peaking insulins, but not zero.',
   nursing:'SC only. Never mix it with another insulin and never give it IV. Same time every day.',
   differs:[{n:'The missing peak', d:'It is the only insulin on the list without a peak, and that is the fact most likely to be tested.'}]
+},
+
+/* ============================================================
+   EXAM 2: ANTI-INFECTIVES
+   No study guide yet, so these lean on the review questions
+   built into the lecture slides. Anything pulled from outside
+   the slides is labeled as a standard reference.
+   ============================================================ */
+
+abx_principles:{
+  t:'Anti-infective core principles',
+  sections:[
+    {h:'Bactericidal vs bacteriostatic', p:'Bactericidal drugs kill bacteria. Your slides give penicillins and cephalosporins as the examples, and the class slides add vancomycin, aminoglycosides, and fluoroquinolones. Bacteriostatic drugs inhibit growth without killing: tetracyclines and sulfonamides. Macrolides and clindamycin switch depending on dose.'},
+    {h:'Culture first', p:'For a new infection, the priority is culturing the wound, blood, urine, or other involved site before the first antibiotic dose. Empiric therapy then starts with a broad-spectrum drug. Once culture and sensitivity identifies the organism and which drugs it responds to, therapy narrows to definitive treatment.'},
+    {h:'Spectrum', p:'Narrow spectrum covers one or a few types of bacteria. Broad spectrum covers gram-positive and gram-negative organisms and is used when the organism is unknown. The broader the coverage, the more adverse effects and the higher the chance of superinfection, so broad-spectrum use should be limited.'},
+    {h:'Resistance', p:'Driven by overuse and by incomplete regimens, which expose bacteria to the drug without eradicating them. Teach the patient to finish the full regimen, never skip doses, and understand that antibiotics do nothing for a viral or fungal illness. The key resistant organisms are MRSA, VRE, and VRSA. MRSA developed when Staph aureus changed its penicillin-binding protein so methicillin could no longer attach.'},
+    {h:'Superinfection', p:'Killing the normal flora lets other organisms overgrow. Candida (yeast infection, thrush) and C. difficile are the examples. Sites are the mouth, skin, vagina, and intestines. More common with longer courses and broader drugs.'},
+    {h:'Allergy vs adverse effect', p:'When a patient reports an allergy, ask what actually happened. Nausea is a side effect; hives or throat swelling is an allergy, and the two are handled very differently. Mild allergy looks like rash, pruritus, and hives. Anaphylaxis is treated with an antihistamine such as diphenhydramine, epinephrine, and a bronchodilator such as albuterol. Cross-sensitivity occurs between structurally similar drugs, most importantly penicillins and cephalosporins.'},
+    {h:'Is it working', p:'Leukocytosis, an elevated WBC, indicates infection. Effective therapy shows up as a falling fever and a WBC returning to normal. Poor clinical response suggests the wrong drug or resistance. Infants, older adults, malnourished patients, and neutropenic patients are more susceptible to infection.'},
+    {h:'Fungal infections', p:'Opportunistic infections occur in immunocompromised or debilitated patients, such as those taking antibiotics, corticosteroids, chemotherapy, or immunosuppressants. Nonopportunistic infections can infect a healthy host. Risk factors include a depressed immune system, broad-spectrum antibiotic use, and poor hygiene.'}
+  ],
+  list:{h:'Shared traps across classes', items:[
+    {n:'QT prolongation', d:'Macrolides and fluoroquinolones. Ondansetron from Exam 1 does this too.'},
+    {n:'Ototoxicity', d:'Aminoglycosides, vancomycin, macrolides, amphotericin B.'},
+    {n:'Nephrotoxicity', d:'Aminoglycosides, vancomycin, amphotericin B, and sulfonamides (renal impairment).'},
+    {n:'Photosensitivity', d:'Tetracyclines, fluoroquinolones, sulfonamides, and per your slides, aminoglycosides.'},
+    {n:'C. difficile risk', d:'Clindamycin and fluoroquinolones are flagged highest. Metronidazole and oral vancomycin treat it.'},
+    {n:'Disulfiram-like reaction with alcohol', d:'Cephalosporins and metronidazole.'},
+    {n:'Oral contraceptive failure', d:'Penicillins, cephalosporins, tetracyclines. Teach backup contraception.'},
+    {n:'Separate from antacids', d:'Azithromycin, tetracyclines, fluoroquinolones, sulfonamides.'},
+    {n:'Peak and trough monitoring', d:'Vancomycin and aminoglycosides. Trough before the dose, peak 1 hour after the infusion ends.'},
+    {n:'P-450 interactions', d:'Macrolides and azole antifungals.'},
+    {n:'MRSA coverage', d:'Vancomycin, ceftaroline, and TMP-SMZ for community-acquired MRSA.'},
+    {n:'Pseudomonas coverage', d:'Piperacillin-tazobactam, cefepime, aminoglycosides.'},
+    {n:'Stevens-Johnson syndrome', d:'Vancomycin and sulfonamides.'}
+  ]}
+},
+
+pcn_basic:{
+  t:'Penicillin: basic (narrow spectrum)',
+  how:'Penicillins contain a beta-lactam ring and kill bacteria by inhibiting cell wall synthesis. They are bactericidal. To a patient: this breaks down the wall that holds the bacteria together.',
+  use:'Narrow spectrum, effective against one or a few types of bacteria. Used as definitive therapy once culture and sensitivity shows a susceptible organism.',
+  watch:'Allergic reactions ranging from rash, pruritus, and hives to anaphylaxis. Cross-sensitivity with cephalosporins because both contain a beta-lactam ring. Superinfection. Penicillins may render oral contraceptives ineffective.',
+  nursing:'Obtain allergy information before the first dose and ask what the reaction actually was. Culture before the first dose. Monitor closely during the first dose. Know the anaphylaxis response: antihistamine, epinephrine, bronchodilator. Check for superinfection and IV incompatibilities.',
+  differs:[
+    {n:'Penicillin G, penicillin V, procaine penicillin', d:'The basic penicillins named in your slides. None are on the med list, so this box is bonus.'},
+    {n:'Why narrow matters', d:'Fewer adverse effects and a lower superinfection risk, which is why therapy moves toward narrow agents once the organism is known.'}
+  ]
+},
+pcn_broad:{
+  t:'Penicillin: broad spectrum (aminopenicillin)',
+  how:'Same beta-lactam, cell wall mechanism as every penicillin, but structured to reach both gram-positive and gram-negative organisms. Bactericidal.',
+  use:'Gram-positive and gram-negative infections including Streptococcus pneumoniae, Enterococcus, E. coli, Haemophilus influenzae, Shigella, Proteus mirabilis, and Salmonella.',
+  watch:'Allergy and anaphylaxis, cross-sensitivity with cephalosporins, and superinfection including Candida and C. difficile. May render oral contraceptives ineffective.',
+  nursing:'Allergy history and culture before the first dose. Monitor closely during the first dose. Teach backup contraception to patients on oral contraceptives. Teach the patient to finish the full regimen even after feeling better.',
+  differs:[
+    {n:'Amoxicillin (Amoxil) and ampicillin (Omnipen)', d:'Your slides treat them as a matched pair with the same spectrum. Also called aminopenicillins.'},
+    {n:'Versus the combination products', d:'Add a beta-lactamase inhibitor and amoxicillin becomes Augmentin, ampicillin becomes Unasyn. Same base drug, different category. That is exactly the kind of distinction a matching question tests.'},
+    {n:'In-class match question', d:'Your slides ask you to match amoxicillin to its penicillin type. The answer is broad spectrum.'}
+  ]
+},
+pcn_resist:{
+  t:'Penicillin: penicillinase-resistant',
+  how:'Some bacteria produce penicillinase, an enzyme that destroys the beta-lactam ring. These penicillins are structured to survive that enzyme.',
+  use:'Infections caused by penicillinase-producing Staphylococcus aureus.',
+  watch:'The same allergy, cross-sensitivity, and superinfection profile as every penicillin.',
+  nursing:'The standard penicillin nursing process: allergy history, culture first, monitor the first dose.',
+  differs:[
+    {n:'Nafcillin (Unipen)', d:'The example in your slides. Not on the med list, so bonus. It appears as a distractor in the in-class penicillin matching question.'},
+    {n:'The MRSA connection', d:'Methicillin was also a penicillinase-resistant penicillin. After repeated exposure, Staph altered its penicillin-binding protein so methicillin could no longer attach. That is how MRSA came to be.'}
+  ]
+},
+pcn_bli:{
+  t:'Penicillin: beta-lactamase inhibitor combination',
+  how:'A penicillin paired with a second drug that blocks beta-lactamase, the bacterial enzyme that would otherwise inactivate the penicillin. The inhibitor protects the antibiotic so it can work.',
+  use:'Infections from organisms that produce beta-lactamase and would destroy the penicillin on its own.',
+  watch:'Penicillin allergy, cephalosporin cross-sensitivity, superinfection.',
+  nursing:'The penicillin nursing process applies. The inhibitor does not change the allergy precautions.',
+  differs:[
+    {n:'Amoxicillin-clavulanic acid (Augmentin)', d:'Amoxicillin plus clavulanate. Bonus, not on the med list.'},
+    {n:'Ampicillin-sulbactam (Unasyn)', d:'Ampicillin plus sulbactam. Bonus, not on the med list.'},
+    {n:'Versus Zosyn', d:'Zosyn is also a penicillin plus an inhibitor, but your slides file it separately as extended spectrum because of its gram-negative and Pseudomonas reach.'}
+  ]
+},
+pcn_ext:{
+  t:'Penicillin: extended-spectrum beta-lactamase inhibitor',
+  how:'A penicillin plus a beta-lactamase inhibitor, built for greater activity against gram-negative organisms.',
+  use:'Gram-negative infections including Pseudomonas aeruginosa, Proteus, Serratia, Klebsiella pneumoniae, Enterobacter, and Acinetobacter. Pseudomonas shows up in frequently hospitalized patients.',
+  watch:'Allergy, cephalosporin cross-sensitivity, and superinfection, which becomes more likely as coverage broadens.',
+  nursing:'Allergy history and culture before the first dose. Infusion safety and IV incompatibilities. Monitor for superinfection.',
+  differs:[
+    {n:'Piperacillin-tazobactam (Zosyn)', d:'The only antipseudomonal penicillin. That phrase is the fact to own.'},
+    {n:'In-class match question', d:'Your slides ask you to match piperacillin-tazobactam to its type. The answer is extended-spectrum beta-lactamase inhibitor.'},
+    {n:'Other Pseudomonas coverage on your list', d:'Cefepime (4th generation cephalosporin) and the aminoglycosides.'}
+  ]
+},
+
+ceph1:{
+  t:'Cephalosporin: 1st generation',
+  how:'Cephalosporins (prefix cef or ceph) are semi-synthetic beta-lactams structurally similar to penicillins. They inhibit bacterial cell wall synthesis and are bactericidal.',
+  use:'Strong gram-positive coverage. Common skin and soft tissue infections.',
+  watch:'Pruritus and GI distress. At high doses, increased bleeding because some cause thrombocytopenia, and seizures, mainly in patients with renal dysfunction. Cross-sensitivity with penicillins: a patient with a history of anaphylaxis to a penicillin should avoid cephalosporins. Alcohol can cause a disulfiram-like reaction. May render oral contraceptives ineffective.',
+  nursing:'Allergy history with specific attention to penicillin allergy. Baseline liver and kidney function. Teach no alcohol and teach backup contraception. Watch for secondary infection.',
+  differs:[
+    {n:'Cefazolin (Ancef)', d:'Given IV or IM, commonly for surgical prophylaxis (standard reference, not in your slides).'},
+    {n:'Cephalexin (Keflex)', d:'Given orally, commonly for skin infections (standard reference, not in your slides).'},
+    {n:'The generation rule', d:'As the generation number rises, gram-negative coverage and resistance-fighting ability increase and the spectrum broadens. First generation is the gram-positive end.'}
+  ]
+},
+ceph2:{
+  t:'Cephalosporin: 2nd generation',
+  how:'Same cell wall mechanism as every cephalosporin. Bactericidal.',
+  use:'Keeps gram-positive coverage and adds some gram-negative coverage, including respiratory pathogens.',
+  watch:'Class-wide: pruritus, GI distress, bleeding and seizures at high doses, penicillin cross-sensitivity, disulfiram-like reaction with alcohol, reduced oral contraceptive effectiveness.',
+  nursing:'Same cephalosporin nursing process: penicillin allergy history, liver and kidney function, no alcohol, backup contraception.',
+  differs:[
+    {n:'Cefotetan (Cefotan) and cefoxitin (Mefoxin)', d:'Both parenteral, and both also cover anaerobes, which is why they are used around abdominal surgery (standard reference, not in your slides).'},
+    {n:'Memory hook', d:'Second generation is where gram-negative coverage starts to appear.'}
+  ]
+},
+ceph3:{
+  t:'Cephalosporin: 3rd generation',
+  how:'Same cell wall mechanism. Bactericidal.',
+  use:'Strong gram-negative coverage with increased tissue penetration. Severe systemic infections and meningitis. Your slides use third and fourth generation as examples of broad-spectrum drugs for empiric therapy.',
+  watch:'Class-wide cephalosporin effects, plus a higher superinfection risk because of the broader spectrum.',
+  nursing:'Same cephalosporin nursing process. Because this is broad spectrum, expect it as empiric therapy and expect a switch to a narrower drug once culture results return.',
+  differs:[
+    {n:'Ceftriaxone (Rocephin)', d:'The penetration that reaches the central nervous system is why meningitis lives in this generation. Given IV or IM (route is a standard reference).'},
+    {n:'Cefdinir (Omnicef)', d:'The oral option in this generation (standard reference, not in your slides).'},
+    {n:'Memory hook', d:'Third generation: gram-negative strength and meningitis.'}
+  ]
+},
+ceph4:{
+  t:'Cephalosporin: 4th generation',
+  how:'Same cell wall mechanism. Bactericidal.',
+  use:'Broad-spectrum coverage including Pseudomonas.',
+  watch:'Class-wide cephalosporin effects. Broad spectrum means higher superinfection risk.',
+  nursing:'Same cephalosporin nursing process.',
+  differs:[
+    {n:'Cefepime (Maxipime)', d:'The only fourth-generation drug on your list, and the cephalosporin tied to Pseudomonas.'},
+    {n:'Other Pseudomonas coverage', d:'Piperacillin-tazobactam and the aminoglycosides.'}
+  ]
+},
+ceph5:{
+  t:'Cephalosporin: 5th generation',
+  how:'Same cell wall mechanism. Bactericidal.',
+  use:'MRSA and other highly resistant organisms.',
+  watch:'Class-wide cephalosporin effects.',
+  nursing:'Same cephalosporin nursing process.',
+  differs:[
+    {n:'Ceftaroline (Teflaro)', d:'The only cephalosporin with MRSA coverage. If a question asks for a cephalosporin that treats MRSA, this is it.'},
+    {n:'Other MRSA agents on your list', d:'Vancomycin, and TMP-SMZ for community-acquired MRSA.'}
+  ]
+},
+
+macrolide:{
+  t:'Macrolide',
+  how:'Inhibits bacterial protein synthesis at the ribosome. Bacteriostatic at low to moderate doses, bactericidal at high doses. Suffix -mycin.',
+  use:'Broad spectrum: most gram-positive and some gram-negative bacteria, plus the atypical organisms behind respiratory infections. Community-acquired pneumonia, COPD exacerbation, atypical pneumonia such as Legionnaires disease, and sexually transmitted infections such as chlamydia and gonorrhea, where resistance is rising.',
+  watch:'QT prolongation, tinnitus and ototoxicity, hepatotoxicity, GI distress (the most common effect), and superinfection. Inhibits the P-450 enzymes, which raises levels of warfarin, theophylline, and carbamazepine.',
+  nursing:'Cardiac patients may need EKG monitoring because of the QT effect. Monitor liver function and teach the signs of liver damage: jaundice, itchy skin, pale stools, rising AST and ALT. Culture first. Teach the full regimen. Give antacids 2 hours before or 2 hours after.',
+  differs:[
+    {n:'Azithromycin (Zithromax)', d:'Give 1 hour before or 2 hours after meals with a full glass of water. Antacids reduce its levels.'},
+    {n:'Erythromycin (E-Mycin)', d:'Its levels rise when taken with fluconazole or ketoconazole, the azole antifungals later in the deck.'},
+    {n:'Clarithromycin (Biaxin)', d:'Carries the class-wide QT and P-450 cautions. Also part of H. pylori regimens given with a PPI (standard reference, not in your slides).'},
+    {n:'Review question answers', d:'Your slides ask which category interacts with warfarin, and which causes QT prolongation and ototoxicity. Macrolides answer both. For a patient with cardiac history, the priority intervention is EKG monitoring.'}
+  ]
+},
+lincosamide:{
+  t:'Lincosamide',
+  how:'Inhibits bacterial protein synthesis. Bacteriostatic or bactericidal depending on the dose.',
+  use:'Gram-positive organisms: skin and skin structure infections, dental infections, and obstetric infections.',
+  watch:'Rash, GI distress, anaphylaxis, and a higher association with C. difficile infection.',
+  nursing:'Allergy history and culture first. Teach the patient to report frequent watery stools, and treat new diarrhea as possible C. difficile rather than a routine side effect.',
+  differs:[
+    {n:'Clindamycin (Cleocin)', d:'The only drug in the class. Its signature risk is C. difficile.'},
+    {n:'Shares the C. difficile flag with', d:'The fluoroquinolones, which your slides also mark as high association.'}
+  ]
+},
+glycopeptide:{
+  t:'Glycopeptide',
+  how:'Inhibits cell wall synthesis. Bactericidal. Gram-positive coverage, including MRSA.',
+  use:'Serious infections of bone, skin, and the lower respiratory tract, including MRSA. The oral form is used only for C. difficile.',
+  watch:'Vancomycin flushing syndrome, formerly red man syndrome: red blotching of the face, neck, chest, and extremities, with hypotension and tachycardia in severe cases. It comes from infusing too fast and it is not an allergic reaction. Narrow therapeutic index, with nephrotoxicity and ototoxicity at supratherapeutic levels. Stevens-Johnson syndrome.',
+  nursing:'Infuse over 1 to 2 hours. If flushing starts, slow or stop the infusion and contact the provider. Draw the peak 1 hour after the infusion ends and the trough in the 30 minutes before the next dose. Monitor renal function, hearing, blood pressure, and the IV site; assess for extravasation and rotate sites. Culture first.',
+  differs:[
+    {n:'Vancomycin (Vancocin)', d:'The only drug in the class, and the go-to agent for MRSA.'},
+    {n:'Route matters', d:'IV for systemic infection, oral only for C. difficile. Oral vancomycin is barely absorbed and stays in the gut, which is why it works there and nowhere else (the absorption reasoning is a standard reference).'},
+    {n:'Review question answers', d:'Your slides ask which drug causes red man syndrome, how to prevent it, and what to do. Vancomycin; infuse over 1 to 2 hours; slow or stop the infusion and call the provider.'},
+    {n:'Slide discrepancy', d:'One overview slide lists glycopeptides as acting on ribosomes. The vancomycin slide says cell wall synthesis, which matches standard references. Answer cell wall.'}
+  ]
+},
+tetracycline:{
+  t:'Tetracycline',
+  how:'Inhibits protein synthesis. Bacteriostatic. Suffix -cycline.',
+  use:'Broad-spectrum gram-positive and gram-negative coverage. Also treats acne, orally and topically. Given orally, IM, or IV.',
+  watch:'Photosensitivity, esophagitis, GI distress, and permanent tooth discoloration in children, so never give it to a child younger than 8. Milk products and antacids interfere with it. May reduce oral contraceptive effectiveness.',
+  nursing:'Give 1 hour before or 2 hours after meals and never with milk products or antacids. Teach sun avoidance and backup contraception. Monitor kidney and liver function. Culture first. To prevent esophagitis, take it with a full glass of water and stay upright afterward, not right before lying down (your slides name the risk; the prevention steps are a standard reference).',
+  differs:[
+    {n:'Tetracycline', d:'Your med list names the class without a drug. Tetracycline itself is the one named in your slides.'},
+    {n:'Toddler question', d:'Your slides ask what to do when a toddler is prescribed tetracycline. Contact the provider, because it is contraindicated under age 8.'},
+    {n:'Esophagitis question', d:'Your slides ask which category causes esophagitis. Tetracyclines.'},
+    {n:'Link to Exam 1', d:'The milk and antacid problem is chelation: calcium, magnesium, and aluminum bind the drug and block its absorption.'}
+  ]
+},
+aminoglycoside:{
+  t:'Aminoglycoside',
+  how:'Inhibits bacterial protein synthesis. Bactericidal.',
+  use:'Gram-negative organisms including E. coli, Proteus, and Pseudomonas. Given IM or IV.',
+  watch:'Narrow therapeutic index. Ototoxicity and nephrotoxicity at supratherapeutic levels, plus neuromuscular blockade. Your slides also list photosensitivity and superinfection.',
+  nursing:'Baseline renal function before starting. Keep the patient well hydrated to protect the kidneys. Draw the trough before the dose and the peak 1 hour after the infusion is completed. Monitor renal function and hearing. Teach sunscreen use. Monitor for superinfection.',
+  differs:[
+    {n:'Gentamicin (Garamycin), streptomycin, tobramycin (Nebcin)', d:'Your slides treat all three identically: same monitoring, same toxicities.'},
+    {n:'Standard reference extras', d:'Streptomycin is used in tuberculosis regimens, and tobramycin is known for its Pseudomonas activity. Neither detail is in your slides.'},
+    {n:'The three toxicities', d:'Ototoxicity, nephrotoxicity, neuromuscular blockade. That trio is the class.'},
+    {n:'Compared with vancomycin', d:'Both are narrow therapeutic index drugs with peak and trough monitoring and the same ear and kidney risk. The trough is always drawn before the dose.'}
+  ]
+},
+fluoroquinolone:{
+  t:'Fluoroquinolone',
+  how:'Interferes with the bacterial enzyme gyrase, destroying bacterial DNA. Broad spectrum and bactericidal. Suffix -floxacin.',
+  use:'Gram-positive and gram-negative infections: urinary tract, lower respiratory tract, skin, soft tissue, bone, and joint infections, plus community-acquired pneumonia, chronic bronchitis, and acute sinusitis.',
+  watch:'Tendonitis and tendon rupture, QT prolongation, photosensitivity, and a high association with C. difficile.',
+  nursing:'Culture first. Infuse IV over 60 to 90 minutes. Tell the patient to avoid caffeine. Antacids decrease absorption, so separate them. Check for superinfection. Teach the patient to report tendon pain.',
+  differs:[
+    {n:'Ciprofloxacin (Cipro)', d:'Predominantly gram-negative coverage. UTIs, lower respiratory, skin, soft tissue, bone, and joint infections.'},
+    {n:'Levofloxacin (Levaquin)', d:'Community-acquired pneumonia, chronic bronchitis, sinusitis, UTIs, skin infections. Increases the effect of oral hypoglycemics, theophylline, and caffeine, so watch a diabetic patient for hypoglycemia.'},
+    {n:'Moxifloxacin (Avelox)', d:'The broadest of the three, adding anaerobic coverage. Once-daily oral or IV dosing.'},
+    {n:'Review question answer', d:'Your slides ask which patient on ciprofloxacin raises a drug interaction concern. The one on an oral hypoglycemic. Note the interaction slide names levofloxacin specifically.'}
+  ]
+},
+sulfonamide:{
+  t:'Sulfonamide',
+  how:'Inhibits bacterial synthesis of folic acid. Bacteriostatic.',
+  use:'Gram-negative bacteria including Proteus, Klebsiella, E. coli, and Chlamydia, with some gram-positive activity including community-acquired MRSA. Otitis media, respiratory infections, UTIs, prostatitis, gonorrhea. An alternative for patients allergic to penicillin.',
+  watch:'GI distress, photosensitivity, hyperkalemia, renal impairment, and Stevens-Johnson syndrome.',
+  nursing:'Increase fluid intake to at least 2000 mL per day. Give with a full glass of water 1 hour before or 2 hours after meals. Avoid antacids. Baseline renal function, electrolytes, and skin assessment; monitor CBC and renal function. Skin reactions need immediate attention. Teach sun avoidance. Avoid in the third trimester.',
+  differs:[
+    {n:'Trimethoprim-sulfamethoxazole (Bactrim, Septra)', d:'Two drugs in one compound with a synergistic effect, which makes resistance develop much more slowly than with either alone.'},
+    {n:'Link to Exam 1', d:'A sulfa allergy matters beyond this drug. Sulfonylureas such as glyburide are contraindicated in sulfa allergy too.'},
+    {n:'Why so much fluid', d:'The drug can crystallize in the urine and injure the kidneys (the reason is a standard reference; the 2000 mL target is from your slides).'},
+    {n:'In-class match question', d:'Your slides label TMP-SMZ a combination sulfa drug.'}
+  ]
+},
+
+polyene:{
+  t:'Antifungal: polyene',
+  how:'Binds to the fungal cell membrane and increases its permeability, so the contents of the cell leak out.',
+  use:'Amphotericin B for severe systemic fungal infections. Nystatin for superficial Candida infections such as thrush and rashes.',
+  watch:'Amphotericin B carries a long list: flushing, fever and chills, hypotension or hypertension, tachycardia, GI distress, seizures, paresthesia, thrombophlebitis, nephrotoxicity, electrolyte imbalances including hypokalemia, and ototoxicity. Nystatin mainly causes GI disturbance.',
+  nursing:'For amphotericin B: give IV slowly, take vital signs every 30 minutes, and premedicate to prevent febrile reactions with acetaminophen, diphenhydramine, and hydrocortisone. Increase fluids to protect the kidneys, and monitor urine output, weight, electrolytes, and renal function. For nystatin: swish and swallow, and gargle if the throat is involved.',
+  differs:[
+    {n:'Amphotericin B', d:'Reserved for severe infections because of its toxicity. Two formulations: deoxycholate and liposomal. With kidney injury, use liposomal and avoid deoxycholate. Also given as a bladder instillation and an oral suspension.'},
+    {n:'Nystatin (Mycostatin)', d:'Oral and topical only, for superficial Candida. Your slides ask which polyene is given orally or topically, what it treats, and how: nystatin, thrush and rashes, swish and swallow.'},
+    {n:'Review question answer', d:'Your slides ask which category amphotericin B belongs to. Polyene.'}
+  ]
+},
+azole:{
+  t:'Antifungal: azole',
+  how:'Inhibits ergosterol synthesis, which disrupts the fungal cell membrane.',
+  use:'A range of systemic and superficial fungal infections. Each azole has its own target organisms.',
+  watch:'Nausea, vomiting, rash, and hepatic dysfunction. Interferes with the cytochrome P-450 enzyme system, producing significant drug interactions.',
+  nursing:'Monitor liver enzymes. Culture to identify the fungus. Teach full adherence, since stopping early risks relapse. Also monitor BUN, creatinine, and electrolytes per the general antifungal process.',
+  differs:[
+    {n:'Ketoconazole (Nizoral)', d:'Histoplasmosis. Oral, vaginal, and topical.'},
+    {n:'Fluconazole (Diflucan)', d:'Cryptococcal and Candida infections. Oral and IV.'},
+    {n:'Itraconazole (Sporanox)', d:'Aspergillosis, blastomycosis, AIDS-associated histoplasmosis. Oral only.'},
+    {n:'Voriconazole (Vfend)', d:'Same targets as itraconazole, but available oral and IV.'},
+    {n:'Review question answer', d:'Your slides ask which enzymes matter most with an azole. Liver enzymes.'},
+    {n:'Interaction to remember', d:'Fluconazole and ketoconazole raise erythromycin levels. Azoles and macrolides both tangle with P-450.'}
+  ]
+},
+echinocandin:{
+  t:'Antifungal: echinocandin',
+  how:'Inhibits fungal cell wall synthesis.',
+  use:'Aspergillus. Treatment of invasive aspergillosis in patients who are refractory to or cannot tolerate other therapies.',
+  watch:'Flushing, fever, nausea, vomiting.',
+  nursing:'IV only. General antifungal monitoring applies: liver enzymes, BUN, creatinine, electrolytes, vital signs.',
+  differs:[
+    {n:'Caspofungin (Cancidas) and micafungin (Mycamine)', d:'Both IV only, both for invasive aspergillosis when other therapy has failed. The suffix -fungin marks the class.'},
+    {n:'Three antifungal targets', d:'Polyenes make the membrane leak, azoles block the ergosterol the membrane is built from, echinocandins block the cell wall.'}
+  ]
+},
+metronidazole:{
+  t:'Anaerobic and antiprotozoal agent',
+  how:'Cytotoxic to cells through an oxidation-reduction reaction.',
+  use:'Primarily intra-abdominal infections. Covers anaerobic infections, protozoa such as Giardia, C. difficile, and Trichomonas vaginalis.',
+  watch:'Nausea, headache, metallic taste. Disulfiram-like reaction with alcohol: flushing, palpitations, tachycardia, nausea, vomiting. Dark or reddish brown urine at high doses. Avoid in the first trimester of pregnancy.',
+  nursing:'Teach no alcohol during therapy and for 3 days after the last dose. Warn about the metallic taste and the urine color change so the patient does not stop the drug in alarm. Available IV, oral, and topical.',
+  differs:[
+    {n:'Metronidazole (Flagyl)', d:'Your med list files it under its own name rather than a class. This box describes what it covers instead.'},
+    {n:'Disulfiram-like reactions', d:'Cephalosporins cause them too. Metronidazole carries the explicit 3-day rule.'},
+    {n:'C. difficile treatment', d:'Metronidazole and oral vancomycin are the two drugs on your list that treat it.'},
+    {n:'Reddish brown urine', d:'Senna from Exam 1 does this too.'}
+  ]
 }
 
 };
 
-const ROUNDS = {endocrine:ENDOCRINE, gi:GI, insulin:INSULIN};
-const ORDER = ['endocrine','gi','insulin'];
+const ANTIINF = {
+  title:'Anti-infectives',
+  exam:2,
+  sub:'Antibacterials and antifungals for Exam 2. Penicillins split by subtype, cephalosporins by generation.',
+  accent:'#6B5410',
+  accentSoft:'#F4EFDF',
+  principles:'abx_principles',
+  note:'Tiles marked <b>bonus</b> are penicillins named in the lecture slides but left off the med list: penicillin G, nafcillin, Augmentin, and Unasyn. They are there so the penicillin subtypes have something in them, and because the in-class matching question uses these subtype names. Your med list also names tetracyclines without a drug, so the tile is tetracycline itself.',
+  bins:[
+    {id:'pcn_basic', name:'Penicillin: basic (narrow spectrum)', items:[
+      {g:'Penicillin G', b:'', x:true, f:'The original narrow-spectrum penicillin. Penicillin V and procaine penicillin belong here too.'}
+    ]},
+    {id:'pcn_broad', name:'Penicillin: broad spectrum (aminopenicillin)', items:[
+      {g:'Amoxicillin', b:'Amoxil', f:'Aminopenicillin reaching gram-positive and gram-negative organisms. Teach backup contraception.'},
+      {g:'Ampicillin', b:'Omnipen', f:'Amoxicillin\u2019s partner in the aminopenicillin group, same spectrum.'}
+    ]},
+    {id:'pcn_resist', name:'Penicillin: penicillinase-resistant', items:[
+      {g:'Nafcillin', b:'Unipen', x:true, f:'Survives penicillinase, so it treats penicillinase-producing Staph aureus.'}
+    ]},
+    {id:'pcn_bli', name:'Penicillin: beta-lactamase inhibitor combination', items:[
+      {g:'Amoxicillin-clavulanate', b:'Augmentin', x:true, f:'Amoxicillin plus clavulanic acid, which blocks the enzyme that would inactivate it.'},
+      {g:'Ampicillin-sulbactam', b:'Unasyn', x:true, f:'Ampicillin plus sulbactam, a beta-lactamase inhibitor.'}
+    ]},
+    {id:'pcn_ext', name:'Penicillin: extended-spectrum beta-lactamase inhibitor', items:[
+      {g:'Piperacillin-tazobactam', b:'Zosyn', f:'The only antipseudomonal penicillin.'}
+    ]},
+    {id:'ceph1', name:'Cephalosporin: 1st generation', items:[
+      {g:'Cefazolin', b:'Ancef', f:'Strong gram-positive coverage. Skin and soft tissue infections.'},
+      {g:'Cephalexin', b:'Keflex', f:'First generation, gram-positive. The oral one of the pair.'}
+    ]},
+    {id:'ceph2', name:'Cephalosporin: 2nd generation', items:[
+      {g:'Cefotetan', b:'Cefotan', f:'Adds some gram-negative and respiratory coverage.'},
+      {g:'Cefoxitin', b:'Mefoxin', f:'Second generation alongside cefotetan.'}
+    ]},
+    {id:'ceph3', name:'Cephalosporin: 3rd generation', items:[
+      {g:'Cefdinir', b:'Omnicef', f:'Third generation, strong gram-negative coverage, oral.'},
+      {g:'Ceftriaxone', b:'Rocephin', f:'Penetrates well enough to treat meningitis and severe systemic infection.'}
+    ]},
+    {id:'ceph4', name:'Cephalosporin: 4th generation', items:[
+      {g:'Cefepime', b:'Maxipime', f:'Broad spectrum, and the cephalosporin that covers Pseudomonas.'}
+    ]},
+    {id:'ceph5', name:'Cephalosporin: 5th generation', items:[
+      {g:'Ceftaroline', b:'Teflaro', f:'The only cephalosporin with MRSA coverage.'}
+    ]},
+    {id:'macrolide', name:'Macrolide', items:[
+      {g:'Azithromycin', b:'Zithromax', f:'1 hr before or 2 hr after meals with a full glass of water. Antacids reduce its levels.'},
+      {g:'Clarithromycin', b:'Biaxin', f:'Watch QT prolongation and P-450 interactions such as warfarin.'},
+      {g:'Erythromycin', b:'E-Mycin', f:'Levels rise with fluconazole and ketoconazole.'}
+    ]},
+    {id:'lincosamide', name:'Lincosamide', items:[
+      {g:'Clindamycin', b:'Cleocin', f:'Gram-positive skin, dental, and obstetric infections. High C. difficile association.'}
+    ]},
+    {id:'glycopeptide', name:'Glycopeptide', items:[
+      {g:'Vancomycin', b:'Vancocin', f:'Infuse over 1-2 hr to prevent flushing syndrome. Oral only for C. difficile.'}
+    ]},
+    {id:'tetracycline', name:'Tetracycline', items:[
+      {g:'Tetracycline', b:'', f:'Never under age 8: stains permanent teeth. No milk or antacids.'}
+    ]},
+    {id:'aminoglycoside', name:'Aminoglycoside', items:[
+      {g:'Gentamicin', b:'Garamycin', f:'Ototoxic and nephrotoxic. Trough before the dose, peak 1 hr after.'},
+      {g:'Streptomycin', b:'', f:'Aminoglycoside, IM or IV, with the same ear and kidney risk.'},
+      {g:'Tobramycin', b:'Nebcin', f:'Gram-negative reach including Pseudomonas.'}
+    ]},
+    {id:'fluoroquinolone', name:'Fluoroquinolone', items:[
+      {g:'Ciprofloxacin', b:'Cipro', f:'Predominantly gram-negative, UTIs. Infuse IV over 60-90 min.'},
+      {g:'Levofloxacin', b:'Levaquin', f:'Community-acquired pneumonia. Boosts the effect of oral hypoglycemics.'},
+      {g:'Moxifloxacin', b:'Avelox', f:'Adds anaerobic coverage. Once-daily dosing.'}
+    ]},
+    {id:'sulfonamide', name:'Sulfonamide', items:[
+      {g:'Trimethoprim-sulfamethoxazole', b:'Bactrim, Septra', f:'At least 2000 mL fluid a day. Covers community-acquired MRSA.'}
+    ]},
+    {id:'polyene', name:'Antifungal: polyene', items:[
+      {g:'Amphotericin B', b:'', f:'Premedicate with acetaminophen, diphenhydramine, hydrocortisone. Nephrotoxic, hypokalemia.'},
+      {g:'Nystatin', b:'Mycostatin', f:'Swish and swallow for thrush. Superficial Candida only.'}
+    ]},
+    {id:'azole', name:'Antifungal: azole', items:[
+      {g:'Ketoconazole', b:'Nizoral', f:'Histoplasmosis. Monitor liver enzymes.'},
+      {g:'Fluconazole', b:'Diflucan', f:'Cryptococcal and Candida infections. Oral and IV.'},
+      {g:'Itraconazole', b:'Sporanox', f:'Aspergillosis and blastomycosis. Oral only.'},
+      {g:'Voriconazole', b:'Vfend', f:'Aspergillosis and blastomycosis. Oral and IV.'}
+    ]},
+    {id:'echinocandin', name:'Antifungal: echinocandin', items:[
+      {g:'Caspofungin', b:'Cancidas', f:'IV only. Invasive aspergillosis when other therapy fails.'},
+      {g:'Micafungin', b:'Mycamine', f:'IV only, same role as caspofungin.'}
+    ]},
+    {id:'metronidazole', name:'Anaerobic and antiprotozoal agent', items:[
+      {g:'Metronidazole', b:'Flagyl', f:'No alcohol during therapy and for 3 days after. Metallic taste.'}
+    ]}
+  ]
+};
+
+const ROUNDS = {endocrine:ENDOCRINE, gi:GI, insulin:INSULIN, antiinf:ANTIINF};
+const ORDER = ['endocrine','gi','insulin','antiinf'];
+const examOf = k => ROUNDS[k].exam || 1;
 
 /* ============================================================
    STATE
@@ -1205,6 +1615,7 @@ function startRound(key, only){
     ? 'Everything is sorted for you. Tap any box for the mechanism, indication, adverse effects, nursing points, and what sets each drug apart.'
     : R.sub;
   $('#footnote').innerHTML = R.note ? 'Note. '+R.note : '';
+  $('#btn-principles').hidden = !R.principles;
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', String(t.dataset.round===key)));
   $('#btn-counts').style.display = S.kind==='class' ? '' : 'none';
 
@@ -1264,8 +1675,9 @@ function makeTile(t){
   b.dataset.fact = t.f || '';
   b.dataset.binName = t.binName;
   if(!t.b) b.setAttribute('data-nobrand','');
-  b.innerHTML = '<span class="g">'+t.g+'</span>'+(t.b?'<span class="b">'+t.b+'</span>':'');
-  b.setAttribute('aria-label', t.g + (t.b? ', '+t.b : ''));
+  const tag = t.x ? '<span class="bonus-tag">bonus</span>' : '';
+  b.innerHTML = '<span class="g">'+t.g+tag+'</span>'+(t.b?'<span class="b">'+t.b+tag+'</span>':'');
+  b.setAttribute('aria-label', t.g + (t.b? ', '+t.b : '') + (t.x? ', bonus, not on the med list' : ''));
   attachDrag(b);
   return b;
 }
@@ -1355,7 +1767,7 @@ function place(tile, target){
     tile.removeAttribute('data-names');
     tile.classList.remove('selected','lifted');
     tile.classList.add('placed','pop');
-    tile.disabled = true;
+    tile.tabIndex = -1;
     tile.style.width='';
     drop.appendChild(tile);
     if(tile.dataset.fact){
@@ -1672,7 +2084,7 @@ function finish(){
   }
   $('#r-keybox').hidden = true;
   $('#r-keybox').innerHTML = '';
-  $('#r-next').style.display = ORDER.indexOf(S.key) < ORDER.length-1 ? '' : 'none';
+  $('#r-next').style.display = nextRoundKey(S.key) ? '' : 'none';
   enableInfo();
   $('#overlay').hidden = false;
   $('#r-again').focus();
@@ -1738,13 +2150,17 @@ function openInfo(key){
   $('#info-title').textContent = c.t;
   let html = '';
   const sec = (h,b)=> b ? '<div class="isec"><h3>'+h+'</h3><p>'+b+'</p></div>' : '';
-  html += sec('How it works', c.how);
-  html += sec('What it treats', c.use);
-  html += sec('Watch for', c.watch);
-  html += sec('Nursing and teaching', c.nursing);
-  if(c.differs && c.differs.length){
-    html += '<div class="isec"><h3>What sets the drugs apart</h3><ul class="idiff">'+
-      c.differs.map(d=>'<li><b>'+d.n+'</b>'+d.d+'</li>').join('')+'</ul></div>';
+  const lst = (h,items)=> (items && items.length)
+    ? '<div class="isec"><h3>'+h+'</h3><ul class="idiff">'+items.map(d=>'<li><b>'+d.n+'</b>'+d.d+'</li>').join('')+'</ul></div>' : '';
+  if(c.sections){
+    c.sections.forEach(s=>{ html += sec(s.h, s.p); });
+    if(c.list) html += lst(c.list.h, c.list.items);
+  } else {
+    html += sec('How it works', c.how);
+    html += sec('What it treats', c.use);
+    html += sec('Watch for', c.watch);
+    html += sec('Nursing and teaching', c.nursing);
+    html += lst('What sets the drugs apart', c.differs);
   }
   $('#info-body').innerHTML = html;
   $('#infolay').hidden = false;
@@ -1803,10 +2219,17 @@ $('#btn-counts').addEventListener('click',e=>{
   });
 });
 $('#r-again').addEventListener('click',()=>{ $('#overlay').hidden=true; startRound(S.key); });
+function nextRoundKey(k){
+  const i = ORDER.indexOf(k), nk = ORDER[i+1];
+  return (nk && examOf(nk)===examOf(k)) ? nk : null;
+}
 $('#r-next').addEventListener('click',()=>{
-  const i=ORDER.indexOf(S.key);
+  const nk = nextRoundKey(S.key);
   $('#overlay').hidden=true;
-  startRound(ORDER[Math.min(i+1,ORDER.length-1)]);
+  if(nk) startRound(nk);
+});
+$('#btn-principles').addEventListener('click',()=>{
+  if(S && S.R.principles) openInfo(S.R.principles);
 });
 $('#r-drill').addEventListener('click',()=>{
   const keys=[...S.errors.keys()];
