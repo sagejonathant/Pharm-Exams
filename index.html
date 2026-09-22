@@ -260,6 +260,12 @@ main{
   max-height:calc(100vh - var(--head-h) - 30px);
   overflow:hidden;
 }
+.hintbar{
+  margin:0;padding:8px 12px;font-size:13px;font-weight:600;line-height:1.4;
+  background:var(--accent-soft);color:var(--ink);border-bottom:1px dashed var(--line);
+}
+.hintbar[hidden]{display:none}
+.bin.hinted,.icard.hinted{outline:2px dashed var(--accent);outline-offset:3px}
 .dockhead{
   display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   padding:10px 12px 9px;border-bottom:1px dashed var(--line);
@@ -444,6 +450,7 @@ body.review .progwrap{visibility:hidden}
     width:100%;max-width:1180px;margin:0 auto;
     border-bottom:0;padding:8px 16px 4px;
   }
+  .hintbar{width:100%;max-width:1180px;margin:0 auto;padding:6px 16px}
   .pool{
     width:100%;max-width:1180px;margin:0 auto;
     flex-direction:row;flex-wrap:wrap;align-content:flex-start;
@@ -506,6 +513,7 @@ body.review .progwrap{visibility:hidden}
       <div class="spacer"></div>
       <button class="ghostbtn tiny" id="btn-controls" aria-expanded="true" aria-controls="namebar">Options<span class="chev">&#9660;</span></button>
     </div>
+    <p class="hintbar" id="hintbar" aria-live="polite" hidden></p>
     <div class="namebar" id="namebar">
       <div class="seg" role="group" aria-label="Name shown in the word bank">
         <button type="button" data-names="generic" aria-pressed="false">Generic</button>
@@ -1578,6 +1586,30 @@ const ROUNDS = {endocrine:ENDOCRINE, gi:GI, insulin:INSULIN, antiinf:ANTIINF};
 const ORDER = ['endocrine','gi','insulin','antiinf'];
 const examOf = k => ROUNDS[k].exam || 1;
 
+/* Missing the same drug twice outlines the group of boxes it belongs to.
+   Groups are big enough that the outline narrows the search without
+   pointing at the answer. */
+const HINTFAM = {
+  endocrine:[
+    {n:'the insulins and hypoglycemia rescue', ids:['rapid','short','intermediate','long','rescue']},
+    {n:'the oral agents', ids:['sulfonylurea','meglitinide','biguanide','agi','tzd','dpp4']},
+    {n:'the non-insulin injectables', ids:['amylin','glp1','dual']},
+    {n:'the thyroid drugs', ids:['thyroidrep','antithyroid']}
+  ],
+  gi:[
+    {n:'the antiemetics', ids:['anticholinergic','antihistamine','glucocorticoid','dopamine','prokinetic','serotonin','cannabinoid']},
+    {n:'the antidiarrheals', ids:['adsorbent','antimotility','probiotic']},
+    {n:'the laxatives', ids:['osmotic','stimulant','bulk','emollient']},
+    {n:'the acid-related drugs', ids:['antacid','antiflatulent','h2','ppi','pepsin']}
+  ],
+  antiinf:[
+    {n:'the penicillins', ids:['pcn_basic','pcn_broad','pcn_resist','pcn_bli','pcn_ext']},
+    {n:'the cephalosporins', ids:['ceph1','ceph2','ceph3','ceph4','ceph5']},
+    {n:'the other antibacterials', ids:['macrolide','lincosamide','glycopeptide','tetracycline','aminoglycoside','fluoroquinolone','sulfonamide','metronidazole']},
+    {n:'the antifungals', ids:['polyene','azole','echinocandin']}
+  ]
+};
+
 /* ============================================================
    STATE
    ============================================================ */
@@ -1619,6 +1651,7 @@ function startRound(key, only){
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', String(t.dataset.round===key)));
   $('#btn-counts').style.display = S.kind==='class' ? '' : 'none';
 
+  clearHint();
   if(S.kind==='class') buildClassRound(R, only); else buildInsulinRound(R, only);
   applyNames();
 
@@ -1808,7 +1841,36 @@ function missed(tile, target){
   S.errors.set(k, rec);
   target.classList.add('rejecting');
   setTimeout(()=>target.classList.remove('rejecting'),320);
+  if(rec.n >= 2) giveHint(tile);
   updateStats();
+}
+
+let hintTimer = null, hintTextTimer = null;
+function clearHint(){
+  clearTimeout(hintTimer); clearTimeout(hintTextTimer);
+  document.querySelectorAll('#board .hinted').forEach(el=>el.classList.remove('hinted'));
+  const bar = $('#hintbar'); bar.hidden = true; bar.textContent = '';
+}
+function giveHint(tile){
+  clearHint();
+  let boxes = [], msg = '';
+  if(S.kind==='class'){
+    const fam = (HINTFAM[S.key]||[]).find(f=>f.ids.includes(tile.dataset.bin));
+    if(!fam) return;
+    boxes = fam.ids.map(id=>document.querySelector('#board .bin[data-bin="'+id+'"]')).filter(Boolean);
+    msg = 'Hint: '+tile.dataset.g+' is one of '+fam.n+'. Those boxes are outlined.';
+  } else {
+    const v = tile.dataset.val;
+    boxes = [...document.querySelectorAll('#board .icard')].filter(c=>{
+      const ins = INSULIN.items.find(i=>i.id===c.dataset.ins);
+      return ins && (ins.onset===v || ins.peak===v);
+    });
+    msg = 'Hint: '+v+' belongs to '+(boxes.length>1 ? 'one of the outlined insulins.' : 'the outlined insulin.');
+  }
+  boxes.forEach(b=>b.classList.add('hinted'));
+  const bar = $('#hintbar'); bar.textContent = msg; bar.hidden = false;
+  hintTimer = setTimeout(()=>boxes.forEach(b=>b.classList.remove('hinted')), 3500);
+  hintTextTimer = setTimeout(()=>{ bar.hidden = true; }, 7000);
 }
 function ownerOf(val){
   return INSULIN.items.filter(i=>i.onset===val||i.peak===val)
