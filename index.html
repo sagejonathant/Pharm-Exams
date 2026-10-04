@@ -48,9 +48,9 @@ header{
   border-bottom:1px solid var(--line);
 }
 .hrow{
-  max-width:1180px;margin:0 auto;
+  max-width:1340px;margin:0 auto;
   padding:10px 18px;
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap;
 }
 .brand{
   font-family:'Instrument Serif',Georgia,serif;
@@ -439,6 +439,39 @@ body.review .progwrap{visibility:hidden}
   .ghostbtn:hover{border-color:var(--line);color:inherit}
   .btn.sec:hover{border-color:var(--line);color:var(--ink)}
 }
+/* ---------- speed round ---------- */
+.switch{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--line);background:var(--panel);border-radius:7px;
+  padding:5px 11px 5px 7px;font-size:13px;font-weight:500;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.switch:hover{border-color:var(--accent);color:var(--accent)}
+.switch:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.sw-track{position:relative;flex:0 0 auto;width:30px;height:17px;border-radius:9px;background:var(--line);transition:background .15s}
+.sw-knob{position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+.switch[aria-checked="true"]{border-color:var(--accent);color:var(--accent);font-weight:600}
+.switch[aria-checked="true"] .sw-track{background:var(--accent)}
+.switch[aria-checked="true"] .sw-knob{transform:translateX(13px)}
+body.review .switch,body.flash .switch{display:none}
+.namebar{flex-wrap:wrap}
+.speedbar{flex:1 1 100%;padding:6px 0 0;display:flex;flex-direction:column;gap:2px}
+.speedbar[hidden]{display:none}
+.speednote{font-size:12px;color:var(--muted);padding-left:23px}
+.chk{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500;cursor:pointer}
+.chk input{width:16px;height:16px;margin:0;accent-color:var(--accent)}
+/* one drug at a time, shown large */
+.pool.speed[data-cols="2"]{grid-template-columns:1fr}
+.pool.speed .tile:not(:first-child){display:none}
+.pool.speed .tile{flex:1 1 100%;padding:16px 16px;border-left-width:4px}
+.pool.speed .tile .g{font-size:21px}
+.pool.speed .tile .b{font-size:15px;margin-top:3px}
+.pool.speed .tile[data-names="brand"] .b{font-size:21px}
+.pool.speed:empty::after{content:'Deck finished.'}
+.tile.speedwrong{animation:shake .3s ease;border-color:var(--bad)!important;background:var(--bad-bg)}
+.tile.speedwrong .g,.tile.speedwrong .b{color:var(--bad)}
+.bin.speedok{border-color:var(--ok-line);background:var(--ok-bg)}
+
 /* ---------- flashcards ---------- */
 body.flash .dock{display:none}
 body.flash main{grid-template-columns:minmax(0,1fr)}
@@ -564,7 +597,7 @@ body.flash .tab[data-round="insulin"]{display:none}
       <span class="stat">Misses <b id="s-miss">0</b></span>
       <span class="stat" id="s-timewrap">Time <b id="s-time">0:00</b></span>
     </div>
-    <button class="ghostbtn" id="btn-counts" aria-pressed="false">Show counts</button>
+    <button type="button" class="switch" id="btn-speed" role="switch" aria-checked="false"><span class="sw-track" aria-hidden="true"><span class="sw-knob"></span></span>Speed round</button>
     <button class="ghostbtn" id="btn-review" aria-pressed="false">Review</button>
     <button class="ghostbtn" id="btn-flash" aria-pressed="false">Flashcards</button>
     <button class="ghostbtn" id="btn-restart">Restart</button>
@@ -588,6 +621,11 @@ body.flash .tab[data-round="insulin"]{display:none}
         <button type="button" data-names="both" aria-pressed="true">Both</button>
       </div>
       <button class="ghostbtn tiny" id="btn-shuffle">Shuffle</button>
+      <button class="ghostbtn tiny" id="btn-counts" aria-pressed="false">Show counts</button>
+      <div class="speedbar" id="speedbar" hidden>
+        <label class="chk"><input type="checkbox" id="chk-fill" checked> Fill the boxes as I go</label>
+        <span class="speednote">Unchecked, boxes stay empty for pure recall</span>
+      </div>
     </div>
     <div class="pool" id="pool"></div>
   </aside>
@@ -1931,7 +1969,7 @@ function startRound(key, only){
   document.documentElement.style.setProperty('--accent', R.accent);
   document.documentElement.style.setProperty('--accent-soft', R.accentSoft);
 
-  S = {key, R, kind: key==='insulin' ? 'insulin' : 'class',
+  S = {key, R, only:!!only, kind: key==='insulin' ? 'insulin' : 'class',
        placed:0, total:0, misses:0, selected:null, t0:Date.now(), done:false,
        review:reviewMode, canInfo:false, errors:new Map()};
 
@@ -1943,6 +1981,9 @@ function startRound(key, only){
   $('#btn-principles').hidden = !R.principles;
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', String(t.dataset.round===key)));
   $('#btn-counts').style.display = S.kind==='class' ? '' : 'none';
+  S.speed = speedMode && S.kind==='class' && !reviewMode && !flashMode;
+  $('#btn-speed').style.display = S.kind==='class' ? '' : 'none';
+  $('#speedbar').hidden = !S.speed;
 
   if(flashMode){
     S.kind = 'flash'; S.done = true;
@@ -1959,6 +2000,13 @@ function startRound(key, only){
   applyNames();
 
   if(reviewMode){ fillEverything(); S.done = true; enableInfo(); }
+
+  $('#pool').classList.toggle('speed', !!S.speed);
+  if(S.speed){
+    $('#dock-title').textContent = 'Tap the class it belongs in';
+    $('#round-sub').textContent = 'Speed round. One drug at a time: tap its class or drag it there. It stays until you get it right, and the clock runs until the deck is done.';
+    refreshDock();
+  }
 
   $('#s-total').textContent = S.total;
   updateStats();
@@ -2096,6 +2144,17 @@ function correctTarget(tile, target){
 }
 
 function place(tile, target){
+  if(S.speed && !speedFill && S.kind==='class'){
+    tile.remove();
+    target.classList.remove('speedok'); void target.offsetWidth;
+    target.classList.add('speedok');
+    setTimeout(()=>target.classList.remove('speedok'), 450);
+    S.placed++;
+    updateStats();
+    refreshDock();
+    if(S.placed===S.total && !S.review) finish();
+    return;
+  }
   if(S.kind==='class'){
     const drop = target.querySelector('.bindrop');
     const hint = drop.querySelector('.emptyhint');
@@ -2186,6 +2245,11 @@ function updateStats(){
   $('#progbar').style.width = (S.total? (S.placed/S.total*100):0)+'%';
 }
 function refreshDock(){
+  if(S && S.speed){
+    const left = $('#pool').children.length;
+    $('#dock-count').textContent = left ? 'Drug '+(S.placed+1)+' of '+S.total : '';
+    return;
+  }
   const left = $('#pool').children.length;
   $('#dock-count').textContent = left ? left+' left' : '';
 }
@@ -2208,6 +2272,7 @@ function attachDrag(el){
 }
 
 function toggleSelect(el){
+  if(S && S.speed) return;
   if(el.classList.contains('placed')) return;
   const cur = S.selected;
   if(cur) cur.classList.remove('selected');
@@ -2387,6 +2452,34 @@ function startAutoScroll(){
 }
 function stopAutoScroll(){ if(scrollRAF){cancelAnimationFrame(scrollRAF); scrollRAF=null;} }
 
+/* speed round: tapping a box answers for the one drug showing */
+function speedChoose(bin){
+  const tile = $('#pool .tile');
+  if(!tile) return;
+  if(correctTarget(tile, bin)){ buzz(14); place(tile, bin); }
+  else{
+    missed(tile, bin);
+    buzz([40,50,40]);
+    tile.classList.remove('speedwrong'); void tile.offsetWidth;
+    tile.classList.add('speedwrong');
+    setTimeout(()=>tile.classList.remove('speedwrong'), 420);
+  }
+}
+document.addEventListener('click', e=>{
+  if(!S || !S.speed || S.done) return;
+  const bin = e.target.closest && e.target.closest('#board .bin');
+  if(bin) speedChoose(bin);
+});
+document.addEventListener('keydown', e=>{
+  if(!S || !S.speed || S.done) return;
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const el = document.activeElement;
+  const bin = el && el.closest ? el.closest('#board .bin') : null;
+  if(!bin || el.classList.contains('infodot')) return;
+  e.preventDefault();
+  speedChoose(bin);
+});
+
 /* click-to-place fallback */
 document.addEventListener('click', e=>{
   if(!S || !S.selected) return;
@@ -2422,8 +2515,19 @@ function finish(){
   const firstTry = S.total - S.errors.size;
   const acc = Math.round(firstTry/S.total*100);
 
-  $('#sheet-title').textContent = S.R.title + ' complete';
-  $('#sheet-sub').textContent = (firstTry===S.total
+  let bestNote = '';
+  if(S.speed && !S.only){
+    const bk = S.key + (speedFill ? '' : ':recall');
+    const prev = bestTimes[bk];
+    if(!prev || ms < prev){
+      bestTimes[bk] = ms;
+      bestNote = prev ? 'New best this session, down from '+fmt(prev)+'. ' : '';
+    } else {
+      bestNote = 'Best this session: '+fmt(prev)+'. ';
+    }
+  }
+  $('#sheet-title').textContent = S.R.title + (S.speed ? ' speed round complete' : ' complete');
+  $('#sheet-sub').textContent = bestNote + (firstTry===S.total
     ? 'Clean run. Every tile landed on the first try. '
     : firstTry+' of '+S.total+' landed on the first try. ')
     + 'Every box is now tappable for the full class breakdown.';
@@ -2572,6 +2676,9 @@ document.addEventListener('click', e=>{
    ============================================================ */
 
 let flashMode = false;
+let speedMode = false;
+let speedFill = true;
+const bestTimes = {};
 let F = null;
 
 function deckFor(key){
@@ -2705,6 +2812,18 @@ document.addEventListener('keydown', e=>{
     markCard(false);
   }
 }, true);
+
+$('#btn-speed').addEventListener('click', e=>{
+  speedMode = !speedMode;
+  e.currentTarget.setAttribute('aria-checked', String(speedMode));
+  $('#overlay').hidden = true;
+  closeInfo();
+  startRound(S.key);
+});
+$('#chk-fill').addEventListener('change', e=>{
+  speedFill = e.target.checked;
+  startRound(S.key);
+});
 
 /* one place to switch between drill, review, and flashcards */
 function setMode(mode){
