@@ -475,6 +475,10 @@ body.flash .tab[data-round="insulin"]{display:none}
 .fnotes{align-self:flex-start;margin-top:auto}
 .fctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
 .fctrl .btn{min-width:140px}
+.kbd{
+  display:inline-block;margin:0 6px;padding:1px 5px;border-radius:4px;
+  border:1px solid currentColor;font-size:11px;font-weight:600;line-height:1.3;opacity:.65;
+}
 .fnav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
 .fnav .linkbtn{margin-top:0}
 .fnav .linkbtn:disabled{color:var(--muted);text-decoration:none;cursor:default;opacity:.5}
@@ -486,10 +490,14 @@ body.flash .tab[data-round="insulin"]{display:none}
 .fdone-list{font-size:14px;line-height:1.5}
 @media (pointer:coarse){
   .infodot{width:30px;height:30px;font-size:14px}
-  .fkeyhint{display:none}
+}
+@media (hover:none){
+  .fkeyhint,.kbd{display:none}
 }
 @media (max-width:640px){
   .face{padding:24px 20px 20px;min-height:260px}
+  .fctrl{flex-wrap:nowrap}
+  .fctrl .btn{min-width:0;flex:1 1 0;padding:12px 6px}
   .fg{font-size:26px}
   .fclass{font-size:24px}
 }
@@ -2596,6 +2604,7 @@ function renderFlash(){
       '</div>';
     if(learn.length) $('#f-relearn').addEventListener('click', ()=>startFlash(F.key, learn));
     $('#f-again').addEventListener('click', ()=>startFlash(F.key));
+    ($('#f-relearn') || $('#f-again')).focus({preventScroll:true});
     return;
   }
 
@@ -2627,13 +2636,13 @@ function renderFlash(){
       '</div>'+
     '</div>'+
     '<div class="fctrl">'+
-      (F.flipped
-        ? '<button type="button" class="btn sec" id="f-learn">Still learning</button><button type="button" class="btn" id="f-got">Got it</button>'
-        : '<button type="button" class="btn" id="f-flip">Flip card</button>')+
+      '<button type="button" class="btn sec" id="f-learn"><span class="kbd" aria-hidden="true">&larr;</span>Still learning</button>'+
+      '<button type="button" class="btn sec" id="f-flip">Flip<span class="kbd" aria-hidden="true">Space</span></button>'+
+      '<button type="button" class="btn" id="f-got">Got it<span class="kbd" aria-hidden="true">&rarr;</span></button>'+
     '</div>'+
     '<div class="fnav">'+
-      '<button type="button" class="linkbtn" id="f-prev"'+(F.i===0?' disabled':'')+'>Previous</button>'+
-      '<span class="fkeyhint">Space flips, arrow keys move</span>'+
+      '<button type="button" class="linkbtn" id="f-prev"'+(F.i===0?' disabled':'')+'>Previous card</button>'+
+      '<span class="fkeyhint">Space flips. Right arrow is got it, left arrow is still learning.</span>'+
       '<button type="button" class="linkbtn" id="f-skip">Skip</button>'+
     '</div>';
 
@@ -2643,14 +2652,13 @@ function renderFlash(){
   });
   $('#f-notes').addEventListener('click', e=>{ e.stopPropagation(); openInfo(c.bin); });
   $('#f-shuffle').addEventListener('click', ()=>startFlash(F.key, F.cards));
-  if(F.flipped){
-    $('#f-learn').addEventListener('click', ()=>markCard(false));
-    $('#f-got').addEventListener('click', ()=>markCard(true));
-  } else {
-    $('#f-flip').addEventListener('click', flipCard);
-  }
+  $('#f-learn').addEventListener('click', ()=>markCard(false));
+  $('#f-got').addEventListener('click', ()=>markCard(true));
+  $('#f-flip').addEventListener('click', flipCard);
   $('#f-prev').addEventListener('click', ()=>moveCard(-1));
   $('#f-skip').addEventListener('click', ()=>moveCard(1));
+  // keep keyboard focus on the card so keys never land on a header button
+  $('#fcard').focus({preventScroll:true});
 }
 
 function flipCard(){
@@ -2659,17 +2667,6 @@ function flipCard(){
   card.classList.toggle('flipped', F.flipped);
   card.querySelector('.front').setAttribute('aria-hidden', String(F.flipped));
   card.querySelector('.back').setAttribute('aria-hidden', String(!F.flipped));
-  // swap the button row without rebuilding the card, so the flip animates
-  const ctrl = document.querySelector('.fctrl');
-  ctrl.innerHTML = F.flipped
-    ? '<button type="button" class="btn sec" id="f-learn">Still learning</button><button type="button" class="btn" id="f-got">Got it</button>'
-    : '<button type="button" class="btn" id="f-flip">Flip card</button>';
-  if(F.flipped){
-    $('#f-learn').addEventListener('click', ()=>markCard(false));
-    $('#f-got').addEventListener('click', ()=>markCard(true));
-  } else {
-    $('#f-flip').addEventListener('click', flipCard);
-  }
 }
 function markCard(got){
   const g = F.cards[F.i].g;
@@ -2684,16 +2681,30 @@ function moveCard(d){
 }
 
 document.addEventListener('keydown', e=>{
-  if(!flashMode || !F) return;
+  if(!flashMode || !F || F.i >= F.cards.length) return;
   if(!$('#infolay').hidden || !$('#overlay').hidden) return;
-  const tag = (e.target.tagName||'').toLowerCase();
-  if(tag==='input' || tag==='textarea') return;
-  if(e.target.closest && e.target.closest('button') && (e.key===' '||e.key==='Enter')) return;
-  if(F.i >= F.cards.length) return;
-  if(e.key===' ' || e.key==='Enter'){ e.preventDefault(); flipCard(); }
-  else if(e.key==='ArrowRight'){ e.preventDefault(); moveCard(1); }
-  else if(e.key==='ArrowLeft'){ e.preventDefault(); moveCard(-1); }
-});
+  if(e.altKey || e.ctrlKey || e.metaKey) return;
+  const t = e.target, tag = (t.tagName||'').toLowerCase();
+  if(tag==='input' || tag==='textarea' || tag==='select') return;
+  // a button inside the deck (Got it, Previous card, Full class notes...) keeps its own Space and Enter
+  const deckButton = t.closest && t.closest('#board button');
+
+  if(e.key===' ' || e.key==='Spacebar'){
+    if(deckButton) return;
+    e.preventDefault(); e.stopPropagation();
+    flipCard();
+  } else if(e.key==='Enter'){
+    if(t.id!=='fcard') return;
+    e.preventDefault(); e.stopPropagation();
+    flipCard();
+  } else if(e.key==='ArrowRight'){
+    e.preventDefault(); e.stopPropagation();
+    markCard(true);
+  } else if(e.key==='ArrowLeft'){
+    e.preventDefault(); e.stopPropagation();
+    markCard(false);
+  }
+}, true);
 
 /* one place to switch between drill, review, and flashcards */
 function setMode(mode){
