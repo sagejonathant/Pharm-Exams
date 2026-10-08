@@ -48,9 +48,9 @@ header{
   border-bottom:1px solid var(--line);
 }
 .hrow{
-  max-width:1340px;margin:0 auto;
-  padding:10px 18px;
-  display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap;
+  max-width:1420px;margin:0 auto;
+  padding:10px 14px;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
 }
 .brand{
   font-family:'Instrument Serif',Georgia,serif;
@@ -79,13 +79,13 @@ header{
 .linkbtn[hidden]{display:none}
 .tab{
   border:0;background:transparent;border-radius:6px;
-  padding:6px 12px;font-size:13.5px;font-weight:500;color:var(--muted);
+  padding:6px 8px;font-size:13px;font-weight:500;color:var(--muted);
   cursor:pointer;white-space:nowrap;
 }
 .tab[aria-selected="true"]{background:var(--panel);color:var(--accent);box-shadow:0 1px 2px rgba(20,40,45,.10);font-weight:600}
 .tab:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .spacer{flex:1 1 auto}
-.stats{display:flex;align-items:center;gap:16px;font-size:13px;color:var(--muted)}
+.stats{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
 .stat b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 .ghostbtn{
   border:1px solid var(--line);background:var(--panel);
@@ -237,6 +237,10 @@ main{
 .slot.rejecting{animation:binbad .3s ease}
 .dur{margin-top:9px;font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:baseline}
 .dur b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.dur[hidden]{display:none}
+.dur.why{display:block;font-size:13px;line-height:1.45;color:var(--ink);padding-top:8px;border-top:1px dashed var(--ok-line)}
+.slot .lbl{line-height:1.3}
+.dur.why[hidden]{display:none}
 .vtile{
   display:inline-block;text-align:center;
   background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
@@ -477,7 +481,7 @@ body.flash .dock{display:none}
 body.flash main{grid-template-columns:minmax(0,1fr)}
 body.flash .stats,body.flash #btn-counts{display:none}
 body.flash .progwrap{visibility:hidden}
-body.flash .tab[data-round="insulin"]{display:none}
+body.flash .tab.slot-tab{display:none}
 #btn-flash[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
 .flashwrap{max-width:640px;margin:6px auto 0}
 .fmeta{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin:0 0 10px;font-size:13px;color:var(--muted)}
@@ -587,9 +591,12 @@ body.flash .tab[data-round="insulin"]{display:none}
     <div class="tabs" role="tablist" aria-label="Rounds">
       <button class="tab" role="tab" data-round="endocrine" aria-selected="true">Endocrine</button>
       <button class="tab" role="tab" data-round="gi" aria-selected="false">GI</button>
-      <button class="tab" role="tab" data-round="insulin" aria-selected="false">Insulin timing</button>
+      <button class="tab slot-tab" role="tab" data-round="insulin" aria-selected="false">Insulin timing</button>
       <span class="tabsep" aria-hidden="true"></span>
       <button class="tab" role="tab" data-round="antiinf" aria-selected="false">Anti-infectives</button>
+      <span class="tabsep" aria-hidden="true"></span>
+      <button class="tab" role="tab" data-round="pain" aria-selected="false">Pain &amp; gout</button>
+      <button class="tab slot-tab" role="tab" data-round="painnum" aria-selected="false">Pain numbers</button>
     </div>
     <div class="spacer"></div>
     <div class="stats">
@@ -826,6 +833,10 @@ const INSULIN = {
   accent:'#0F5C52',
   accentSoft:'#E3EFEC',
   note:'<b>Insulin detemir (Levemir)</b> is not in this round because your slides never give its onset, peak, or duration. If it shows up on the exam, it will be a class question, not a timing question.',
+  unit:'insulin',
+  dockTitle:'Drag each time onto the right insulin',
+  slotDefs:[{k:'onset',l:'Onset'},{k:'peak',l:'Peak'}],
+  extra:{k:'dur',l:'Duration'},
   items:[
     {id:'lispro', name:'Lispro', brand:'Humalog', cls:'Rapid-acting', onset:'15-30 min', peak:'0.5-2.5 hr', dur:'3-6 hr'},
     {id:'aspart', name:'Aspart', brand:'NovoLog', cls:'Rapid-acting', onset:'10-20 min', peak:'1-5 hr', dur:'3-5 hr'},
@@ -1939,6 +1950,457 @@ const KEY = {
           'Metallic taste. Reddish brown urine at high doses.']
 };
 
+/* ============================================================
+   EXAM 3: INFLAMMATION, PAIN, AND ANTI-GOUT
+   Built from the lecture slides. No study guide yet. Anything
+   not in the slides is labeled "not in your slides".
+   ============================================================ */
+const PAIN_INFO = {
+
+pain_core:{
+  t:'Exam 3 core concepts',
+  sections:[
+    {h:'Chemical mediators of inflammation', items:[
+      {n:'Histamine', d:'The first mediator in the inflammatory process. Dilates arterioles and increases capillary permeability.'},
+      {n:'Kinins (bradykinin)', d:'Increase capillary permeability and increase pain.'},
+      {n:'Thromboxane A2', d:'Mediates platelet aggregation and controls bleeding.'},
+      {n:'Prostaglandins', d:'Increase capillary permeability, vasodilation, pain, and fever. Most of the drugs in this chapter work by cutting prostaglandin production.'}
+    ]},
+    {h:'The five signs of inflammation', items:[
+      {n:'Redness (rubor)', d:'Vasodilation.'},
+      {n:'Heat (calor)', d:'Increased blood flow.'},
+      {n:'Swelling (tumor)', d:'Fluid leakage.'},
+      {n:'Pain (dolor)', d:'Prostaglandins and bradykinin.'},
+      {n:'Loss of function', d:'Pain and tissue damage.'}
+    ]},
+    {h:'COX-1 vs COX-2', p:'NSAIDs block cyclooxygenase (COX), the enzyme that turns arachidonic acid into prostaglandins and thromboxane A2. COX-1 makes the "good" prostaglandins: it protects the stomach lining, maintains kidney blood flow, and regulates platelets. COX-2 makes the "bad" prostaglandins that cause inflammation and pain. Blocking COX-2 gives the benefit. Blocking COX-1 causes the ulcers, kidney problems, and bleeding.'},
+    {h:'Aspirin vs other NSAIDs vs acetaminophen', items:[
+      {n:'Aspirin', d:'Analgesic, anti-inflammatory, antipyretic, and antiplatelet. All four.'},
+      {n:'Other NSAIDs (ibuprofen)', d:'Analgesic, anti-inflammatory, antipyretic. The comparison chart marks them as not antiplatelet, though another slide notes NSAIDs in general impair platelets and raise bleeding risk.'},
+      {n:'Acetaminophen (Tylenol)', d:'Analgesic and antipyretic only. Not anti-inflammatory and not antiplatelet. It is not an NSAID.'}
+    ]},
+    {h:'What pain is', p:'Pain is a dynamic interaction of physical, cognitive, spiritual, emotional, and environmental factors. The American Pain Society defines it as an unpleasant sensory and emotional experience associated with actual or potential tissue damage, or described in terms of such damage. Pain is subjective and affected by culture and expectations. Anxiety, depression, fear, and anger decrease pain tolerance.'},
+    {h:'Threshold, perceptual dominance, tolerance', items:[
+      {n:'Pain threshold', d:'The point at which a stimulus is perceived as pain.'},
+      {n:'Perceptual dominance', d:'Pain at one location may raise the threshold in another location.'},
+      {n:'Pain tolerance', d:'How long or how intense a pain a person will endure before responding to it.'}
+    ]},
+    {h:'Types of pain', items:[
+      {n:'Acute', d:'A protective warning that something is wrong. Lasts seconds to days. Triggers the sympathetic response: increased heart rate, blood pressure, and muscle tension, sweating, dilated pupils, decreased gut motility, dry mouth. Associated with anxiety.'},
+      {n:'Somatic', d:'Superficial pain from skin, connective tissue, or bone. Well localized.'},
+      {n:'Visceral', d:'Pain from internal organs and the abdomen. Not well localized, and often referred.'},
+      {n:'Referred', d:'Felt in an area away from its point of origin, such as heart pain felt in the left arm.'},
+      {n:'Chronic', d:'Persistent or intermittent, sudden or gradual. Usually no physiologic signs like acute pain has. Brings irritability, depression, withdrawal, poor sleep, decreased libido, and appetite changes.'},
+      {n:'Neuropathic', d:'From trauma or disease of the nerves themselves. Usually chronic. Peripheral, such as diabetic neuropathy, or central, such as phantom limb pain. This is where adjuvant drugs come in.'}
+    ]},
+    {h:'Slide discrepancy: how long is chronic pain', p:'One slide defines chronic pain as lasting at least 3 to 6 months. The comparison table says acute pain is under 6 months and chronic pain is 6 months or more. If a question gives a number, 6 months is the line both slides agree on.'},
+    {h:'Opioid, opiate, narcotic', items:[
+      {n:'Opioid', d:'Any natural or synthetic substance with properties similar to morphine.'},
+      {n:'Opiate', d:'Contains alkaloids found in opium itself, such as morphine and codeine.'},
+      {n:'Narcotic', d:'A nonspecific term. Originally anything that induced sleep; now often used for any illegal substance or any substance that alters the CNS.'}
+    ]},
+    {h:'Nonpharmacologic pain management', p:'These enhance the effects of medication: backrubs, repositioning, heat or cold, relaxation techniques, diversional activities, decreased environmental stimulation, visualization, biofeedback, meditation, and TENS units.'},
+    {h:'Opioid dosing guidelines', p:'Assess pain before giving an opioid and about 1 hour after. Doses are adjusted to the individual. As a rule, give opioids on a fixed schedule. Avoid abrupt stops that cause withdrawal. Hold the dose if an adult’s respirations are below 12 per minute and consult the provider.'},
+    {h:'Tolerance and physical dependence', p:'Tolerance means higher doses are needed for the same effect. It develops to pain relief, euphoria, sedation, and respiratory depression, with cross-tolerance to other opioid agonists. It never develops to miosis or constipation. Physical dependence shows as an abstinence syndrome when the drug stops abruptly: about 10 hours after the last dose, yawning, runny nose, and sweating, progressing to violent sneezing, weakness, nausea, vomiting, diarrhea, cramps, bone and muscle pain, spasms, and kicking movements. It lasts 7 to 10 days untreated and is unpleasant but not lethal.'},
+    {h:'Discharge teaching for analgesics', p:'Call the provider for poor pain control or adverse effects. Expect lightheadedness, dizziness, sedation, nausea, sweating, confusion, orthostatic hypotension, and constipation. Use the smallest dose that relieves pain.'},
+    {h:'The two antidotes', items:[
+      {n:'Acetylcysteine (Mucomyst)', d:'Acetaminophen overdose.'},
+      {n:'Naloxone (Narcan)', d:'Opioid overdose: reverses respiratory and CNS depression.'}
+    ]}
+  ]
+},
+
+nsaid_sal: abxCard('NSAID: salicylate', {
+  how:'Irreversibly blocks COX-1 and COX-2, so prostaglandins and thromboxane A2 are not made. It is analgesic, anti-inflammatory, and antipyretic, and the only drug on this list used as an antiplatelet.',
+  use:'Mild pain, fever, and inflammatory disorders. At 81 mg daily, prevention of MI and ischemic stroke: used after an MI and as prophylaxis for people at risk of CAD or stroke.',
+  contra:'Children and teenagers with flu-like symptoms (Reye syndrome). Active peptic ulcer or GI bleeding, chronic kidney disease, heart failure or uncontrolled hypertension, anticoagulant therapy, the third trimester of pregnancy, and a history of NSAID-induced asthma.',
+  ae:'GI: gastritis, peptic ulcers, GI bleeding. Bleeding from impaired platelet aggregation, most pronounced with aspirin. Renal injury with sodium and water retention. Bronchospasm in aspirin-sensitive patients. Overdose causes salicylism: tinnitus, dizziness, headache, confusion, sweating, drowsiness, thirst, nausea, vomiting, diarrhea. Severe poisoning causes convulsions and coma.',
+  admin:'Pain: 325-650 mg every 4-6 hours. Cardioprotection: 81 mg daily. Take with meals or snacks. Avoid alcohol. Report bleeding gums, petechiae, black tarry stools, or peripheral edema.',
+  inter:'Anticoagulants raise the bleeding risk. Glucocorticoids are listed as an interaction with NSAIDs.',
+  mon:'Serum salicylate: therapeutic 15-30 mg/dL, toxic above 30 mg/dL. Tinnitus is the early warning sign of toxicity. Signs of bleeding. Expected outcome: less pain and swelling, more mobility.',
+  differs:[
+    {n:'Aspirin (Bayer, Ecotrin)', d:'The prototype NSAID and the only salicylate on the list. Your slide table calls it irreversible, COX-1 more than COX-2, which is why its antiplatelet effect lasts.'},
+    {n:'Compared with ibuprofen and Tylenol', d:'Aspirin gets all four checks on the slide chart: analgesic, anti-inflammatory, antipyretic, antiplatelet.'},
+    {n:'Slide discrepancy', d:'One slide says NSAIDs in general inhibit platelets and could cause bleeding, while the chart marks other NSAIDs as not antiplatelet. Both hold up: other NSAIDs impair platelets temporarily and raise bleeding risk, but only aspirin is used as an antiplatelet drug. The reversible versus irreversible explanation is not in your slides.'}
+  ]
+}),
+nsaid_non: abxCard('NSAID: nonselective COX-1/COX-2', {
+  how:'Block both COX-1 and COX-2. Blocking COX-2 relieves pain, inflammation, and fever. Blocking COX-1 removes the protective prostaglandins, which is where the stomach, kidney, and bleeding problems come from.',
+  use:'Mild to moderate pain, fever, osteoarthritis, rheumatoid arthritis, dysmenorrhea, musculoskeletal injuries, tendonitis, bursitis, and gout. Ketorolac is for short-term moderate to severe acute pain, such as after surgery.',
+  contra:'Active peptic ulcer disease or GI bleeding, chronic kidney disease, heart failure or uncontrolled hypertension, concurrent anticoagulants, the third trimester of pregnancy, and a history of NSAID-induced asthma or severe hypersensitivity.',
+  ae:'GI: gastritis, peptic ulcers, GI bleeding. Renal: reduced renal blood flow, acute kidney injury, sodium and water retention. Cardiovascular: hypertension, edema, and a higher risk of MI and stroke with long-term use. Impaired platelet aggregation. Bronchospasm in susceptible patients.',
+  admin:'Take with meals or snacks. Avoid alcohol. Report bleeding (bleeding gums, petechiae, black tarry stools) and peripheral edema.',
+  inter:'Anticoagulants raise the bleeding risk. Glucocorticoids are listed as an interaction with NSAIDs, and together they add to the GI risk (the reason is not in your slides).',
+  mon:'Signs of bleeding, blood pressure, edema, and renal function. Expected outcome: reduced pain and swelling and increased mobility.',
+  differs:[
+    {n:'Ibuprofen (Advil, Motrin)', d:'OTC 200-400 mg every 4-6 hours. Prescription 400-800 mg every 6-8 hours, max 3,200 mg/day.'},
+    {n:'Naproxen (Aleve, Naprosyn)', d:'Twice-daily dosing, 250-500 mg. Max 1,000-1,250 mg/day.'},
+    {n:'Ketorolac (Toradol)', d:'The one available IV and IM. Short-term only: maximum 5 days of therapy, and oral max 40 mg/day.'},
+    {n:'Indomethacin (Indocin)', d:'Bonus, not on the med list. Commonly used for gout flares.'},
+    {n:'Diclofenac (Voltaren)', d:'Bonus, not on the med list. Available as a topical gel.'}
+  ]
+}),
+nsaid_pref: abxCard('NSAID: preferential COX-2', {
+  how:'Blocks both COX enzymes but favors COX-2, so it sits between the nonselective NSAIDs and celecoxib.',
+  use:'Osteoarthritis, rheumatoid arthritis, and juvenile idiopathic arthritis.',
+  contra:'The same NSAID cautions: active ulcer or GI bleeding, chronic kidney disease, heart failure or uncontrolled hypertension, anticoagulants, third trimester of pregnancy, NSAID-induced asthma.',
+  ae:'The NSAID profile: GI ulcers and bleeding, kidney injury, hypertension and edema, and cardiovascular risk with long-term use.',
+  admin:'7.5-15 mg once daily, max 15 mg/day. Take with food. Same NSAID teaching: avoid alcohol, report bleeding and edema.',
+  mon:'Bleeding, blood pressure, edema, renal function.',
+  differs:[
+    {n:'Meloxicam (Mobic)', d:'Your slide table labels it preferential COX-2, not selective. Once-daily dosing.'},
+    {n:'Why it gets its own box', d:'COX-1 effects are reduced, not removed, so GI risk is lower than ibuprofen but not as low as celecoxib.'}
+  ]
+}),
+nsaid_sel: abxCard('NSAID: selective COX-2 inhibitor', {
+  how:'Selectively blocks COX-2 (the "bad" prostaglandins) with little effect on COX-1 (the "good" prostaglandins that protect the stomach lining and regulate platelets).',
+  use:'Designed for patients at high risk of GI bleeding. Chronic pain and inflammation of osteoarthritis and rheumatoid arthritis, plus ankylosing spondylitis, acute pain, and dysmenorrhea.',
+  contra:'The same NSAID cautions, especially heart failure and uncontrolled hypertension. Sulfa allergy is a standard contraindication (not in your slides).',
+  ae:'Headache, dizziness, sinusitis, peripheral edema, and GI distress at a lower rate than other NSAIDs. Long-term COX-2 inhibitor use raises the risk of MI and stroke.',
+  admin:'100-200 mg once or twice daily, max 400 mg/day. Take with food, avoid alcohol, report bleeding and swelling.',
+  mon:'Peripheral edema, blood pressure, cardiovascular symptoms.',
+  differs:[
+    {n:'Celecoxib (Celebrex)', d:'The first COX-2 inhibitor released and the only one currently available.'},
+    {n:'The tradeoff', d:'Less GI damage because COX-1 is spared, but a cardiovascular risk warning, and no antiplatelet protection (the antiplatelet point is not in your slides).'}
+  ]
+}),
+apap: abxCard('Non-NSAID analgesic and antipyretic', {
+  how:'Inhibits prostaglandin synthesis. It is not an NSAID: it relieves pain and fever but is not anti-inflammatory or antiplatelet.',
+  use:'Mild to moderate pain, discomfort, and fever.',
+  contra:'Liver disease and heavy alcohol use raise the risk of liver damage (not in your slides).',
+  ae:'Rash and a low incidence of GI distress. Toxicity: hepatotoxicity and thrombocytopenia.',
+  admin:'Maximum 4 g per day. Many combination products also contain acetaminophen, so count every source (not in your slides).',
+  mon:'Serum level: normal 5-20 mcg/mL, toxic above 50 mcg/mL. Liver function with high doses or long-term use.',
+  differs:[
+    {n:'Acetaminophen (Tylenol)', d:'Analgesic and antipyretic only on the slide chart.'},
+    {n:'When it is the better choice', d:'A patient who cannot take an NSAID because of ulcers, bleeding risk, or anticoagulants (the reasoning is not in your slides).'},
+    {n:'Overdose', d:'The antidote is acetylcysteine (Mucomyst).'}
+  ]
+}),
+apap_antidote: abxCard('Acetaminophen antidote', {
+  how:'Reverses acetaminophen toxicity by helping the liver neutralize the toxic byproduct of acetaminophen (mechanism not in your slides).',
+  use:'Acetaminophen overdose: serum level above 50 mcg/mL.',
+  ae:'Nausea, vomiting, and a strong sulfur smell when taken orally (not in your slides).',
+  admin:'Works best when started soon after the overdose. Given orally or IV (not in your slides).',
+  mon:'Acetaminophen level and liver function.',
+  differs:[
+    {n:'Acetylcysteine (Mucomyst)', d:'One of the two antidotes in this chapter. Acetylcysteine for Tylenol, naloxone for opioids.'}
+  ]
+}),
+gc_infl: abxCard('Glucocorticoid (corticosteroid)', {
+  how:'Nearly identical to the steroids made by the adrenal cortex. Low doses replace what the body is missing (physiologic effect). High doses suppress inflammation (pharmacologic effect).',
+  use:'Suppressing inflammation, adrenocortical insufficiency, and adrenal crisis. Also listed as an adjuvant for pain.',
+  contra:'Systemic fungal infections and patients receiving live virus vaccines. Use with caution in children and in pregnancy or breastfeeding.',
+  ae:'Adrenal insufficiency, osteoporosis and fractures, infection, glucose intolerance, myopathy, fluid and electrolyte disturbances, growth retardation, psychologic disturbances, cataracts and glaucoma, peptic ulcer disease, and iatrogenic Cushing syndrome.',
+  admin:'Oral, IV, IM, subcutaneous, and topical. Dosing is individualized: with no immediate threat, start low and slow; with an immediate threat, start high and decrease as possible. Long-term use at the smallest effective amount, and high doses long-term only when the disorder is life-threatening or disabling. The dose goes up in times of stress. Wean gradually rather than stopping. Alternate-day therapy is an option.',
+  inter:'Potassium loss. NSAIDs. Insulin and oral hypoglycemics, because steroids raise blood glucose. Vaccines.',
+  mon:'Blood glucose, potassium, signs of infection, GI bleeding, bone health, mood.',
+  differs:[
+    {n:'Hydrocortisone', d:'Physiologic replacement and adrenal crisis.'},
+    {n:'Prednisone', d:'The most common oral steroid.'},
+    {n:'Methylprednisolone (Solu-Medrol)', d:'The common IV steroid for hospitalized patients.'},
+    {n:'Dexamethasone (Decadron)', d:'The most potent and longest acting, with minimal mineralocorticoid activity.'},
+    {n:'How they differ', d:'Biologic half-life, mineralocorticoid potency, and glucocorticoid potency.'},
+    {n:'Link to Exam 1', d:'Dexamethasone and methylprednisolone also showed up as antiemetics for chemotherapy.'}
+  ]
+}),
+op_morph: abxCard('Opioid agonist: morphine group', {
+  how:'Act on the same brain receptors as morphine to block the pain sensation. Morphine, hydromorphone, codeine, oxycodone, and hydrocodone are structurally similar to opium.',
+  use:'Acute or chronic moderate to severe pain, before surgery, and to supplement anesthesia. Codeine and hydrocodone also appear in cough remedies.',
+  contra:'An allergy to one drug in this group means cross-sensitivity to all of them. Caution with impaired pulmonary function (asthma, emphysema, kyphoscoliosis, cor pulmonale, extreme obesity), infants and older adults, biliary colic, and raised intracranial pressure.',
+  ae:'Respiratory depression is the most serious. Also constipation, orthostatic hypotension, urinary retention, nausea and vomiting, sedation, cough suppression, miosis (pinpoint pupils at toxic doses), biliary colic, euphoria or dysphoria, raised intracranial pressure, and neurotoxicity. Prolonged use: hormonal changes and suppressed immune function.',
+  admin:'Give on a fixed schedule as a rule. Assess pain before and about 1 hour after each dose. Teach: change positions slowly, cough at regular intervals, avoid hazardous activities, and prevent constipation with activity, fiber, fluids, and a stimulant laxative or stool softener. Use the smallest dose that relieves pain.',
+  inter:'Alcohol, barbiturates, benzodiazepines, and other CNS depressants deepen respiratory depression.',
+  mon:'Respiratory rate: hold if below 12 per minute in an adult and consult the provider. Vital signs, mental status, bowel and bladder function. Goals: pain at rest under 3, with movement under 5, and 6 hours of sleep uninterrupted by pain.',
+  differs:[
+    {n:'Potency order', d:'Hydromorphone > morphine > oxycodone > hydrocodone > codeine.'},
+    {n:'Morphine', d:'The prototype. Oral, IM, IV, subcutaneous, epidural, and intrathecal. Not very lipid soluble, so only a small fraction of each dose reaches the brain.'},
+    {n:'Hydromorphone (Dilaudid)', d:'The most potent of the group. Oral or IV.'},
+    {n:'Codeine and hydrocodone', d:'Oral, the weakest of the group, and the ones used in cough remedies.'},
+    {n:'Oxycodone and OxyContin', d:'OxyContin is controlled-release oxycodone. Its abuse by crushing led to a harder-to-crush formulation that did not stop misuse.'},
+    {n:'Tolerance', d:'Develops to pain relief, euphoria, sedation, and respiratory depression, but never to miosis or constipation. Constipation needs a plan for the whole course.'}
+  ]
+}),
+op_phen: abxCard('Opioid agonist: phenylpiperidine', {
+  how:'Synthetic opioid agonists with a different structure from the morphine group but the same pain-blocking action.',
+  use:'Can be given to patients allergic to morphine and its derivatives. Fentanyl injection and buccal forms for acute pain, the fentanyl patch for severe chronic pain.',
+  contra:'Meperidine: avoid in older adults and in renal impairment, where poor excretion can cause seizures.',
+  ae:'The same opioid effects as morphine, including respiratory depression.',
+  admin:'The fentanyl patch does not work for acute pain.',
+  mon:'Respiratory rate and the same opioid monitoring as morphine.',
+  differs:[
+    {n:'Meperidine (Demerol)', d:'One of the first synthetic opioids. No cough suppression. Seldom used now because of seizures in older adults and renal impairment.'},
+    {n:'Fentanyl injection (Sublimaze)', d:'Fast onset, short duration, very lipid soluble, about 100 times more potent than morphine. For acute pain.'},
+    {n:'Fentanyl patch (Duragesic)', d:'Severe chronic pain only. Not effective for acute pain.'},
+    {n:'Fentanyl buccal (Actiq)', d:'The lollipop form, for acute pain.'},
+    {n:'Why this box matters', d:'A morphine allergy rules out the whole morphine group, but meperidine and fentanyl can be given safely.'}
+  ]
+}),
+op_meth: abxCard('Opioid agonist: methadone', {
+  how:'A synthetic opioid agonist that your slides list as its own methadone-like class.',
+  use:'Moderate to severe pain. Also used for opioid use disorder because it prevents withdrawal (not in your slides).',
+  ae:'The same opioid effects, including respiratory depression. QT prolongation (not in your slides).',
+  admin:'A long and variable half-life lets it build up over the first days of therapy (not in your slides).',
+  mon:'Respiratory rate and sedation. EKG for QT changes (not in your slides).',
+  differs:[
+    {n:'Methadone', d:'Your slides only name it as a separate structural class, so expect a class question rather than specifics.'}
+  ]
+}),
+op_antag: abxCard('Opioid antagonist', {
+  how:'Block opioid receptors (naloxone at mu and kappa receptors). They produce no pain relief and none of the opioid effects.',
+  use:'Naloxone reverses respiratory and CNS depression from an opioid overdose. Methylnaltrexone treats opioid-induced constipation.',
+  ae:'Naloxone can bring on abrupt withdrawal and return of pain in a patient who is physically dependent (not in your slides).',
+  admin:'Naloxone can wear off before the opioid does, so a repeat dose may be needed (not in your slides).',
+  mon:'After naloxone: respiratory rate and level of consciousness, and watch for sedation returning (not in your slides).',
+  differs:[
+    {n:'Naloxone (Narcan)', d:'The opioid overdose reversal drug.'},
+    {n:'Methylnaltrexone', d:'Relieves opioid-induced constipation. It acts outside the brain, so pain relief continues (that reason is not in your slides).'}
+  ]
+}),
+gout_acute: abxCard('Anti-gout: anti-inflammatory for flares', {
+  how:'Inhibits neutrophil migration and the inflammatory response to uric acid crystals. It treats the inflammation, not the high uric acid.',
+  use:'Acute gout flares. Low doses are also commonly given for the first 3-6 months of allopurinol to prevent flares.',
+  contra:'Reduce the dose in renal impairment. Avoid CYP3A4 inhibitors such as clarithromycin.',
+  ae:'Diarrhea (the most common), nausea, vomiting, abdominal pain. Muscle weakness and bone marrow suppression.',
+  admin:'Most effective when started within 24-36 hours of symptom onset.',
+  inter:'CYP3A4 inhibitors such as clarithromycin, the macrolide from Exam 2.',
+  mon:'Muscle weakness, bone marrow suppression, renal function, GI symptoms.',
+  differs:[
+    {n:'Colchicine (Colcrys, Mitigare)', d:'Does not lower uric acid levels.'},
+    {n:'Versus allopurinol', d:'Colchicine for the flare, allopurinol for long-term prevention. Indomethacin is the NSAID commonly used for flares.'}
+  ]
+}),
+gout_xo: abxCard('Anti-gout: xanthine oxidase inhibitor', {
+  how:'Inhibits xanthine oxidase, the enzyme that produces uric acid, so uric acid production drops.',
+  use:'First-line long-term treatment of chronic gout and prevention of recurrent attacks.',
+  ae:'Rash, nausea, diarrhea. Serious: allopurinol hypersensitivity syndrome or Stevens-Johnson syndrome, so stop the drug immediately if a rash develops.',
+  admin:'Keep taking it during an acute flare if it is already prescribed. Fluids 2-3 L/day unless contraindicated.',
+  mon:'Uric acid, renal function, liver function, and the skin.',
+  differs:[
+    {n:'Allopurinol (Zyloprim)', d:'Lowers uric acid but does not treat acute gout pain.'},
+    {n:'The common trap', d:'Do not stop allopurinol during a flare, and do not expect it to relieve one.'}
+  ]
+}),
+adj_anticonv: abxCard('Adjuvant: anticonvulsant', {
+  how:'Calms overactive nerve signaling, which helps nerve pain (mechanism not in your slides).',
+  use:'Adjuvant therapy, given along with a non-opioid or opioid. Most common in neuropathic pain such as diabetic neuropathy.',
+  ae:'Dizziness and drowsiness (not in your slides).',
+  admin:'Used together with other analgesics, not instead of them.',
+  differs:[
+    {n:'Gabapentin (Neurontin), pregabalin (Lyrica), carbamazepine (Tegretol)', d:'Bonus: named in the slides as adjuvants but not on the med list.'}
+  ]
+}),
+adj_antidep: abxCard('Adjuvant: antidepressant', {
+  how:'Tricyclic antidepressants change pain signaling in the spinal cord and brain (mechanism not in your slides).',
+  use:'Adjuvant therapy for neuropathic pain, given with other analgesics.',
+  ae:'Anticholinergic effects: dry mouth, constipation, urinary retention, sedation (not in your slides).',
+  differs:[
+    {n:'Nortriptyline (Pamelor) and amitriptyline (Elavil)', d:'Bonus: named in the slides but not on the med list.'}
+  ]
+}),
+adj_local: abxCard('Adjuvant: local anesthetic', {
+  how:'Numbs the nerves under the patch (mechanism not in your slides).',
+  use:'Adjuvant therapy, commonly for localized neuropathic pain.',
+  differs:[
+    {n:'Topical lidocaine patch', d:'Bonus: named in the slides but not on the med list.'},
+    {n:'Other adjuvants', d:'Your slides also list corticosteroids as adjuvants.'}
+  ]
+})
+
+};
+Object.assign(INFO, PAIN_INFO);
+
+const PAIN = {
+  title:'Inflammation and pain',
+  exam:3,
+  sub:'NSAIDs, acetaminophen, glucocorticoids, opioids, antagonists, and anti-gout drugs. Bonus tiles are slide-only adjuvants and NSAIDs.',
+  accent:'#8A2F3B',
+  accentSoft:'#F6E6E8',
+  principles:'pain_core',
+  principlesLabel:'Core concepts from the slides',
+  note:'Built from the lecture slides; there is no Exam 3 study guide yet. Tiles marked <b>bonus</b> are in the slides but not the med list: indomethacin, diclofenac, and the adjuvant pain drugs. NSAIDs are split by COX selectivity and opioids by structure, since that structure decides what a morphine-allergic patient can safely take.',
+  bins:[
+    {id:'nsaid_sal', name:'NSAID: salicylate', items:[
+      {g:'Aspirin', b:'Bayer, Ecotrin', f:'Irreversible, antiplatelet at 81 mg daily. Toxic above 30 mg/dL. No children with flu-like symptoms.'}
+    ]},
+    {id:'nsaid_non', name:'NSAID: nonselective COX-1/COX-2', items:[
+      {g:'Ibuprofen', b:'Advil, Motrin', f:'OTC. Rx max 3,200 mg/day. Take with food.'},
+      {g:'Naproxen', b:'Aleve, Naprosyn', f:'Twice-daily dosing, max 1,000-1,250 mg/day.'},
+      {g:'Ketorolac', b:'Toradol', f:'IV or IM available. Short-term acute pain only, 5-day max.'},
+      {g:'Indomethacin', b:'Indocin', x:true, f:'Commonly used for gout flares.'},
+      {g:'Diclofenac', b:'Voltaren', x:true, f:'Available as a topical gel.'}
+    ]},
+    {id:'nsaid_pref', name:'NSAID: preferential COX-2', items:[
+      {g:'Meloxicam', b:'Mobic', f:'Favors COX-2 but is not selective. Once daily, max 15 mg/day.'}
+    ]},
+    {id:'nsaid_sel', name:'NSAID: selective COX-2 inhibitor', items:[
+      {g:'Celecoxib', b:'Celebrex', f:'The only COX-2 inhibitor available. For patients at high risk of GI bleeding. Watch for edema.'}
+    ]},
+    {id:'apap', name:'Non-NSAID analgesic and antipyretic', items:[
+      {g:'Acetaminophen', b:'Tylenol', f:'Max 4 g/day. Not anti-inflammatory. Overdose damages the liver.'}
+    ]},
+    {id:'apap_antidote', name:'Acetaminophen antidote', items:[
+      {g:'Acetylcysteine', b:'Mucomyst', f:'Reverses acetaminophen toxicity (level above 50 mcg/mL).'}
+    ]},
+    {id:'gc_infl', name:'Glucocorticoid (corticosteroid)', items:[
+      {g:'Hydrocortisone', b:'', f:'Physiologic replacement and adrenal crisis.'},
+      {g:'Prednisone', b:'', f:'The most common oral steroid.'},
+      {g:'Methylprednisolone', b:'Solu-Medrol', f:'The common IV steroid for hospitalized patients.'},
+      {g:'Dexamethasone', b:'Decadron', f:'Most potent and longest acting.'}
+    ]},
+    {id:'op_morph', name:'Opioid agonist: morphine group', items:[
+      {g:'Morphine', b:'', f:'The prototype. Many routes, including epidural and intrathecal.'},
+      {g:'Hydromorphone', b:'Dilaudid', f:'The most potent of the morphine group.'},
+      {g:'Codeine', b:'', f:'The weakest of the group. Also used for cough.'},
+      {g:'Hydrocodone', b:'', f:'Oral. Also in cough remedies.'},
+      {g:'Oxycodone', b:'', f:'Oral. Immediate-release form.'},
+      {g:'Oxycodone extended-release', b:'OxyContin', f:'Controlled-release oxycodone. Reformulated to resist crushing.'}
+    ]},
+    {id:'op_phen', name:'Opioid agonist: phenylpiperidine', items:[
+      {g:'Meperidine', b:'Demerol', f:'Safe in morphine allergy, but seizures in older adults and renal impairment.'},
+      {g:'Fentanyl injection', b:'Sublimaze', f:'About 100 times more potent than morphine. For acute pain.'},
+      {g:'Fentanyl patch', b:'Duragesic', f:'Severe chronic pain only. Not for acute pain.'},
+      {g:'Fentanyl buccal', b:'Actiq', f:'The lollipop form, for acute pain.'}
+    ]},
+    {id:'op_meth', name:'Opioid agonist: methadone', items:[
+      {g:'Methadone', b:'', f:'Its own structural class in your slides.'}
+    ]},
+    {id:'op_antag', name:'Opioid antagonist', items:[
+      {g:'Naloxone', b:'Narcan', f:'Reverses opioid respiratory and CNS depression.'},
+      {g:'Methylnaltrexone', b:'', f:'Treats opioid-induced constipation.'}
+    ]},
+    {id:'gout_acute', name:'Anti-gout: anti-inflammatory for flares', items:[
+      {g:'Colchicine', b:'Colcrys, Mitigare', f:'Start within 24-36 hr of a flare. Diarrhea is the most common effect.'}
+    ]},
+    {id:'gout_xo', name:'Anti-gout: xanthine oxidase inhibitor', items:[
+      {g:'Allopurinol', b:'Zyloprim', f:'Lowers uric acid long term. Stop immediately for a rash. 2-3 L fluid/day.'}
+    ]},
+    {id:'adj_anticonv', name:'Adjuvant: anticonvulsant', items:[
+      {g:'Gabapentin', b:'Neurontin', x:true, f:'Adjuvant for neuropathic pain.'},
+      {g:'Pregabalin', b:'Lyrica', x:true, f:'Adjuvant for neuropathic pain.'},
+      {g:'Carbamazepine', b:'Tegretol', x:true, f:'Adjuvant for neuropathic pain.'}
+    ]},
+    {id:'adj_antidep', name:'Adjuvant: antidepressant', items:[
+      {g:'Nortriptyline', b:'Pamelor', x:true, f:'Tricyclic adjuvant for nerve pain.'},
+      {g:'Amitriptyline', b:'Elavil', x:true, f:'Tricyclic adjuvant for nerve pain.'}
+    ]},
+    {id:'adj_local', name:'Adjuvant: local anesthetic', items:[
+      {g:'Lidocaine patch', b:'', x:true, f:'Topical adjuvant for localized pain.'}
+    ]}
+  ]
+};
+
+const PAINNUM = {
+  title:'Pain numbers',
+  exam:3,
+  sub:'Levels, max doses, hold parameters, and timing from the slides. Drop each number onto its card.',
+  accent:'#2E6B7A',
+  accentSoft:'#E3EFF2',
+  unit:'card',
+  dockTitle:'Drag each number onto the right card',
+  note:'Watch the units: salicylate levels are in <b>mg/dL</b>, acetaminophen levels in <b>mcg/mL</b>. Each card opens the related class notes from its info button.',
+  items:[
+    {id:'n_asa_level', name:'Serum salicylate level', sub:'Aspirin', info:'nsaid_sal',
+      slots:[{l:'Therapeutic', v:'15-30 mg/dL'},{l:'Toxic', v:'Above 30 mg/dL'}],
+      why:'Toxicity starts as salicylism: tinnitus, dizziness, headache, confusion, sweating, nausea, vomiting. Severe poisoning brings convulsions and coma.'},
+    {id:'n_asa_dose', name:'Aspirin doses', sub:'Aspirin (Bayer, Ecotrin)', info:'nsaid_sal',
+      slots:[{l:'Pain', v:'325-650 mg every 4-6 hr'},{l:'Cardioprotection', v:'81 mg daily'}],
+      why:'The low daily dose is the antiplatelet dose used to prevent MI and stroke.'},
+    {id:'n_apap', name:'Acetaminophen', sub:'Tylenol', info:'apap',
+      slots:[{l:'Normal serum level', v:'5-20 mcg/mL'},{l:'Toxic level', v:'Above 50 mcg/mL'},{l:'Max daily dose', v:'4 g/day'}],
+      why:'Overdose damages the liver and can cause thrombocytopenia. The antidote is acetylcysteine (Mucomyst).'},
+    {id:'n_ketorolac', name:'Ketorolac limits', sub:'Toradol', info:'nsaid_non',
+      slots:[{l:'Max length of therapy', v:'5 days'},{l:'Max oral dose', v:'40 mg/day'}],
+      why:'Short-term only, for moderate to severe acute pain such as after surgery. IV and IM forms exist.'},
+    {id:'n_nsaid_max', name:'NSAID max daily doses', sub:'Prescription limits', info:'nsaid_non',
+      slots:[{l:'Ibuprofen (Rx)', v:'3,200 mg/day'},{l:'Naproxen', v:'1,000-1,250 mg/day'},{l:'Meloxicam', v:'15 mg/day'},{l:'Celecoxib', v:'400 mg/day'}],
+      why:'Meloxicam is once daily, naproxen twice daily, celecoxib once or twice daily.'},
+    {id:'n_hold', name:'Before and after an opioid', sub:'All opioid agonists', info:'op_morph',
+      slots:[{l:'Hold if adult respirations below', v:'12 per minute'},{l:'Reassess pain after the dose', v:'About 1 hour'}],
+      why:'If respirations are low, hold the dose and consult the provider. Pain is assessed before every dose and again afterward.'},
+    {id:'n_goals', name:'Pain therapy goals', sub:'Opioid monitoring', info:'op_morph',
+      slots:[{l:'Pain at rest', v:'Below 3'},{l:'Pain with movement', v:'Below 5'},{l:'Sleep without pain waking you', v:'At least 6 hours'}],
+      why:'The therapeutic goals from your slides for judging whether the regimen works. The fourth is being able to work at a hobby for an hour.'},
+    {id:'n_resp', name:'Respiratory depression onset', sub:'Morphine', info:'op_morph',
+      slots:[{l:'IV', v:'7 minutes'},{l:'IM', v:'30 minutes'},{l:'Subcutaneous', v:'Up to 90 minutes'}],
+      why:'It may persist 4 to 5 hours. After a spinal injection, it may be delayed by hours.'},
+    {id:'n_withdraw', name:'Opioid withdrawal', sub:'Abstinence syndrome', info:'op_morph',
+      slots:[{l:'Starts after the last dose', v:'About 10 hours'},{l:'Lasts if untreated', v:'7-10 days'}],
+      why:'Starts with yawning, runny nose, and sweating, then progresses. Unpleasant but not lethal, unlike withdrawal from CNS depressants.'},
+    {id:'n_fent', name:'Fentanyl potency', sub:'Sublimaze, Duragesic, Actiq', info:'op_phen',
+      slots:[{l:'Compared with morphine', v:'About 100 times'}],
+      why:'The patch is for severe chronic pain and does not work for acute pain.'},
+    {id:'n_colch', name:'Colchicine timing', sub:'Colcrys, Mitigare', info:'gout_acute',
+      slots:[{l:'Most effective if started within', v:'24-36 hours'},{l:'Low dose alongside allopurinol for', v:'The first 3-6 months'}],
+      why:'Colchicine treats the inflammation of a flare and does not lower uric acid.'},
+    {id:'n_allo', name:'Allopurinol fluids', sub:'Zyloprim', info:'gout_xo',
+      slots:[{l:'Daily fluid intake', v:'2-3 L/day'}],
+      why:'Unless fluids are restricted. Stop the drug immediately if a rash develops.'}
+  ]
+};
+
+Object.assign(KEY, {
+  nsaid_sal:['Irreversible COX block: the only NSAID used as an antiplatelet (81 mg daily).',
+             'Never for children or teens with flu-like symptoms. Tinnitus is the first sign of toxicity.',
+             'Therapeutic 15-30 mg/dL, toxic above 30. Take with food, report bleeding.'],
+  nsaid_non:['Blocks COX-1 and COX-2: relieves pain, inflammation, fever.',
+             'COX-1 loss causes GI ulcers and bleeding, kidney injury, fluid retention, hypertension.',
+             'Take with food, avoid alcohol, report black stools or swelling. Avoid with anticoagulants.'],
+  nsaid_pref:['Favors COX-2 but is not fully selective.',
+             'Once daily, max 15 mg/day.',
+             'Same NSAID teaching: food, no alcohol, report bleeding and edema.'],
+  nsaid_sel:['Selective COX-2: spares the stomach-protecting COX-1.',
+             'For patients at high risk of GI bleeding, mainly OA and RA.',
+             'Peripheral edema and cardiovascular risk. Max 400 mg/day.'],
+  apap:['Not an NSAID: pain and fever only, no anti-inflammatory or antiplatelet effect.',
+        'Max 4 g/day. Overdose causes hepatotoxicity.',
+        'Normal 5-20 mcg/mL, toxic above 50. Antidote: acetylcysteine.'],
+  apap_antidote:['The antidote for acetaminophen overdose.',
+             'Used when the acetaminophen level is toxic (above 50 mcg/mL).',
+             'Monitor liver function.'],
+  gc_infl:['High doses suppress inflammation; low doses replace adrenal hormones.',
+           'Contraindicated with systemic fungal infection and live virus vaccines.',
+           'Raises glucose, infection risk, osteoporosis. Never stop abruptly: taper. Increase dose in stress.'],
+  op_morph:['Allergy to one means cross-sensitivity to the whole morphine group.',
+            'Hold if adult respirations are below 12. Potency: hydromorphone > morphine > oxycodone > hydrocodone > codeine.',
+            'No tolerance to constipation or miosis: plan a bowel regimen.'],
+  op_phen:['Safe for patients allergic to morphine.',
+           'Fentanyl is about 100x morphine. The patch is for chronic pain only.',
+           'Meperidine causes seizures in older adults and renal impairment.'],
+  op_meth:['A synthetic opioid agonist in its own structural class.',
+           'Same opioid cautions: respiratory depression and sedation.',
+           'Details beyond the class are not in your slides.'],
+  op_antag:['Naloxone reverses opioid respiratory and CNS depression.',
+            'Methylnaltrexone treats opioid-induced constipation.',
+            'They provide no pain relief.'],
+  gout_acute:['Treats the inflammation of a flare, not the uric acid.',
+              'Start within 24-36 hours. Diarrhea is the most common effect.',
+              'Reduce dose in renal impairment. Avoid clarithromycin.'],
+  gout_xo:['Blocks xanthine oxidase so less uric acid is made.',
+           'Long-term prevention: does not treat flare pain, and is not stopped during a flare.',
+           'Stop immediately for a rash (Stevens-Johnson risk). Fluids 2-3 L/day.'],
+  adj_anticonv:['Given with other analgesics, mainly for neuropathic pain.',
+                'Not on the med list: bonus.',
+                'Examples: gabapentin, pregabalin, carbamazepine.'],
+  adj_antidep:['Tricyclic antidepressants used as adjuvants for nerve pain.',
+               'Not on the med list: bonus.',
+               'Examples: nortriptyline, amitriptyline.'],
+  adj_local:['Topical lidocaine patch for localized pain.',
+             'Not on the med list: bonus.',
+             'Corticosteroids are also used as adjuvants.']
+});
+
+HINTFAM.pain = [
+  {n:'the NSAIDs', ids:['nsaid_sal','nsaid_non','nsaid_pref','nsaid_sel']},
+  {n:'the non-NSAID, non-opioid drugs (acetaminophen, steroids, gout)', ids:['apap','apap_antidote','gc_infl','gout_acute','gout_xo']},
+  {n:'the opioids and opioid antagonists', ids:['op_morph','op_phen','op_meth','op_antag']},
+  {n:'the adjuvant pain drugs', ids:['adj_anticonv','adj_antidep','adj_local']}
+];
+
+ROUNDS.pain = PAIN;
+ROUNDS.painnum = PAINNUM;
+ORDER.push('pain','painnum');
+
 
 /* ============================================================
    STATE
@@ -1964,12 +2426,12 @@ function fmt(ms){
    ============================================================ */
 
 function startRound(key, only){
-  if(flashMode && key==='insulin') key = 'endocrine';
+  if(flashMode && isSlotRound(key)) key = ORDER.find(k=>examOf(k)===examOf(key) && !isSlotRound(k)) || 'endocrine';
   const R = ROUNDS[key];
   document.documentElement.style.setProperty('--accent', R.accent);
   document.documentElement.style.setProperty('--accent-soft', R.accentSoft);
 
-  S = {key, R, only:!!only, kind: key==='insulin' ? 'insulin' : 'class',
+  S = {key, R, only:!!only, kind: isSlotRound(key) ? 'insulin' : 'class',
        placed:0, total:0, misses:0, selected:null, t0:Date.now(), done:false,
        review:reviewMode, canInfo:false, errors:new Map()};
 
@@ -1979,6 +2441,7 @@ function startRound(key, only){
     : R.sub;
   $('#footnote').innerHTML = R.note ? 'Note. '+R.note : '';
   $('#btn-principles').hidden = !R.principles;
+  $('#btn-principles').textContent = R.principlesLabel || 'Study guide: things to know';
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', String(t.dataset.round===key)));
   $('#btn-counts').style.display = S.kind==='class' ? '' : 'none';
   S.speed = speedMode && S.kind==='class' && !reviewMode && !flashMode;
@@ -2084,6 +2547,17 @@ function applyNames(){
   else pool.removeAttribute('data-cols');
 }
 
+/* Slot rounds: each card has blanks to fill. "insulin" is the internal
+   kind name for any slot round; the round object says what its slots are. */
+function isSlotRound(k){ return !!ROUNDS[k] && !ROUNDS[k].bins; }
+function slotsOf(item, R){
+  R = R || S.R;
+  if(item.slots) return item.slots.map((x,i)=>({k:'s'+i, l:x.l, v:x.v}));
+  return R.slotDefs.map(d=>({k:d.k, l:d.l, v:item[d.k]}));
+}
+function slotItem(id){ return S.R.items.find(i=>i.id===id); }
+function slotValue(item, k){ const x = slotsOf(item).find(z=>z.k===k); return x ? x.v : undefined; }
+
 function buildInsulinRound(R, only){
   const board = $('#board');
   board.className = 'insulin-grid';
@@ -2099,26 +2573,30 @@ function buildInsulinRound(R, only){
     const c = document.createElement('div');
     c.className='icard';
     c.dataset.ins = ins.id;
+    const infoKey = ins.info || ins.id;
+    c.dataset.info = infoKey;
+    const slots = slotsOf(ins, R);
+    const sub = ins.sub || (ins.brand+' &middot; '+ins.cls);
+    const extra = ins.why
+      ? '<div class="dur why" hidden>'+ins.why+'</div>'
+      : (R.extra ? '<div class="dur" hidden><span>'+R.extra.l+'</span><b>'+ins[R.extra.k]+'</b></div>' : '');
     c.innerHTML =
-      '<div class="ihead"><h3>'+ins.name+'</h3><button type="button" class="infodot" data-info="'+ins.id+'" aria-label="Notes on '+ins.name+'">i</button></div>'+
-      '<div class="cls">'+ins.brand+' &middot; '+ins.cls+'</div>'+
-      '<div class="slots">'+
-        slotHTML(ins.id,'onset','Onset')+
-        slotHTML(ins.id,'peak','Peak')+
-      '</div>'+
-      '<div class="dur" hidden><span>Duration</span><b>'+ins.dur+'</b></div>';
+      '<div class="ihead"><h3>'+ins.name+'</h3><button type="button" class="infodot" data-info="'+infoKey+'" aria-label="Notes on '+ins.name+'">i</button></div>'+
+      '<div class="cls">'+sub+'</div>'+
+      '<div class="slots">'+slots.map(x=>slotHTML(ins.id,x.k,x.l)).join('')+'</div>'+
+      extra;
     board.appendChild(c);
-    vals.push({v:ins.onset, ins:ins.id}, {v:ins.peak, ins:ins.id});
+    slots.forEach(x=>vals.push({v:x.v, ins:ins.id}));
   });
 
   S.total = vals.length;
   shuffle(vals).forEach(v=>pool.appendChild(makeVTile(v.v)));
-  $('#dock-title').textContent = 'Drag each time onto the right insulin';
+  $('#dock-title').textContent = R.dockTitle || 'Drag each value onto the right card';
   refreshDock();
 }
 function slotHTML(ins,kind,label){
   return '<div class="slot" tabindex="0" role="button" data-ins="'+ins+'" data-kind="'+kind+'" '+
-         'aria-label="'+label+' for this insulin, empty">'+
+         'aria-label="'+label+', empty">'+
          '<span class="lbl">'+label+'</span><span class="val">&mdash;</span></div>';
 }
 function makeVTile(v){
@@ -2137,10 +2615,10 @@ function makeVTile(v){
 
 function correctTarget(tile, target){
   if(S.kind==='class') return tile.dataset.bin === target.dataset.bin;
-  const ins = INSULIN.items.find(i=>i.id===target.dataset.ins);
+  const ins = slotItem(target.dataset.ins);
   if(!ins) return false;
   if(target.classList.contains('filled')) return false;
-  return ins[target.dataset.kind] === tile.dataset.val;
+  return slotValue(ins, target.dataset.kind) === tile.dataset.val;
 }
 
 function place(tile, target){
@@ -2182,9 +2660,9 @@ function place(tile, target){
     target.setAttribute('aria-label', target.querySelector('.lbl').textContent+' '+tile.dataset.val);
     tile.remove();
     const card = target.closest('.icard');
-    if(card.querySelectorAll('.slot.filled').length===2){
+    if(card.querySelectorAll('.slot.filled').length===card.querySelectorAll('.slot').length){
       card.classList.add('solved');
-      card.querySelector('.dur').hidden=false;
+      const ex = card.querySelector('.dur'); if(ex) ex.hidden=false;
     }
   }
   S.placed++;
@@ -2199,7 +2677,7 @@ function missed(tile, target){
   const rec = S.errors.get(k) || {n:0, label:k, right: S.kind==='class' ? tile.dataset.binName : ownerOf(tile.dataset.val), wrong:new Set()};
   rec.n++;
   rec.wrong.add(S.kind==='class' ? target.querySelector('.binname').textContent
-                                 : target.closest('.icard').querySelector('.ihead h3').textContent+' '+target.dataset.kind);
+                                 : target.closest('.icard').querySelector('.ihead h3').textContent+', '+target.querySelector('.lbl').textContent.toLowerCase());
   S.errors.set(k, rec);
   target.classList.add('rejecting');
   setTimeout(()=>target.classList.remove('rejecting'),320);
@@ -2224,10 +2702,11 @@ function giveHint(tile){
   } else {
     const v = tile.dataset.val;
     boxes = [...document.querySelectorAll('#board .icard')].filter(c=>{
-      const ins = INSULIN.items.find(i=>i.id===c.dataset.ins);
-      return ins && (ins.onset===v || ins.peak===v);
+      const ins = slotItem(c.dataset.ins);
+      return ins && slotsOf(ins).some(x=>x.v===v);
     });
-    msg = 'Hint: '+v+' belongs to '+(boxes.length>1 ? 'one of the outlined insulins.' : 'the outlined insulin.');
+    const unit = S.R.unit || 'card';
+    msg = 'Hint: '+v+' belongs to '+(boxes.length>1 ? 'one of the outlined '+unit+'s.' : 'the outlined '+unit+'.');
   }
   boxes.forEach(b=>b.classList.add('hinted'));
   const bar = $('#hintbar'); bar.textContent = msg; bar.hidden = false;
@@ -2235,8 +2714,7 @@ function giveHint(tile){
   hintTextTimer = setTimeout(()=>{ bar.hidden = true; }, 7000);
 }
 function ownerOf(val){
-  return INSULIN.items.filter(i=>i.onset===val||i.peak===val)
-    .map(i=>i.name+' '+(i.onset===val?'onset':'peak')).join(' or ');
+  return S.R.items.flatMap(i=>slotsOf(i).filter(x=>x.v===val).map(x=>i.name+', '+x.l.toLowerCase())).join(' or ');
 }
 
 function updateStats(){
@@ -2567,8 +3045,10 @@ function buildKey(){
       html += '<dt>'+b.name+'</dt><dd>'+b.items.map(i=>i.g+(i.b?' ('+i.b+')':'')).join(' &middot; ')+'</dd>';
     });
   } else {
-    INSULIN.items.forEach(i=>{
-      html += '<dt>'+i.name+' ('+i.brand+')</dt><dd>Onset '+i.onset+' &middot; Peak '+i.peak+' &middot; Duration '+i.dur+'</dd>';
+    S.R.items.forEach(i=>{
+      const parts = slotsOf(i).map(x=>x.l+': '+x.v);
+      if(S.R.extra && i[S.R.extra.k]) parts.push(S.R.extra.l+': '+i[S.R.extra.k]);
+      html += '<dt>'+i.name+(i.brand ? ' ('+i.brand+')' : '')+'</dt><dd>'+parts.join(' &middot; ')+'</dd>';
     });
   }
   box.innerHTML = html+'</dl>';
@@ -2591,9 +3071,9 @@ function fillEverything(){
     });
   } else {
     board.querySelectorAll('.slot').forEach(sl=>{
-      const ins = INSULIN.items.find(i=>i.id===sl.dataset.ins);
+      const ins = slotItem(sl.dataset.ins);
       if(!ins) return;
-      const want = ins[sl.dataset.kind];
+      const want = slotValue(ins, sl.dataset.kind);
       const t = [...pool.querySelectorAll('.vtile')].find(v=>v.dataset.val===want);
       if(t) place(t, sl);
     });
@@ -2607,7 +3087,7 @@ function enableInfo(){
     el.classList.add('can-info');
     el.tabIndex = 0;
     el.setAttribute('role','button');
-    const key = el.dataset.bin || el.dataset.ins;
+    const key = el.dataset.bin || el.dataset.info || el.dataset.ins;
     const card = INFO[key];
     if(card) el.setAttribute('aria-label', card.t+', open details');
   });
@@ -2643,13 +3123,13 @@ document.addEventListener('click', e=>{
   if(!$('#infolay').hidden || !$('#overlay').hidden) return;
   const host = e.target.closest('#board .bin.can-info, #board .icard.can-info');
   if(!host) return;
-  openInfo(host.dataset.bin || host.dataset.ins);
+  openInfo(host.dataset.bin || host.dataset.info || host.dataset.ins);
 });
 document.addEventListener('keydown', e=>{
   if(e.key!=='Enter' || !S || !S.canInfo) return;
   const host = document.activeElement && document.activeElement.closest
     ? document.activeElement.closest('#board .bin.can-info, #board .icard.can-info') : null;
-  if(host){ e.preventDefault(); openInfo(host.dataset.bin || host.dataset.ins); }
+  if(host){ e.preventDefault(); openInfo(host.dataset.bin || host.dataset.info || host.dataset.ins); }
 });
 $('#info-close').addEventListener('click', closeInfo);
 $('#infolay').addEventListener('click', e=>{ if(e.target.id==='infolay') closeInfo(); });
@@ -2882,7 +3362,7 @@ $('#r-drill').addEventListener('click',()=>{
   const only=new Set();
   if(S.kind==='class'){ keys.forEach(k=>only.add(k)); }
   else{
-    INSULIN.items.forEach(i=>{ if(keys.includes(i.onset)||keys.includes(i.peak)) only.add(i.id); });
+    S.R.items.forEach(i=>{ if(slotsOf(i).some(x=>keys.includes(x.v))) only.add(i.id); });
   }
   $('#overlay').hidden=true;
   startRound(S.key, only);
