@@ -64,6 +64,22 @@ header{
 }
 .tabs::-webkit-scrollbar{display:none}
 .tabsep{flex:0 0 1px;align-self:stretch;margin:4px 3px;background:var(--line)}
+.tab[hidden]{display:none}
+.exams{
+  display:flex;align-items:center;gap:2px;flex:0 0 auto;
+  background:var(--panel-2);padding:3px;border-radius:8px;border:1px solid var(--line-soft);
+}
+.ex-lbl{font-size:12.5px;color:var(--muted);padding:0 6px 0 7px}
+.exams button{
+  border:0;background:transparent;border-radius:6px;min-width:28px;
+  padding:6px 8px;font-size:13px;font-weight:600;color:var(--muted);
+  cursor:pointer;font-variant-numeric:tabular-nums;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.exams button:hover{color:var(--ink)}
+.exams button[aria-pressed="true"]{background:var(--panel);color:var(--accent);box-shadow:0 1px 2px rgba(20,40,45,.10)}
+.exams button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media (pointer:coarse){ .exams button{min-width:36px;padding:9px 10px} }
 .bonus-tag{
   display:inline-block;margin-left:6px;padding:0 5px;border-radius:4px;
   font-size:10.5px;font-weight:600;line-height:16px;vertical-align:1px;
@@ -540,7 +556,7 @@ body.flash .tab.slot-tab{display:none}
 }
 
 /* seven round tabs: drop the title on laptop widths so the controls stay on one line */
-@media (min-width:901px) and (max-width:1579px){ .brand{display:none} }
+@media (min-width:901px) and (max-width:1359px){ .brand{display:none} }
 @media (max-width:900px){
   body{padding-bottom:calc(var(--dock-h) + 14px)}
   main{grid-template-columns:1fr}
@@ -590,16 +606,23 @@ body.flash .tab.slot-tab{display:none}
 <header>
   <div class="hrow">
     <div class="brand">Drug class <em>drill</em></div>
+    <div class="exams" role="group" aria-label="Exam">
+      <span class="ex-lbl">Exam</span>
+      <button type="button" data-exam="1" aria-pressed="false">1</button>
+      <button type="button" data-exam="2" aria-pressed="false">2</button>
+      <button type="button" data-exam="3" aria-pressed="false">3</button>
+      <button type="button" data-exam="4" aria-pressed="false">4</button>
+    </div>
     <div class="tabs" role="tablist" aria-label="Rounds">
       <button class="tab" role="tab" data-round="endocrine" aria-selected="true">Endocrine</button>
       <button class="tab" role="tab" data-round="gi" aria-selected="false">GI</button>
       <button class="tab slot-tab" role="tab" data-round="insulin" aria-selected="false">Insulin timing</button>
-      <span class="tabsep" aria-hidden="true"></span>
       <button class="tab" role="tab" data-round="antiinf" aria-selected="false">Anti-infectives</button>
-      <span class="tabsep" aria-hidden="true"></span>
       <button class="tab" role="tab" data-round="pain" aria-selected="false">Pain &amp; gout</button>
       <button class="tab slot-tab" role="tab" data-round="painnum" aria-selected="false">Pain numbers</button>
       <button class="tab" role="tab" data-round="eedc" aria-selected="false">Eye, ear, skin, onc</button>
+      <button class="tab" role="tab" data-round="cns" aria-selected="false">Neuro &amp; CNS</button>
+      <button class="tab slot-tab" role="tab" data-round="cnsnum" aria-selected="false">Neuro numbers</button>
     </div>
     <div class="spacer"></div>
     <div class="stats">
@@ -1962,7 +1985,6 @@ const KEY = {
    from the study guide plus standard nursing pharmacology
    references, since those slides were not uploaded.
    ============================================================ */
-const EEDC_SRC = 'Your study guide plus standard nursing pharmacology references. The lecture slides for this topic were not uploaded, so check these against your notes.';
 
 const PAIN_INFO = {
 
@@ -2107,232 +2129,260 @@ gout: abxCard('Anti-gout', {
 eedc_core:{
   t:'Exam 3 study guide: eye, ear, skin, and cancer',
   sections:[
-    {h:'Where this comes from', p:EEDC_SRC},
-    {h:'Giving eye medications', items:[
-      {n:'Set up', d:'Hand hygiene, gloves, and remove contact lenses unless told otherwise. Have the patient tilt the head back and look up.'},
-      {n:'Drops', d:'Pull the lower lid down to make a pocket (the conjunctival sac) and drop the medication into the pocket, not onto the cornea. Never touch the tip to the eye or lashes.'},
-      {n:'After the drop', d:'Have the patient close the eye gently without squeezing, and press on the inner corner of the eye (punctal occlusion) for 1 to 2 minutes so less drug drains into the nose and gets absorbed systemically. This matters most with timolol.'},
-      {n:'Ointment', d:'Apply a thin ribbon along the lower lid from the inner corner outward. Vision blurs for a while afterward.'},
-      {n:'More than one eye medication', d:'Wait at least 5 minutes between different drops, and give drops before ointments. An ointment first would form a film that keeps the drops from absorbing.'}
+    {h:'Giving eye medications (from your slides)', items:[
+      {n:'Before', d:'Wash hands and wear gloves. Remove contact lenses, and put them back 15 minutes after the medication.'},
+      {n:'Drops', d:'Pull and pinch the bottom eyelid to make a pocket, and squeeze the drops into the conjunctival sac.'},
+      {n:'Ointment', d:'Apply a thin layer into the conjunctival sac. Try to give ointments before bedtime, since they blur vision.'},
+      {n:'More than one eye medication', d:'Drops first, then ointments.'},
+      {n:'Not in your slides', d:'Do not touch the tip to the eye. Pressing the inner corner of the eye for 1 to 2 minutes (punctal occlusion) cuts systemic absorption, which matters most with timolol. Waiting about 5 minutes between different drops is common practice.'}
     ]},
-    {h:'Giving ear medications', items:[
-      {n:'Warm the drops', d:'Roll the bottle in your hands to body temperature. Cold drops can cause dizziness, nausea, and vertigo.'},
-      {n:'Position', d:'Patient lies on the side with the affected ear up.'},
-      {n:'Straighten the canal', d:'Adult and child over 3: pull the pinna up and back. Child under 3: pull the pinna down and back.'},
-      {n:'Instill', d:'Let the drops run down the wall of the canal without touching the dropper to the ear. Press gently on the tragus to help them in.'},
-      {n:'After', d:'Stay on the side for about 5 minutes. A cotton ball may be placed loosely at the opening only if ordered.'}
+    {h:'Eye infections named in your slides', items:[
+      {n:'Blepharitis', d:'Infection of the eyelids.'},
+      {n:'Hordeolum (sty)', d:'Infection of the eyelash follicles and glands of the front of the lid.'},
+      {n:'Keratitis', d:'Inflammation of the cornea from a bacterial infection.'},
+      {n:'Conjunctivitis', d:'Inflammation of the mucous membrane lining the back of the eyelids and the front of the eye. Can be bacterial, viral, or fungal.'}
     ]},
-    {h:'Preventing ear infections', p:'Hand hygiene, staying current on vaccines (pneumococcal and yearly flu), breastfeeding infants, feeding babies upright and never propping a bottle or giving one in bed, and avoiding secondhand smoke. For swimmer’s ear: dry the ears after swimming, tilt the head to drain water, use earplugs, and do not put cotton swabs or other objects in the canal.'},
+    {h:'Glaucoma basics', p:'Glaucoma is elevated intraocular pressure (IOP) that can damage the optic nerve and lead to blindness. Open-angle and angle-closure glaucoma have the same treatment goal: decrease intraocular pressure. Most of the drugs do it by decreasing aqueous humor production (beta blockers, carbonic anhydrase inhibitors) or increasing its outflow (prostaglandin analogues, cholinergics). IV mannitol is the emergency treatment for acute closed-angle glaucoma.'},
+    {h:'Giving ear medications (from your slides)', items:[
+      {n:'Warm it', d:'Let refrigerated solutions warm to room temperature.'},
+      {n:'Straighten the canal', d:'Pull the pinna up and back or down and back, as appropriate. The usual rule is up and back for adults and children over 3, down and back under 3 (the age rule is not in your slides).'},
+      {n:'Instill and massage', d:'Instill the drops, then gently massage the tragus area and allow time for the drops to flow into the canal.'},
+      {n:'Position', d:'The patient lies on the side opposite the affected ear (affected ear up) for 5 minutes after instillation.'}
+    ]},
+    {h:'Otitis externa vs otitis media', items:[
+      {n:'Otitis externa (swimmer’s ear)', d:'Infection of the external ear canal. Causes: swimming or moisture, trauma from cotton swabs, fingernails, or earbuds, irritating hearing aids or earplugs, eczema or psoriasis, and bacteria (most common). Signs: ear pain that worsens when the ear is pulled or the tragus pressed, itching, redness and swelling of the canal, drainage, fullness or decreased hearing. Treated with topical ofloxacin or ciprofloxacin.'},
+      {n:'Otitis media', d:'Infection of the middle ear. Most often in children after an upper respiratory infection; in adults, from foreign objects or water sports. Pain, fever, malaise, pressure, fullness, or hearing loss. Untreated, it can cause tinnitus, nausea, vertigo, mastoiditis, and hearing loss. Treated with systemic amoxicillin, or azithromycin or clarithromycin with a severe penicillin allergy.'}
+    ]},
+    {h:'Preventing ear infections', p:'From your slides: dry the ears after swimming and use custom-fitting earplugs. Systemic antihistamines and decongestants have no role. Since cotton swabs, fingernails, and earbuds are listed causes of otitis externa, keep objects out of the canal. Not in your slides: hand hygiene, vaccines (pneumococcal, flu), and avoiding secondhand smoke are standard ways to reduce middle ear infections in children.'},
     {h:'Intertriginous dermatitis vs incontinence-associated dermatitis', items:[
-      {n:'Intertriginous dermatitis (ITD)', d:'In skin folds: under the breasts, the abdominal fold, groin, axillae. Caused by trapped moisture and skin rubbing on skin. Treated by keeping the fold dry, often with a moisture-wicking fabric laid in the fold. Barrier cream is not the treatment here, because it holds moisture in the fold.'},
-      {n:'Incontinence-associated dermatitis (IAD)', d:'On the perineum, buttocks, perianal area, and inner thighs from urine or stool. Treated with gentle cleansing and a barrier cream (zinc oxide or dimethicone). This is the one you treat with barrier cream.'}
+      {n:'Intertriginous dermatitis (ITD)', d:'Location: skin folds. Cause: skin surfaces rubbing together plus sweat trapped in the folds. Treatment: remove moisture with a wicking product such as InterDry. Do NOT use barrier cream: it locks moisture in.'},
+      {n:'Incontinence-associated dermatitis (IAD)', d:'Location: buttocks, sacrum, coccyx, groin. Cause: contact with urine and stool that irritates and damages the skin. Treatment: protect from moisture and apply a barrier cream containing zinc oxide. This is the one treated with barrier cream.'}
     ]},
-    {h:'Fungal vs nonfungal MASD', p:'MASD is moisture-associated skin damage, the umbrella term for both. A fungal (Candida) infection shows bright red skin with satellite lesions: small red bumps or pustules scattered past the edge of the main rash, often with itching. Nonfungal damage is redness without satellite lesions. Treat fungal MASD with a topical antifungal such as a miconazole or nystatin powder or cream (nystatin is the Exam 2 polyene), plus moisture management. For IAD with yeast, an antifungal barrier product.'},
-    {h:'Before applying a topical antimicrobial to a wound', p:'Cleanse the wound first (normal saline or the ordered cleanser) and remove old product and debris, so the antimicrobial touches the wound bed. Assess the wound, and if a culture is ordered, get it before the first application. Hand hygiene and clean or sterile technique per policy.'},
-    {h:'The four topical antimicrobials', items:[
-      {n:'Manuka honey', d:'Contraindicated in people with a bee allergy.'},
-      {n:'Silver dressings (silver alginate)', d:'For wounds with moderate to heavy drainage.'},
-      {n:'Hydrofera Blue Classic (methylene blue)', d:'Must be premoistened with saline, not wound cleanser. Your guide calls it "not ready" because the Ready version comes pre-moistened.'},
-      {n:'Mupirocin', d:'For impetigo.'}
+    {h:'Fungal vs nonfungal MASD', p:'Not every moisture-associated skin damage (MASD) has a fungal component. The hallmark of a yeast infection is satellite lesions: spots scattered beyond the edge of the main red area. Treat fungal MASD with an antifungal powder (nystatin) or a barrier cream with an antifungal.'},
+    {h:'Bioburden', p:'Bioburden is the number and type of microorganisms in a wound. More bioburden means more inflammation, slower healing, and a higher risk of infection that can progress to cellulitis or systemic infection. It progresses in stages: contamination (organisms present, no tissue damage), colonization (multiplying, no response yet), critical colonization or local infection (more odor and drainage, pain, slough), spreading localized infection, and systemic infection. Topical antimicrobials are used to prevent or decrease bioburden.'},
+    {h:'Before applying a topical antimicrobial to a wound', p:'Your slides do not answer this one directly. Standard practice: cleanse the wound first (normal saline or the ordered cleanser) and remove old product and debris, assess the wound and its bioburden stage (odor, drainage, pain, slough), and get any ordered culture before the first application. Check allergies first too, since several of these products have allergy contraindications.'},
+    {h:'The four topical antimicrobials on your guide', items:[
+      {n:'Mupirocin (Bactroban)', d:'For Staph and Strep impetigo. The intranasal form is used for MRSA. Prescription only.'},
+      {n:'Manuka honey (Medihoney, Therahoney)', d:'Contraindicated with a bee allergy. Draws fluid out of the wound by osmosis, reduces bacteria, and debrides. Expect temporary stinging and more drainage.'},
+      {n:'Methylene blue (Hydrafera Blue Classic)', d:'For moderate to high drainage. The Classic version must be premoistened with saline or sterile water; wound cleanser is contraindicated. Leave in place until the foam turns white, or up to 7 days.'},
+      {n:'Silver alginate', d:'For moderate to heavy drainage. Contraindicated in third-degree burns, silver allergy, and dry or low-drainage wounds.'}
     ]},
-    {h:'Dose-limiting adverse effect', p:'An adverse effect severe enough that it caps how much chemotherapy can be given. It forces the dose to be lowered or the next cycle delayed, which can make treatment less effective. The most common is bone marrow suppression (neutropenia, anemia, thrombocytopenia). Others include mucositis or stomatitis, cardiotoxicity, nephrotoxicity, neurotoxicity, and pulmonary toxicity. The hematopoietic drugs exist partly to keep bone marrow suppression from delaying chemo.'},
-    {h:'Tumor lysis syndrome', p:'When chemotherapy kills a large number of cancer cells quickly (most often in leukemia and lymphoma), the cells release their contents into the blood: high potassium, high phosphate, high uric acid, and low calcium (phosphate binds calcium). The uric acid and phosphate can cause acute kidney injury, and the potassium can cause dysrhythmias. Prevent it with aggressive IV hydration and allopurinol (the gout drug) to keep uric acid down. Monitor potassium, phosphate, calcium, uric acid, creatinine, urine output, and heart rhythm.'},
-    {h:'Chemotherapy adverse reactions in general', p:'Chemo targets rapidly dividing cells, so it damages fast-growing normal tissue too. Bone marrow suppression: neutropenia and infection, anemia and fatigue, thrombocytopenia and bleeding; counts are lowest (the nadir) about 7 to 14 days after treatment. Nausea and vomiting (the Exam 1 antiemetics, given 30 to 60 minutes before). Mucositis and stomatitis. Hair loss. Diarrhea or constipation. Fatigue. Infertility and birth defects. Tissue damage if an IV drug leaks out (extravasation). Tumor lysis syndrome.'},
-    {h:'Hematopoietic drugs: how they work and what to watch', items:[
-      {n:'Epoetin alfa', d:'Stimulates the bone marrow to make red blood cells. For anemia from chemotherapy or chronic kidney disease. Watch for hypertension (the most common problem) and blood clots, MI, and stroke. Monitor hemoglobin and blood pressure, and use the lowest dose that avoids transfusion. It needs iron to work, so check iron levels. Contraindicated in uncontrolled hypertension.'},
-      {n:'Filgrastim and pegfilgrastim', d:'Stimulate the bone marrow to make neutrophils, lowering the risk of infection during neutropenia. Bone pain is the most common side effect. Report left upper abdominal or shoulder pain, which can mean splenic rupture. Monitor the CBC and absolute neutrophil count. Give at least 24 hours after chemotherapy, not on the same day.'}
-    ]}
+    {h:'In your slides but not on the study guide', p:'Sulfacetamide (Bleph-10) eye drops, bimatoprost, betaxolol, the alpha-adrenergic agonists apraclonidine and brimonidine, brinzolamide, azithromycin or clarithromycin for otitis media with penicillin allergy, benzoyl peroxide and oral antibiotics for acne, eczema treatment, the TNF inhibitors etanercept and adalimumab, bacitracin, Neosporin, and silver sulfadiazine (Silvadene, avoid in sulfa allergy). The study guide is the blueprint, so these are background, not drill tiles. Stevens-Johnson syndrome is also in these slides: large blisters in the mouth, anogenital area, throat, and eyes, with pain out of proportion to what the skin shows; stop the drug immediately.'},
+    {h:'Cancer basics (from your antineoplastic slides)', p:'Cancer is cellular transformation with uncontrolled, rapid growth, invasion into surrounding tissue, and metastasis to other tissues or organs. Cancer cells lack growth control and serve no useful function. The primary lesion is the original site; a metastasis is a secondary lesion in a new, remote part of the body. A neoplasm is a mass of new cells (a tumor), which can be benign or malignant. Carcinoma starts in epithelial cells, sarcoma in connective tissue, bone, muscle, tendons, nerves, and blood vessels, lymphoma in the lymphatic system, and leukemia in the blood-forming cells of the bone marrow.'},
+    {h:'Chemotherapy and the cell cycle', p:'Chemotherapy drugs are grouped by where in the cell cycle they work: cell cycle-specific (CCS) and cell cycle-nonspecific (CCNS), and some act as both. Most chemo has no effect on cells resting in the G0 phase. Watch the definitions: your slide lists CCNS as "cytotoxic during a specific phase" and CCS as "any phase," which is reversed from the standard definitions. Cell cycle-specific drugs act during a specific phase; nonspecific drugs act during any phase. Ask your professor which she will test.'},
+    {h:'Dose-limiting adverse effect', items:[
+      {n:'What it is', d:'An adverse effect severe enough that it caps how much chemotherapy can be given. Chemo drugs have a narrow therapeutic index, so the dose has to be lowered or the next cycle delayed, which can make treatment less effective (the definition is not spelled out in your slides).'},
+      {n:'Examples from your slides', d:'Bone marrow suppression, cardiac and/or pulmonary toxicity, nephrotoxicity, and hepatotoxicity.'},
+      {n:'Where the hematopoietic drugs fit', d:'They shorten chemo-induced anemia, neutropenia, and thrombocytopenia and speed bone marrow recovery, which enables higher doses of chemotherapy.'}
+    ]},
+    {h:'Tumor lysis syndrome', items:[
+      {n:'What happens', d:'Dying cancer cells flood the bloodstream with uric acid, potassium, and phosphate: hyperuricemia, hyperkalemia, hyperphosphatemia, and HYPOcalcemia.'},
+      {n:'Why it is dangerous', d:'It can cause kidney failure, cardiac arrest, and death. It is a medical emergency.'},
+      {n:'When', d:'Usually within 48 to 72 hours after chemo.'},
+      {n:'Signs', d:'Early: fatigue, nausea, changes in urination, dehydration. Then diarrhea, weakness, lethargy, shortness of breath, seizures, hypotension, and arrhythmias leading to cardiac arrest.'},
+      {n:'Prevention (not in your slides)', d:'Aggressive IV hydration and allopurinol, the gout drug, to keep uric acid down. Monitor potassium, phosphate, calcium, uric acid, creatinine, urine output, and heart rhythm.'}
+    ]},
+    {h:'Chemotherapy adverse reactions in general', items:[
+      {n:'Why', d:'Chemo harms all rapidly growing cells, cancerous and healthy: hair follicles, mucous membranes and GI tract cells, and bone marrow. Nearly all chemo drugs cause adverse effects.'},
+      {n:'GI', d:'Stomatitis, nausea and vomiting, and diarrhea.'},
+      {n:'Nervous system', d:'Neuropathy in the hands and feet, and cold intolerance.'},
+      {n:'Bone marrow', d:'Anemia (which can cause severe fatigue), neutropenia (infection), and thrombocytopenia (bleeding).'},
+      {n:'Mental well-being', d:'Anxiety, depression, and self-image. Hair loss is one of the hardest self-image issues for many patients.'},
+      {n:'Infection with neutropenia', d:'Hand hygiene is the most effective way to prevent infection. Fever is the principal early sign of infection when the WBC is low and must be reported immediately. Normal WBC is 4,500 to 10,000 cells/mm3.'}
+    ]},
+    {h:'How hematopoietic drugs work', p:'All are made by recombinant DNA technology. They bind to progenitor cells in the bone marrow, stimulating them to reproduce and differentiate into a specific type of blood cell, depending on the drug.'},
+    {h:'Hematopoietic drugs: adverse reactions and nursing implications', items:[
+      {n:'Purpose', d:'Shorten chemo-induced anemia, neutropenia, or thrombocytopenia, enable higher chemo doses, and shorten bone marrow recovery.'},
+      {n:'Contraindication', d:'Drug allergy.'},
+      {n:'Side effects', d:'Fever, muscle aches and bone pain, nausea and vomiting, and flushing.'},
+      {n:'Administration', d:'Timing is important and is planned around the nadir, the low point in blood counts after chemo.'},
+      {n:'Evaluate', d:'The injection site for irritation or infection, the lab value that fits the drug (WBC or RBC), and signs of complications: bleeding, anemia, infection.'},
+      {n:'Epoetin alfa', d:'Monitor hemoglobin and hold the dose if it approaches or exceeds 11. Contraindicated with uncontrolled hypertension; monitor blood pressure throughout. May need supplemental iron. Watch for thromboembolic events.'},
+      {n:'Filgrastim and pegfilgrastim', d:'Do not give within 24 hours before or after chemo. Pegfilgrastim lasts longer: one dose.'}
+    ]},
+    {h:'In your antineoplastic slides but not on the study guide', p:'Darbepoetin alfa (Aranesp), another erythropoiesis-stimulating drug, and sargramostim (Leukine), which stimulates granulocytes, monocytes, and macrophages for bone marrow recovery after a transplant and is given by injection only.'}
   ]
 },
 
 eye_abx: abxCard('Eye: ophthalmic anti-infective', {
-  src:EEDC_SRC,
-  how:'Antibiotic drops or ointment that treat bacterial eye infections at the site.',
-  use:'Bacterial conjunctivitis and corneal ulcers. Erythromycin ointment is also given to newborns to prevent eye infection from birth.',
-  contra:'Allergy to the drug or its class: fluoroquinolones for ciprofloxacin, macrolides for erythromycin. Your guide says you only need general contraindications and adverse effects here.',
-  ae:'Burning, stinging, itching, redness, and temporary blurred vision, especially with ointment. Superinfection with prolonged use. Ciprofloxacin drops can leave a white crystalline deposit on the cornea.',
-  admin:'Do not touch the tip to the eye. Avoid contact lenses during an eye infection. Use for the full course.',
+  how:'Antibiotic drops or ointment that treat bacterial eye infections right at the eye. Systemic therapy is usually not necessary.',
+  use:'Bacterial eye infections such as blepharitis, hordeolum (sty), keratitis, and bacterial conjunctivitis.',
+  contra:'Known drug allergy. Your guide says you only need general contraindications and adverse effects for these.',
+  ae:'Local, temporary inflammation, burning, and stinging. With large doses, systemic effects: urticaria, dermatitis, and angioedema.',
+  admin:'Drops into the conjunctival sac; ointment as a thin layer, ideally at bedtime. Drops before ointments. Remove contacts and replace them 15 minutes later.',
   differs:[
-    {n:'Ciprofloxacin ophthalmic', d:'A fluoroquinolone drop.'},
-    {n:'Erythromycin ophthalmic', d:'A macrolide ointment, the one used in newborns.'}
+    {n:'Ciprofloxacin ophthalmic (Ciloxan)', d:'A quinolone, given as drops.'},
+    {n:'Erythromycin ophthalmic (Ilotycin)', d:'A macrolide, given as an ointment.'},
+    {n:'Also in your slides', d:'Sulfacetamide (Bleph-10), a sulfonamide drop. Not on your guide.'}
   ]
 }),
 eye_infl: abxCard('Eye: ophthalmic anti-inflammatory', {
-  src:EEDC_SRC,
-  how:'Ketorolac drops block prostaglandins in the eye (an NSAID). Olopatadine blocks histamine and stabilizes mast cells, stopping allergic itching.',
-  use:'Ketorolac (Acular): inflammation and pain after cataract surgery and itching from seasonal allergic conjunctivitis. Olopatadine (Pataday): itching from allergic conjunctivitis.',
-  contra:'Ketorolac: allergy to aspirin or other NSAIDs, and caution with bleeding tendencies. Your guide says you only need general information and adverse effects.',
-  ae:'Burning and stinging on instillation, eye irritation. Olopatadine can also cause headache and a bitter taste.',
-  admin:'Remove contact lenses before instilling and wait about 10 to 15 minutes before putting them back.',
+  how:'Decrease the local inflammation in the eye that comes with histamine release.',
+  use:'Allergic conjunctivitis, and relief of eye pain and itching.',
+  contra:'Known drug allergy. Your guide says you only need general information and adverse effects.',
+  ae:'Ketorolac: burning of the eyes and blurred vision. Olopatadine: burning and stinging that goes away on its own.',
+  admin:'Remove contact lenses first and put them back 15 minutes later.',
   differs:[
-    {n:'Ketorolac (Acular)', d:'The same drug as Toradol, as an eye drop. NSAID allergy matters here too.'},
-    {n:'Olopatadine (Pataday)', d:'The allergy drop.'}
+    {n:'Ketorolac (Acular)', d:'The NSAID eye drop: the same drug as Toradol. Burning and blurred vision.'},
+    {n:'Olopatadine (Pataday)', d:'The antihistamine eye drop. Burning and stinging that is self-limiting.'}
   ]
 }),
 gl_chol: abxCard('Glaucoma: cholinergic agent', {
-  src:EEDC_SRC,
-  how:'Constricts the pupil (miosis), which opens the drainage pathway so aqueous humor flows out and intraocular pressure drops.',
-  use:'Glaucoma, including acute angle-closure glaucoma.',
-  contra:'Conditions where pupil constriction is harmful, such as acute iritis.',
-  ae:'Blurred vision, poor vision in dim light, brow ache, and headache. If absorbed systemically: sweating, drooling, bradycardia, and GI upset (cholinergic effects).',
-  admin:'Teach caution driving at night or in dim light because the small pupil lets in less light. Use punctal occlusion.',
+  how:'Causes miosis by constricting the pupil and contracting the ciliary muscle. The ciliary muscle contraction pushes aqueous humor out of the eye, decreasing intraocular pressure.',
+  use:'Glaucoma.',
+  ae:'Headache, conjunctival hyperemia (red eyes), trouble with visual accommodation (focusing), and blurred vision.',
+  admin:'Teach that vision may blur and focusing may be harder, so take care with driving, especially at night (driving advice is not in your slides).',
   differs:[
-    {n:'Pilocarpine (Isopto Carpine)', d:'The miotic: it shrinks the pupil to open drainage.'}
+    {n:'Pilocarpine (Isopto Carpine)', d:'The miotic. Headache and blurred vision are its signature effects.'}
   ]
 }),
 gl_beta: abxCard('Glaucoma: beta-adrenergic blocker', {
-  src:EEDC_SRC,
   sfx:'-olol.',
-  how:'Decreases the production of aqueous humor, lowering intraocular pressure.',
-  use:'Open-angle glaucoma and high intraocular pressure.',
-  contra:'Asthma and COPD (bronchospasm), bradycardia, heart block, and heart failure, because enough drug can be absorbed to act like an oral beta blocker.',
-  ae:'Stinging. Systemic: bradycardia, hypotension, bronchospasm, fatigue. In diabetes it can mask hypoglycemia, the same as an oral beta blocker (Exam 1).',
-  admin:'Punctal occlusion for 1 to 2 minutes after each drop to limit systemic absorption.',
-  mon:'Heart rate, blood pressure, and breathing.',
+  how:'Decreases intraocular pressure by decreasing the beta-1 and beta-2 receptor-mediated production of aqueous humor.',
+  use:'Glaucoma.',
+  contra:'Bradycardia, AV heart block, and heart failure, because enough drug is absorbed to slow the heart. Asthma and other obstructive lung disease, because it blocks bronchodilation. Avoid in diabetics, because it masks the signs of hypoglycemia.',
+  ae:'Eye discomfort, miosis, and difficulty with night vision. Systemic: slowed heart rate, worsening heart block and heart failure, and bronchoconstriction.',
+  admin:'Pressing on the inner corner of the eye for 1 to 2 minutes after the drop reduces systemic absorption (not in your slides).',
+  mon:'Heart rate, blood pressure, breathing, and blood glucose in diabetic patients.',
   differs:[
-    {n:'Timolol (Timoptic)', d:'An eye drop with whole-body beta blocker risks.'}
+    {n:'Timolol (Timoptic)', d:'An eye drop with whole-body beta blocker risks, the same as the oral beta blocker warning from Exam 1.'},
+    {n:'Also in your slides', d:'Betaxolol (Betoptic). Not on your guide.'}
   ]
 }),
 gl_pg: abxCard('Glaucoma: prostaglandin analogue', {
-  src:EEDC_SRC,
-  sfx:'-prost.',
-  how:'Increases outflow of aqueous humor, lowering intraocular pressure.',
-  use:'Open-angle glaucoma and high intraocular pressure. Usually first-line.',
-  ae:'Permanent brown darkening of the iris (most noticeable in light-colored eyes), longer and darker eyelashes, darkening of the eyelid skin, and eye irritation.',
-  admin:'Once daily, in the evening. Remove contact lenses and wait 15 minutes before reinserting.',
+  sfx:'-prost (your slides write it -oprost).',
+  how:'Increases aqueous humor outflow through the trabecular meshwork, the spongy tissue that regulates drainage, reducing intraocular pressure.',
+  use:'Glaucoma.',
+  ae:'Changes the color of the iris by increasing brown pigmentation, darkening of the eyelids, hypertrichosis (extra eyelash growth), blurred vision, red conjunctiva, itching, and stinging.',
+  admin:'Usually given once daily in the evening (not in your slides). Remove contacts and replace them 15 minutes later.',
   differs:[
-    {n:'Latanoprost (Xalatan)', d:'The one that can permanently change eye color.'}
+    {n:'Latanoprost (Xalatan)', d:'The one that can turn the iris brown.'},
+    {n:'Also in your slides', d:'Bimatoprost (Lumigan). Not on your guide.'}
   ]
 }),
 gl_cai: abxCard('Glaucoma: carbonic anhydrase inhibitor', {
-  src:EEDC_SRC,
-  how:'Blocks carbonic anhydrase, which decreases the production of aqueous humor.',
-  use:'Glaucoma, including acute angle-closure glaucoma. Acetazolamide is also used for altitude sickness.',
-  contra:'Sulfa allergy, since it is a sulfonamide derivative. Severe kidney or liver disease and low potassium or sodium.',
-  ae:'Tingling in the fingers and toes, drowsiness, GI upset, a change in taste, metabolic acidosis, low potassium, and kidney stones.',
-  admin:'Given orally or IV (it is not an eye drop). Encourage fluids.',
-  mon:'Electrolytes, especially potassium.',
+  how:'Decreases intraocular pressure by decreasing the production of aqueous humor.',
+  use:'Glaucoma.',
+  contra:'Sulfa allergy, because acetazolamide is a sulfonamide derivative (not in your slides).',
+  ae:'Systemic forms: fluid and electrolyte imbalance, metabolic acidosis, and orthostatic hypotension. Topical forms: blurred vision, blepharitis, and dry eyes.',
+  admin:'Acetazolamide is systemic (oral or IV), not an eye drop. Teach slow position changes because of orthostatic hypotension.',
+  mon:'Electrolytes and blood pressure.',
   differs:[
-    {n:'Acetazolamide (Diamox)', d:'A systemic glaucoma drug, and a sulfa-allergy contraindication like Bactrim and glyburide.'}
+    {n:'Acetazolamide (Diamox)', d:'The systemic carbonic anhydrase inhibitor, so it carries the systemic side effects.'},
+    {n:'Also in your slides', d:'Brinzolamide (Azopt), the topical version. Not on your guide.'}
   ]
 }),
 gl_osm: abxCard('Glaucoma: osmotic diuretic', {
-  src:EEDC_SRC,
-  how:'Raises the osmotic pressure of the blood, which pulls fluid out of the eye (and the brain) into the bloodstream, quickly lowering pressure.',
-  use:'Emergency lowering of intraocular pressure in acute angle-closure glaucoma. Also used for increased intracranial pressure.',
-  contra:'Anuria, severe dehydration, heart failure, and pulmonary edema, since it first expands blood volume.',
-  ae:'Fluid and electrolyte imbalance, fluid overload and pulmonary edema, dehydration, and headache.',
-  admin:'IV, through an in-line filter because it can crystallize.',
-  mon:'Strict intake and output, electrolytes, lung sounds, and signs of fluid overload.',
+  how:'Decreases the volume of vitreous humor, reducing intraocular pressure. Used before and after eye surgery.',
+  use:'Emergency treatment of acute closed-angle glaucoma.',
+  ae:'Nausea, vomiting, tachycardia, and disorientation from electrolyte imbalances, especially in older adults.',
+  admin:'Given IV. Standard practice also uses an in-line filter, because mannitol can crystallize (not in your slides).',
+  mon:'Electrolytes and mental status, especially in older adults. Intake and output (not in your slides).',
   differs:[
-    {n:'Mannitol', d:'The emergency, IV option.'}
+    {n:'Mannitol', d:'The IV emergency drug. Watch older adults for confusion from electrolyte shifts.'}
   ]
 }),
-ear_sys: abxCard('Ear antibiotic: systemic', {
-  src:EEDC_SRC,
-  how:'A broad-spectrum penicillin that breaks down the bacterial cell wall (Exam 2).',
-  use:'First-line treatment for acute otitis media (middle ear infection).',
-  contra:'Penicillin allergy, with cephalosporin cross-sensitivity.',
-  ae:'Diarrhea, rash, and allergic reactions. Superinfection such as thrush or C. diff.',
-  admin:'Finish the full course even after the ear feels better. Teach backup contraception for patients on oral contraceptives.',
+ear_sys: abxCard('Ear antibiotic: systemic (otitis media)', {
+  how:'A penicillin that breaks down the bacterial cell wall (Exam 2).',
+  use:'Otitis media, the middle ear infection, most often in children after an upper respiratory infection.',
+  contra:'Penicillin allergy. Penicillins and cephalosporins cross-react, so with a severe penicillin allergy the slides use azithromycin or clarithromycin instead.',
+  ae:'GI upset, nausea, vomiting, diarrhea, overgrowth of other organisms (superinfection), and hypersensitivity.',
+  admin:'Finish the full course. Teach backup contraception for patients on oral contraceptives (Exam 2).',
   differs:[
     {n:'Amoxicillin (Amoxil)', d:'The systemic, by-mouth choice for middle ear infections.'}
   ]
 }),
-ear_top: abxCard('Ear antibiotic: topical (otic)', {
-  src:EEDC_SRC,
-  how:'Fluoroquinolone ear drops that kill bacteria in the ear canal.',
-  use:'Otitis externa (swimmer’s ear), and middle ear infections in patients with ear tubes or a perforated eardrum.',
-  contra:'Allergy to fluoroquinolones.',
-  ae:'Ear itching or discomfort and an altered taste.',
-  admin:'Warm the drops in your hands, pull the pinna up and back for adults (down and back under age 3), and stay on the side about 5 minutes.',
+ear_top: abxCard('Ear antibiotic: topical (otitis externa)', {
+  how:'Quinolone ear drops that treat bacteria in the external ear canal.',
+  use:'Otitis externa (swimmer’s ear), an infection of the external ear canal.',
+  contra:'Known drug allergy.',
+  ae:'A local reaction at the application site, pruritus, itching, and burning.',
+  admin:'Warm to room temperature, straighten the canal, instill, massage the tragus, and have the patient lie with the affected ear up for 5 minutes. Prevent recurrence: dry ears after swimming and use custom-fitting earplugs.',
   differs:[
-    {n:'Ciprofloxacin or ofloxacin otic', d:'Safe with a perforated eardrum, unlike many other ear drops.'}
+    {n:'Ofloxacin or ciprofloxacin otic', d:'Topical, for the outer ear, while amoxicillin is systemic, for the middle ear.'}
   ]
 }),
-cerumen: abxCard('Cerumenolytic', {
-  src:EEDC_SRC,
-  how:'Releases oxygen and foams in the ear canal, softening and loosening earwax.',
-  use:'Removing impacted or excess earwax.',
-  contra:'A perforated eardrum, ear drainage, ear pain or infection, and recent ear surgery.',
-  ae:'A fizzing feeling and temporary muffled hearing.',
-  admin:'Tilt the head, instill the drops, and keep the head tilted several minutes. Afterward the ear can be flushed gently with warm water. Use for no more than 4 days.',
+cerumen: abxCard('Cerumenolytic (earwax emulsifier)', {
+  how:'A topical ear agent, usually dilute hydrogen peroxide, that softens or breaks up earwax so it can be removed.',
+  use:'Earwax buildup.',
+  contra:'Otitis media and otitis externa, to avoid damaging the inflamed membranes.',
+  admin:'Ear canal irrigation with water and a bulb syringe may be needed afterward.',
   differs:[
-    {n:'Carbamide peroxide (Debrox)', d:'The one that foams. Never with a perforated eardrum.'}
+    {n:'Carbamide peroxide (Debrox)', d:'Not for use during an ear infection.'}
   ]
 }),
 acne_top: abxCard('Anti-acne: topical vitamin A analog', {
-  src:EEDC_SRC,
-  how:'A vitamin A analog that speeds skin cell turnover and loosens plugged pores.',
-  use:'Acne. Renova is used for fine wrinkles and sun damage.',
-  contra:'Pregnancy, and broken or sunburned skin.',
-  ae:'Redness, peeling, dryness, burning, and sun sensitivity. Acne can look worse for the first few weeks.',
-  admin:'Apply a pea-sized amount at night to clean, dry skin, waiting 20 to 30 minutes after washing. Avoid the eyes and mouth. Use sunscreen daily and avoid harsh scrubs.',
+  how:'Reduces occlusion (plugging) of the skin follicles.',
+  use:'Acne vulgaris: lesions most often on the face, neck, chest, upper back, and upper arms, from bacteria in clogged follicles and increased androgen production.',
+  contra:'Pregnancy is a standard caution for vitamin A analogs (not in your slides).',
+  ae:'Increased skin sensitivity, skin discomfort, and peeling.',
+  admin:'Start with good skin hygiene: a gentle cleanser 2 to 3 times a day and avoiding triggers. Sunscreen and nighttime application are standard teaching (not in your slides).',
   differs:[
-    {n:'Tretinoin (Retin-A, Renova)', d:'The topical one. Your guide also lists it under systemic, which is likely a typo, since oral tretinoin is used for a type of leukemia.'}
+    {n:'Tretinoin (Retin-A, Renova)', d:'The topical one. Your guide also lists it under systemic, likely a typo.'},
+    {n:'Also in your slides', d:'Benzoyl peroxide and oral antibiotics (doxycycline, minocycline, tetracycline, erythromycin). The antibiotics can make oral contraceptives less effective, so counsel a backup method.'}
   ]
 }),
 acne_sys: abxCard('Anti-acne: systemic vitamin A analog', {
-  src:EEDC_SRC,
-  how:'An oral vitamin A analog that shrinks oil glands and reduces oil production.',
-  use:'Severe nodular or cystic acne that has not responded to other treatment.',
-  contra:'Pregnancy: it causes severe birth defects. Also avoid with vitamin A supplements and tetracyclines (Exam 2), which together raise pressure in the skull.',
-  ae:'Dry skin and cracked lips, dry eyes and trouble with contact lenses, nosebleeds, sun sensitivity, poor night vision, high triglycerides, liver enzyme elevation, and depression or suicidal thoughts.',
-  admin:'Prescribed through the iPLEDGE program: two negative pregnancy tests before starting, monthly tests, and two forms of birth control. No blood donation. Take with food.',
-  mon:'Pregnancy tests, lipids, liver function, and mood.',
+  how:'An oral vitamin A analog.',
+  use:'Severe acne.',
+  contra:'Pregnancy: it is teratogenic.',
+  ae:'Skin irritation, thrombocytopenia, nosebleeds, teratogenic effects, and depression.',
+  admin:'Pregnancy test at the start and during therapy. Standard practice adds the iPLEDGE program and two forms of birth control (not in your slides).',
+  mon:'Blood work, pregnancy tests, platelets, and mood.',
   differs:[
-    {n:'Isotretinoin (Accutane)', d:'Highly teratogenic. Pregnancy prevention is the priority teaching.'}
+    {n:'Isotretinoin (Accutane)', d:'Teratogenic: pregnancy testing before and during therapy is the priority.'}
   ]
 }),
 psoriasis: abxCard('Antipsoriasis', {
-  src:EEDC_SRC,
-  how:'A folic acid antagonist that slows the rapidly dividing skin cells of psoriasis and calms the immune response.',
-  use:'Severe psoriasis. Also rheumatoid arthritis and some cancers.',
-  contra:'Pregnancy, liver disease, alcohol use, and immune deficiency.',
-  ae:'Bone marrow suppression, liver toxicity, mouth sores and GI ulcers, kidney and lung toxicity, and birth defects.',
-  admin:'For psoriasis it is taken ONCE A WEEK, not daily; daily dosing by mistake has been fatal. Folic acid is given to reduce side effects. No alcohol.',
-  inter:'Bismuth subsalicylate and cholestyramine (Exam 1) raise methotrexate toxicity, as do NSAIDs and TMP-SMZ.',
-  mon:'CBC, liver function, and kidney function.',
+  how:'A folic acid antagonist that decreases T-cell activity, calming the autoimmune inflammation behind psoriasis.',
+  use:'Psoriasis that does not respond to topical agents. Psoriasis is an autoimmune disease with well-demarcated red plaques; first-line care is topical salicylic acid, topical steroids, and ultraviolet light.',
+  contra:'Pregnancy.',
+  ae:'Liver failure and bone marrow suppression.',
+  admin:'For psoriasis it is taken once a week, not daily; daily dosing errors have been fatal (not in your slides). Avoid alcohol (not in your slides).',
+  inter:'Adsorbents such as bismuth subsalicylate raise methotrexate toxicity (your Exam 1 GI slides).',
+  mon:'Liver function and CBC.',
   differs:[
-    {n:'Methotrexate', d:'Once weekly. Watch the blood counts and the liver.'}
+    {n:'Methotrexate', d:'The systemic psoriasis drug: watch the liver and the blood counts.'},
+    {n:'Also in your slides', d:'The TNF inhibitors etanercept (Enbrel) and adalimumab (Humira). Not on your guide.'}
   ]
 }),
 wound_abx: abxCard('Topical antimicrobial (wound and skin)', {
-  src:EEDC_SRC,
-  how:'Kill or slow microbes directly in the wound or on the skin.',
-  use:'Infected or high-risk wounds, and skin infections such as impetigo.',
-  contra:'Manuka honey: bee allergy. Silver: silver allergy, and remove before an MRI.',
-  admin:'Cleanse the wound first with saline or the ordered cleanser and remove old product, then apply. Get any ordered culture before the first application.',
+  how:'Used to prevent or decrease bioburden, the number and type of microorganisms in a wound. More bioburden means more inflammation, slower healing, and a higher risk of infection.',
+  use:'Wounds at risk of or showing local infection, and skin infections such as impetigo.',
+  contra:'Manuka honey: bee allergy. Silver alginate: third-degree burns, silver allergy, and dry or low-drainage wounds. Hydrafera Blue Classic: do not moisten with wound cleanser.',
+  ae:'Manuka honey: temporary stinging or burning, more drainage, and allergic reactions.',
+  admin:'Cleanse the wound, assess it, and check allergies before applying (not in your slides).',
   differs:[
-    {n:'Mupirocin', d:'For impetigo.'},
-    {n:'Manuka honey', d:'Contraindicated with a bee allergy.'},
-    {n:'Methylene blue (Hydrofera Blue Classic)', d:'Premoisten with saline, never wound cleanser. Your guide spells it Hydrafera.'},
-    {n:'Silver alginate', d:'For wounds with moderate to heavy drainage. It gels as it absorbs fluid, so it is not for dry wounds.'}
+    {n:'Mupirocin (Bactroban)', d:'For Staph and Strep impetigo. The intranasal form is used for MRSA.'},
+    {n:'Manuka honey (Medihoney, Therahoney)', d:'Contraindicated with a bee allergy. Draws fluid out by osmosis and debrides.'},
+    {n:'Methylene blue (Hydrafera Blue Classic)', d:'For moderate to high drainage. Premoisten with saline or sterile water, never wound cleanser. Change when the foam turns white or after 7 days.'},
+    {n:'Silver alginate', d:'For moderate to heavy drainage. The alginate gels as it absorbs fluid.'}
   ]
 }),
 esa: abxCard('Hematopoietic: erythropoiesis-stimulating agent', {
-  src:EEDC_SRC,
-  how:'A synthetic form of erythropoietin, the kidney hormone that tells the bone marrow to make red blood cells.',
-  use:'Anemia from chemotherapy and from chronic kidney disease.',
-  contra:'Uncontrolled hypertension.',
-  ae:'Hypertension (the most common problem), blood clots, MI, and stroke, especially when hemoglobin climbs too high. Headache and joint pain. In some cancers, faster tumor growth.',
-  admin:'Subcutaneous or IV. Do not shake the vial. Use the lowest dose that avoids a transfusion. Give iron if stores are low, since the marrow needs iron to make red cells. It takes a few weeks to raise hemoglobin.',
-  mon:'Hemoglobin and hematocrit, blood pressure, and iron levels.',
+  how:'Made by recombinant DNA technology. Binds to progenitor cells in the bone marrow and increases erythropoietin, the precursor to red blood cells, so more red cells are made.',
+  use:'Anemia related to chemotherapy or kidney disease. Shortens chemo-induced anemia and bone marrow recovery time.',
+  contra:'Uncontrolled hypertension; assess for a history of it before starting. Drug allergy.',
+  ae:'Thromboembolic events. Like all hematopoietic drugs: fever, muscle aches and bone pain, nausea and vomiting, and flushing.',
+  admin:'Timing is planned around the nadir. May need supplemental iron during therapy.',
+  mon:'Hemoglobin: hold the dose if it approaches or exceeds 11. Blood pressure throughout therapy. The injection site, and signs of anemia or clots.',
   differs:[
-    {n:'Epoetin alfa', d:'Raises red cells. Watch blood pressure and do not push hemoglobin too high.'}
+    {n:'Epoetin alfa (Procrit, Epogen)', d:'The red blood cell drug. Hold for a hemoglobin near 11 and watch blood pressure.'},
+    {n:'Also in your slides', d:'Darbepoetin alfa (Aranesp). Not on your guide.'}
   ]
 }),
 gcsf: abxCard('Hematopoietic: granulocyte colony-stimulating factor', {
-  src:EEDC_SRC,
   sfx:'-grastim.',
-  how:'Stimulates the bone marrow to make and release neutrophils.',
-  use:'Prevents infection and shortens neutropenia after chemotherapy.',
-  ae:'Bone pain (the most common; acetaminophen helps). Splenic rupture: report pain in the left upper abdomen or shoulder. Allergic reactions and breathing problems.',
-  admin:'Subcutaneous. Give at least 24 hours after chemotherapy, never the same day. Do not shake.',
-  mon:'CBC with absolute neutrophil count, temperature and signs of infection, and abdominal or shoulder pain.',
+  how:'Made by recombinant DNA technology. Binds to progenitor cells in the bone marrow and stimulates the production of neutrophils.',
+  use:'Increase neutrophils in patients who are neutropenic after chemotherapy. Shortens neutropenia and bone marrow recovery time.',
+  contra:'Drug allergy.',
+  ae:'Fever, muscle aches and bone pain, nausea and vomiting, and flushing. Splenic rupture is a rare serious risk: report left upper abdominal or shoulder pain (not in your slides).',
+  admin:'Do not give within 24 hours before or after chemotherapy. Timing is planned around the nadir.',
+  mon:'WBC and neutrophil count, the injection site, and signs of infection, especially fever.',
   differs:[
-    {n:'Filgrastim (Neupogen)', d:'Short acting: given daily until counts recover.'},
-    {n:'Pegfilgrastim (Neulasta)', d:'Long acting: once per chemotherapy cycle.'}
+    {n:'Filgrastim (Neupogen)', d:'The shorter-acting one, given repeatedly.'},
+    {n:'Pegfilgrastim (Neulasta)', d:'Longer acting than Neupogen: one administration.'},
+    {n:'Also in your slides', d:'Sargramostim (Leukine), for bone marrow recovery after a transplant. Not on your guide.'}
   ]
 })
 
@@ -2434,61 +2484,61 @@ const EEDC = {
   accent:'#3F5E2A',
   accentSoft:'#E8EFE2',
   principles:'eedc_core',
-  note:'These drugs are not in the lecture slides you uploaded, so the notes come from your study guide plus standard nursing pharmacology references; send the slides and I will match them. The guide spells the wound product <b>Hydrafera</b>; the brand is Hydrofera Blue. The guide lists tretinoin under both topical and systemic acne drugs, so it sits with topical here.',
+  note:'Drugs and categories follow your study guide; the facts come from your eye, ear, and skin slides and your antineoplastic slides. Anything else is labeled "not in your slides." Both the slides and the guide spell it <b>Hydrafera</b>; the real brand is Hydrofera Blue. The guide lists tretinoin under both topical and systemic acne drugs, and the slides teach it as topical, so it sits there.',
   bins:[
     {id:'eye_abx', name:'Eye: ophthalmic anti-infective', items:[
-      {g:'Ciprofloxacin ophthalmic', b:'', f:'Fluoroquinolone eye drop. Burning, stinging, blurred vision.'},
-      {g:'Erythromycin ophthalmic', b:'', f:'Macrolide eye ointment, also given to newborns.'}
+      {g:'Ciprofloxacin ophthalmic', b:'Ciloxan', f:'Quinolone drop. Burning and stinging; contraindicated with known drug allergy.'},
+      {g:'Erythromycin ophthalmic', b:'Ilotycin', f:'Macrolide ointment. Give ointments after drops, ideally at bedtime.'}
     ]},
     {id:'eye_infl', name:'Eye: ophthalmic anti-inflammatory', items:[
-      {g:'Ketorolac ophthalmic', b:'Acular', f:'NSAID eye drop. Burning and stinging. Caution with NSAID allergy.'},
-      {g:'Olopatadine', b:'Pataday', f:'Allergy eye drop for itching.'}
+      {g:'Ketorolac ophthalmic', b:'Acular', f:'NSAID eye drop. Burning of the eyes and blurred vision.'},
+      {g:'Olopatadine', b:'Pataday', f:'Antihistamine eye drop. Burning and stinging that goes away on its own.'}
     ]},
     {id:'gl_chol', name:'Glaucoma: cholinergic agent', items:[
-      {g:'Pilocarpine', b:'Isopto Carpine', f:'Shrinks the pupil to open drainage. Poor vision in dim light.'}
+      {g:'Pilocarpine', b:'Isopto Carpine', f:'Constricts the pupil (miosis). Headache, blurred vision, red eyes.'}
     ]},
     {id:'gl_beta', name:'Glaucoma: beta-adrenergic blocker', items:[
-      {g:'Timolol', b:'Timoptic', f:'Avoid in asthma and bradycardia. Press the inner corner after each drop.'}
+      {g:'Timolol', b:'Timoptic', f:'Can slow the heart, block bronchodilation, and mask hypoglycemia.'}
     ]},
     {id:'gl_pg', name:'Glaucoma: prostaglandin analogue', items:[
-      {g:'Latanoprost', b:'Xalatan', f:'Once in the evening. Can permanently darken the iris.'}
+      {g:'Latanoprost', b:'Xalatan', f:'Increases outflow. Can turn the iris brown and darken the eyelids.'}
     ]},
     {id:'gl_cai', name:'Glaucoma: carbonic anhydrase inhibitor', items:[
-      {g:'Acetazolamide', b:'Diamox', f:'Oral or IV. Sulfa allergy. Tingling, low potassium.'}
+      {g:'Acetazolamide', b:'Diamox', f:'Systemic: electrolyte imbalance, metabolic acidosis, orthostatic hypotension.'}
     ]},
     {id:'gl_osm', name:'Glaucoma: osmotic diuretic', items:[
-      {g:'Mannitol', b:'', f:'IV emergency use. Use a filter. Strict I&O, watch for fluid overload.'}
+      {g:'Mannitol', b:'', f:'IV emergency for acute closed-angle glaucoma. Disorientation in older adults.'}
     ]},
-    {id:'ear_sys', name:'Ear antibiotic: systemic', items:[
-      {g:'Amoxicillin', b:'Amoxil', f:'First-line by mouth for middle ear infections. Finish the course.'}
+    {id:'ear_sys', name:'Ear antibiotic: systemic (otitis media)', items:[
+      {g:'Amoxicillin', b:'Amoxil', f:'Middle ear infection. Severe penicillin allergy: azithromycin or clarithromycin instead.'}
     ]},
-    {id:'ear_top', name:'Ear antibiotic: topical (otic)', items:[
-      {g:'Ciprofloxacin or ofloxacin otic', b:'', f:'Swimmer’s ear, and safe with ear tubes or a perforated eardrum.'}
+    {id:'ear_top', name:'Ear antibiotic: topical (otitis externa)', items:[
+      {g:'Ofloxacin or ciprofloxacin otic', b:'', f:'Swimmer’s ear. Local itching and burning.'}
     ]},
-    {id:'cerumen', name:'Cerumenolytic', items:[
-      {g:'Carbamide peroxide', b:'Debrox', f:'Softens earwax. Never with a perforated eardrum.'}
+    {id:'cerumen', name:'Cerumenolytic (earwax emulsifier)', items:[
+      {g:'Carbamide peroxide', b:'Debrox', f:'Softens earwax. Avoid with otitis media or otitis externa.'}
     ]},
     {id:'acne_top', name:'Anti-acne: topical vitamin A analog', items:[
-      {g:'Tretinoin', b:'Retin-A, Renova', f:'At night on dry skin. Peeling and sun sensitivity. Sunscreen.'}
+      {g:'Tretinoin', b:'Retin-A, Renova', f:'Unplugs follicles. Skin sensitivity, discomfort, peeling.'}
     ]},
     {id:'acne_sys', name:'Anti-acne: systemic vitamin A analog', items:[
-      {g:'Isotretinoin', b:'Accutane', f:'Severe birth defects: iPLEDGE, two forms of birth control. Watch mood.'}
+      {g:'Isotretinoin', b:'Accutane', f:'Teratogenic: pregnancy test before and during. Depression, nosebleeds, low platelets.'}
     ]},
     {id:'psoriasis', name:'Antipsoriasis', items:[
-      {g:'Methotrexate', b:'', f:'Once WEEKLY for psoriasis. Bone marrow and liver toxicity. No alcohol.'}
+      {g:'Methotrexate', b:'', f:'Folic acid antagonist. Liver failure, bone marrow suppression, no pregnancy.'}
     ]},
     {id:'wound_abx', name:'Topical antimicrobial', items:[
-      {g:'Mupirocin', b:'', f:'For impetigo.'},
-      {g:'Manuka honey', b:'', f:'Contraindicated with a bee allergy.'},
-      {g:'Methylene blue', b:'Hydrofera Blue Classic', f:'Premoisten with saline, not wound cleanser.'},
-      {g:'Silver alginate', b:'', f:'For wounds with moderate to heavy drainage.'}
+      {g:'Mupirocin', b:'Bactroban', f:'For Staph and Strep impetigo. Intranasal form for MRSA.'},
+      {g:'Manuka honey', b:'Medihoney, Therahoney', f:'Contraindicated with a bee allergy. Temporary stinging.'},
+      {g:'Methylene blue', b:'Hydrafera Blue Classic', f:'Premoisten with saline or sterile water, never wound cleanser.'},
+      {g:'Silver alginate', b:'', f:'Moderate to heavy drainage. Not for third-degree burns or dry wounds.'}
     ]},
     {id:'esa', name:'Hematopoietic: erythropoiesis-stimulating', items:[
-      {g:'Epoetin alfa', b:'', f:'Makes red cells. Watch blood pressure and clots. Needs iron.'}
+      {g:'Epoetin alfa', b:'Procrit, Epogen', f:'Makes red cells. Hold if Hgb nears 11. No uncontrolled hypertension. May need iron.'}
     ]},
     {id:'gcsf', name:'Hematopoietic: granulocyte colony-stimulating factor', items:[
-      {g:'Filgrastim', b:'Neupogen', f:'Daily until neutrophils recover. Bone pain is common.'},
-      {g:'Pegfilgrastim', b:'Neulasta', f:'Once per chemo cycle, at least 24 hr after chemo.'}
+      {g:'Filgrastim', b:'Neupogen', f:'Makes neutrophils. Not within 24 hr before or after chemo. Bone pain.'},
+      {g:'Pegfilgrastim', b:'Neulasta', f:'Longer acting than Neupogen: one administration.'}
     ]}
   ]
 };
@@ -2515,54 +2565,54 @@ Object.assign(KEY, {
   gout:['Colchicine treats the flare; allopurinol lowers uric acid to prevent the next one.',
         'Colchicine: start within 24-36 hours; diarrhea is most common.',
         'Allopurinol: stop for a rash, 2-3 L fluid a day, keep taking it during a flare.'],
-  eye_abx:['Treat bacterial eye infections at the site.',
-           'Contraindicated with allergy to the class (fluoroquinolone or macrolide).',
-           'Burning, stinging, blurred vision. Drops before ointment.'],
-  eye_infl:['Ketorolac (Acular) is an NSAID drop; olopatadine (Pataday) is an allergy drop.',
-            'Burning and stinging on instillation.',
-            'Remove contacts first and wait 10-15 minutes.'],
-  gl_chol:['Constricts the pupil to open drainage and lower eye pressure.',
-           'Blurred vision and poor vision in dim light: caution driving at night.',
-           'Systemic absorption causes cholinergic effects: sweating, drooling, bradycardia.'],
+  eye_abx:['Treat bacterial eye infections at the eye; systemic therapy usually is not needed.',
+           'Contraindication: known drug allergy.',
+           'Burning, stinging, local inflammation. Large doses: urticaria, dermatitis, angioedema.'],
+  eye_infl:['Decrease histamine-related inflammation: allergic conjunctivitis, pain, itching.',
+            'Ketorolac (Acular): burning and blurred vision.',
+            'Olopatadine (Pataday): burning and stinging that is self-limiting.'],
+  gl_chol:['Constricts the pupil and contracts the ciliary muscle to push aqueous humor out.',
+           'Headache, red eyes, blurred vision, trouble focusing.',
+           'Goal of every glaucoma drug: lower intraocular pressure.'],
   gl_beta:['Decreases aqueous humor production.',
-           'Contraindicated in asthma, COPD, bradycardia, heart block, heart failure.',
-           'Press the inner corner of the eye after each drop. Monitor heart rate.'],
-  gl_pg:['Suffix -prost. Increases aqueous outflow.',
-         'Once daily in the evening.',
-         'Can permanently darken the iris and lengthen lashes.'],
-  gl_cai:['Decreases aqueous humor production. Given orally or IV.',
-          'Contraindicated with sulfa allergy.',
-          'Tingling, low potassium, metabolic acidosis, kidney stones.'],
-  gl_osm:['Pulls fluid out of the eye fast: emergency IV use.',
-          'Contraindicated in anuria, heart failure, pulmonary edema.',
-          'Use a filter. Strict I&O and watch for fluid overload.'],
-  ear_sys:['First-line oral antibiotic for middle ear infection.',
-           'Penicillin allergy rules it out.',
-           'Finish the course. Diarrhea and rash are common.'],
-  ear_top:['Fluoroquinolone ear drops for swimmer’s ear.',
-           'Safe with ear tubes or a perforated eardrum.',
-           'Warm the drops; adults pinna up and back, under 3 down and back.'],
-  cerumen:['Softens and loosens earwax by foaming.',
-           'Never with a perforated eardrum, drainage, pain, or infection.',
-           'Use for no more than 4 days.'],
-  acne_top:['Vitamin A analog that speeds skin turnover.',
-            'Redness, peeling, sun sensitivity; acne may look worse at first.',
-            'Apply at night to dry skin. Daily sunscreen. Avoid in pregnancy.'],
-  acne_sys:['Oral vitamin A analog for severe cystic acne.',
-            'Causes severe birth defects: iPLEDGE, pregnancy tests, two forms of birth control.',
-            'Dry lips and eyes, high lipids and liver enzymes, depression.'],
-  psoriasis:['Folic acid antagonist that slows rapidly dividing cells.',
-             'Once WEEKLY for psoriasis; daily dosing errors can be fatal.',
-             'Bone marrow and liver toxicity. No alcohol, no pregnancy. Monitor CBC and LFTs.'],
-  wound_abx:['Cleanse the wound before applying any topical antimicrobial.',
-             'Manuka honey: bee allergy. Silver: moderate to heavy drainage.',
-             'Hydrofera Blue Classic: premoisten with saline. Mupirocin: impetigo.'],
-  esa:['Stimulates the marrow to make red blood cells.',
-       'Hypertension, clots, MI, and stroke: do not push hemoglobin too high.',
-       'Monitor hemoglobin, blood pressure, and iron.'],
-  gcsf:['Stimulates the marrow to make neutrophils.',
-        'Bone pain is common. Left upper abdominal or shoulder pain can mean splenic rupture.',
-        'Give at least 24 hours after chemo. Monitor the CBC and ANC.']
+           'Systemic absorption: worsens bradycardia, heart block, heart failure; blocks bronchodilation in asthma.',
+           'Masks hypoglycemia: avoid in diabetics. Also difficulty with night vision.'],
+  gl_pg:['Suffix -prost. Increases outflow through the trabecular meshwork.',
+         'Turns the iris brown, darkens eyelids, grows eyelashes (hypertrichosis).',
+         'Also blurred vision, red conjunctiva, itching, stinging.'],
+  gl_cai:['Decreases aqueous humor production.',
+          'Acetazolamide is systemic: electrolyte imbalance, metabolic acidosis, orthostatic hypotension.',
+          'Topical forms cause blurred vision, blepharitis, dry eyes.'],
+  gl_osm:['Decreases vitreous humor volume to lower intraocular pressure.',
+          'IV mannitol: emergency treatment of acute closed-angle glaucoma.',
+          'Nausea, vomiting, tachycardia, disorientation in older adults.'],
+  ear_sys:['Systemic amoxicillin for otitis media (middle ear).',
+           'Severe penicillin allergy: azithromycin or clarithromycin. Cephalosporins cross-react.',
+           'GI upset, superinfection, hypersensitivity. Finish the course.'],
+  ear_top:['Topical ofloxacin or ciprofloxacin for otitis externa (swimmer’s ear).',
+           'Local reaction, itching, burning.',
+           'Prevention: dry ears after swimming, custom-fitting earplugs.'],
+  cerumen:['Softens and breaks up earwax so it can be removed.',
+           'Avoid in otitis media and otitis externa: damages inflamed membranes.',
+           'Irrigation with water and a bulb syringe may be needed.'],
+  acne_top:['Vitamin A analog that reduces plugging of skin follicles.',
+            'Increased skin sensitivity, discomfort, peeling.',
+            'Start with gentle cleansing 2 to 3 times a day and avoiding triggers.'],
+  acne_sys:['Oral vitamin A analog for severe acne.',
+            'Teratogenic: pregnancy test at the start and during therapy.',
+            'Skin irritation, thrombocytopenia, nosebleeds, depression. Monitor blood work.'],
+  psoriasis:['Folic acid antagonist that decreases T-cell activity.',
+             'For psoriasis that does not respond to topical agents.',
+             'Liver failure and bone marrow suppression. Contraindicated in pregnancy.'],
+  wound_abx:['Used to prevent or decrease bioburden in wounds.',
+             'Manuka honey: bee allergy. Silver alginate: moderate to heavy drainage, not dry wounds or third-degree burns.',
+             'Hydrafera Blue Classic: premoisten with saline, never cleanser. Mupirocin: impetigo.'],
+  esa:['Increases erythropoietin so the marrow makes red cells. For anemia from chemo or kidney disease.',
+       'Hold the dose if hemoglobin approaches or exceeds 11. Watch for thromboembolic events.',
+       'Contraindicated with uncontrolled hypertension; monitor BP. May need iron.'],
+  gcsf:['Stimulates the marrow to make neutrophils for neutropenic patients.',
+        'Do not give within 24 hours before or after chemo. Pegfilgrastim lasts longer: one dose.',
+        'Fever, bone and muscle pain, nausea, flushing. Monitor WBC and signs of infection.']
 });
 
 HINTFAM.pain = [
@@ -2581,6 +2631,335 @@ ROUNDS.pain = PAIN;
 ROUNDS.painnum = PAINNUM;
 ROUNDS.eedc = EEDC;
 ORDER.push('pain','painnum','eedc');
+
+/* ============================================================
+   EXAM 4: NEURO DRUGS, CNS DEPRESSANTS, AND CNS STIMULANTS
+   Drugs and categories follow the Exam 4 study guide.
+   Sedative-hypnotics, muscle relaxants, ADHD/narcolepsy, and
+   migraine facts come from the CNS depressants and stimulants
+   slides. The anti-seizure, myasthenia gravis, Parkinson's, and
+   Alzheimer's slides were not uploaded, so those cards come from
+   the study guide plus standard nursing pharmacology references
+   and say so at the top.
+   ============================================================ */
+const NEURO_SRC = 'Your study guide plus standard nursing pharmacology references. The slides for this topic were not uploaded, so check these against your notes.';
+
+const CNS_INFO = {
+
+cns_core:{
+  t:'Exam 4 study guide: things to know',
+  sections:[
+    {h:'Where these answers come from', p:'Answers about sedatives, muscle relaxants, ADHD drugs, and migraine drugs come from your CNS depressants and stimulants slides. The slides for anti-seizure, myasthenia gravis, Parkinson’s, and Alzheimer’s drugs were not uploaded, so those answers come from standard nursing pharmacology references and are marked "not in your slides."'},
+
+    {h:'The main problem in the brain during a seizure (not in your slides)', p:'A seizure is a sudden burst of abnormal, excessive, synchronized electrical activity in a group of neurons. Normally excitatory signals (such as glutamate) and inhibitory signals (GABA) stay in balance; in a seizure, excitation wins. Anti-seizure drugs work by calming that firing: blocking sodium or calcium channels so neurons cannot fire as rapidly, or boosting GABA, the brain’s main inhibitory neurotransmitter.'},
+    {h:'Status epilepticus and its first-line drug', p:'Status epilepticus is a seizure lasting longer than 5 minutes, or repeated seizures without regaining consciousness in between. It is a medical emergency because prolonged seizures cause brain injury, hypoxia, and death. First line is an IV benzodiazepine: lorazepam IV, or diazepam IV or rectally, or midazolam IM or intranasally if there is no IV. Benzodiazepines bind benzodiazepine receptors linked to GABA, strengthening GABA’s inhibitory effect and stopping the firing (your CNS slides list treating acute seizures as a benzodiazepine indication and tie them to GABA; the rest is not in your slides). A longer-acting drug such as phenytoin, fosphenytoin, levetiracetam, or valproic acid then follows to keep seizures from returning. Abruptly stopping an anti-seizure drug is a common trigger.'},
+    {h:'Assessing a patient starting a new anti-seizure drug (not in your slides)', items:[
+      {n:'Seizures', d:'Baseline frequency, type, and triggers, and how well the drug controls them. Seizure precautions.'},
+      {n:'Levels and labs', d:'Drug levels for phenytoin, carbamazepine, valproic acid, and phenobarbital. CBC for blood dyscrasias, liver function, renal function, and sodium with carbamazepine.'},
+      {n:'Skin', d:'Any rash, especially with carbamazepine or phenytoin, can be the start of Stevens-Johnson syndrome.'},
+      {n:'Mood', d:'All anti-seizure drugs carry a warning for suicidal thoughts and behavior.'},
+      {n:'CNS effects', d:'Drowsiness, dizziness, and unsteady gait (fall risk).'},
+      {n:'Everything else', d:'Pregnancy status and contraception, other medications (many interactions), and understanding that the drug is never stopped abruptly.'}
+    ]},
+    {h:'Blood dyscrasias (not in your slides)', p:'A blood dyscrasia is an abnormality of the blood cells or bone marrow: agranulocytosis or leukopenia (low white cells), thrombocytopenia (low platelets), or aplastic anemia (all cell lines down). Carbamazepine, phenytoin, valproic acid, and phenobarbital can cause them. Assess with a baseline and periodic CBC, and watch for the signs: fever, sore throat, and mouth sores (infection), easy bruising, petechiae, bleeding gums, or nosebleeds (low platelets), and fatigue and pallor (anemia). Teach the patient to report these right away.'},
+    {h:'Gingival hyperplasia (not in your slides)', p:'An overgrowth of gum tissue, a classic effect of long-term phenytoin. The gums swell, cover part of the teeth, and bleed easily. Teach meticulous oral hygiene: brush and floss daily, massage the gums, use a soft brush, see the dentist regularly, and tell the dentist about phenytoin.'},
+    {h:'Angle-closure glaucoma symptoms', p:'Sudden, severe eye pain, headache, blurred vision, halos around lights, a red eye, nausea and vomiting, and a fixed, mid-dilated pupil. It is an emergency (Exam 3: IV mannitol). In this unit, topiramate can trigger it, benzodiazepines are contraindicated with narrow-angle glaucoma (your slides), and anticholinergics such as benztropine are avoided in it. The symptom list and the topiramate and benztropine links are not in your slides.'},
+    {h:'Anti-seizure drugs and oral contraceptives (not in your slides)', p:'Phenytoin, carbamazepine, phenobarbital, and topiramate at higher doses speed up liver enzymes (CYP450) that break down hormones, so birth control pills can fail. Many anti-seizure drugs, especially valproic acid, also cause birth defects. Teach a nonhormonal or more reliable method, such as an IUD or barrier methods, and to plan pregnancies with the provider.'},
+    {h:'IV phenytoin nursing interventions (not in your slides)', items:[
+      {n:'Rate', d:'Give slowly: no faster than 50 mg per minute in adults. Too fast causes hypotension, dysrhythmias, and cardiovascular collapse.'},
+      {n:'Mix', d:'With normal saline only. It precipitates in dextrose. Flush the line with normal saline before and after, and use an in-line filter.'},
+      {n:'Site', d:'A large vein. It is highly irritating; check the site often, since extravasation can cause severe tissue damage (purple glove syndrome).'},
+      {n:'Monitor', d:'Continuous cardiac monitoring and blood pressure during the infusion, and the serum level afterward. Fosphenytoin is the gentler IV alternative.'}
+    ]},
+    {h:'Therapeutic levels and toxicity (not in your slides)', items:[
+      {n:'Phenytoin: 10-20 mcg/mL', d:'Toxicity: nystagmus first, then ataxia, slurred speech, confusion, and lethargy.'},
+      {n:'Carbamazepine: 4-12 mcg/mL', d:'Toxicity: ataxia, nystagmus, drowsiness, dizziness, nausea, and vomiting.'},
+      {n:'Valproic acid: 50-100 mcg/mL', d:'Toxicity: somnolence, tremor, and in severe cases coma. Ranges vary slightly by reference; some list up to 125.'},
+      {n:'Phenobarbital: 15-40 mcg/mL', d:'Toxicity: heavy sedation, ataxia, respiratory depression, and coma.'},
+      {n:'No routine level', d:'Levetiracetam and topiramate.'}
+    ]},
+    {h:'Renal and liver adjustments and labs (not in your slides)', items:[
+      {n:'Dose adjusted for kidney function', d:'Levetiracetam, topiramate, and amantadine are cleared by the kidneys. Baclofen is too. Monitor BUN and creatinine.'},
+      {n:'Monitor the liver', d:'Valproic acid is the big one (hepatotoxicity; avoid in liver disease). Also carbamazepine, phenytoin, and phenobarbital, and atomoxetine, which carries a liver injury warning.'},
+      {n:'Lower doses with liver disease', d:'Benzodiazepines, zolpidem, and modafinil. Sumatriptan is avoided in severe liver impairment.'}
+    ]},
+
+    {h:'Myasthenia gravis: myasthenic vs cholinergic crisis (not in your slides)', items:[
+      {n:'Both', d:'Severe muscle weakness that can reach the breathing muscles, so both are emergencies. Respiratory support comes first.'},
+      {n:'Myasthenic crisis (too little drug, or the disease flaring)', d:'Weakness without cholinergic signs: ptosis, double vision, trouble swallowing, tachycardia, and hypertension. It improves with more anticholinesterase drug.'},
+      {n:'Cholinergic crisis (too much drug)', d:'Weakness plus signs of excess acetylcholine (SLUDGE): salivation, lacrimation, urination, diarrhea, GI cramping, emesis, plus sweating, bradycardia, constricted pupils, heavy bronchial secretions, and muscle twitching (fasciculations). The drug is held, and atropine is the antidote.'},
+      {n:'How the provider tells them apart', d:'An edrophonium (Tensilon) test: strength improves in myasthenic crisis and worsens in cholinergic crisis.'}
+    ]},
+    {h:'Key assessments when starting myasthenia gravis drugs (not in your slides)', p:'Baseline and ongoing muscle strength, ptosis, and double vision; swallowing, chewing, and gag reflex (aspiration risk); respiratory rate, depth, breath sounds, and vital capacity; heart rate (bradycardia); and cholinergic side effects that signal too much drug. Give doses exactly on time, and 30 to 60 minutes before meals so chewing and swallowing are strongest.'},
+    {h:'When myasthenia gravis drugs do not work (not in your slides)', p:'Immunosuppressants such as corticosteroids (prednisone) and azathioprine, plasmapheresis (plasma exchange) to remove the antibodies, IV immunoglobulin (IVIG), and thymectomy (removing the thymus). In crisis, intubation and mechanical ventilation.'},
+
+    {h:'Long-term carbidopa-levodopa (not in your slides)', p:'Over years the drug becomes less predictable. Dyskinesias (involuntary writhing or jerking movements) and the "on-off" phenomenon (sudden swings between good control and freezing) develop, along with "wearing off" before the next dose. Hallucinations, confusion, and psychosis can also appear. Other effects: orthostatic hypotension, nausea, and dark urine or sweat.'},
+    {h:'Dizziness when getting out of bed', p:'This is orthostatic hypotension, common with carbidopa-levodopa, amantadine, and the CNS depressants in this unit. Teach the patient to change positions slowly: sit up, dangle the legs at the edge of the bed for a minute, then stand with support. Call for help before getting up, use fall precautions (bed low, call light in reach, nonskid socks), keep hydrated, and check orthostatic vital signs. Your slides list dizziness and falls in older adults as benzodiazepine effects; the teaching steps are not in your slides.'},
+    {h:'Is Alzheimer’s disease curable? (not in your slides)', p:'No. Donepezil and the other drugs do not stop or reverse the disease. The goal is to slow the decline in memory and thinking, keep the patient functioning independently as long as possible, and improve quality of life for the patient and family.'},
+
+    {h:'Too much CNS depressant, opioid, or muscle relaxant', p:'Priority assessment: airway and breathing. Respiratory rate, depth, oxygen saturation, and level of consciousness. Priority intervention: maintain the airway and support breathing (positioning, oxygen, bag-valve mask or intubation if needed), then give the antidote if there is one: naloxone for opioids, flumazenil for benzodiazepines. Muscle relaxants have no antidote. From your slides: muscle relaxant overdose is treated supportively; with other CNS depressants, maintain the airway, monitor the EKG, and give fluids to avoid crystalluria.'},
+    {h:'Benzodiazepine plus an opioid', p:'From your slides: benzodiazepines alone rarely cause hypotension or respiratory depression, but they do when taken with other CNS depressants such as opioids and alcohol. Together the effects add up: profound sedation, respiratory depression, coma, and death. This is why both drugs carry an FDA boxed warning against combining them (the boxed warning is not in your slides).'},
+    {h:'The benzodiazepine antidote', p:'Flumazenil (from your slides). It reverses the sedation. Not in your slides: it can trigger seizures in patients dependent on benzodiazepines or with a seizure disorder, and it wears off sooner than many benzodiazepines, so sedation can return.'},
+    {h:'Daytime drowsiness', p:'From your slides: the "hangover" effect and daytime sleepiness from sedative-hypnotics, and a fall hazard for older adults. Narcolepsy sleep attacks cause car accidents or near-misses in 70% or more of patients. So the risks are falls, injuries, and car accidents. Avoid driving, operating machinery, and anything requiring alertness until the patient knows how the drug affects them.'},
+    {h:'Cyclobenzaprine and driving', p:'Your slides say cyclobenzaprine can cause marked sedation. Teach the patient not to drive or do anything that requires alertness until they know how it affects them, and not to combine it with alcohol or other CNS depressants such as benzodiazepines (your slides list both as interactions).'},
+    {h:'Alcohol with diphenhydramine', p:'From your slides: over-the-counter sleep aids contain antihistamines such as diphenhydramine, which depress the CNS. Adding alcohol, another CNS depressant, can cause respiratory depression or respiratory arrest.'},
+    {h:'How sumatriptan works', p:'From your slides: triptans stimulate serotonin (5-HT1) receptors in the cerebral arteries, which constricts the swollen vessels and reduces the headache. They also reduce the release of inflammatory neuropeptides. They are abortive therapy, taken to stop a migraine once it starts, and relieve a moderate to severe migraine within 2 hours in most patients.'},
+
+    {h:'In your slides but not on the study guide', p:'Lisdexamfetamine (Vyvanse), a prodrug of dextroamphetamine; armodafinil (Nuvigil); the other triptans (almotriptan, eletriptan, naratriptan, rizatriptan, zolmitriptan, frovatriptan); ergotamine with caffeine (Cafergot); IV dantrolene for malignant hyperthermia; and the OTC sleep aids doxylamine (Unisom) and melatonin. The study guide is the blueprint, so these are background, not drill tiles.'}
+  ]
+},
+
+antiseizure: abxCard('Anti-seizure (antiepileptic)', {
+  src:NEURO_SRC,
+  how:'Calm overactive neurons so seizures do not start or spread. Phenytoin and carbamazepine block sodium channels; phenobarbital boosts GABA; valproic acid and topiramate work several ways, including both; levetiracetam binds a protein (SV2A) that controls neurotransmitter release.',
+  use:'Seizure disorders. Carbamazepine also treats trigeminal neuralgia and bipolar disorder; valproic acid also treats bipolar disorder and prevents migraines; topiramate also prevents migraines.',
+  contra:'Drug allergy. Valproic acid: liver disease and pregnancy (neural tube defects). Carbamazepine: bone marrow depression and recent MAOI use. IV phenytoin: sinus bradycardia and heart block. Phenobarbital: severe respiratory disease.',
+  ae:'Drowsiness, dizziness, and ataxia; blood dyscrasias; rash that can progress to Stevens-Johnson syndrome; liver toxicity; suicidal thoughts (warning for all of them); and birth defects. Phenytoin adds gingival hyperplasia, hirsutism, and nystagmus with toxicity.',
+  admin:'Take at the same times every day and never stop abruptly, which can cause status epilepticus. Avoid alcohol. No driving until seizures are controlled. Wear medical ID. Use a nonhormonal backup to birth control pills. Phenytoin: meticulous oral hygiene; IV no faster than 50 mg/min, normal saline only.',
+  inter:'Phenytoin, carbamazepine, and phenobarbital speed up liver enzymes and lower the effect of birth control pills, warfarin, and many other drugs. Levetiracetam has the fewest interactions.',
+  mon:'Seizure activity, drug levels (phenytoin 10-20, carbamazepine 4-12, valproic acid 50-100, phenobarbital 15-40 mcg/mL), CBC, liver and renal function, sodium with carbamazepine, skin, and mood.',
+  differs:[
+    {n:'Phenytoin (Dilantin)', d:'Level 10-20 mcg/mL; nystagmus is the first sign of toxicity. Gingival hyperplasia. IV no faster than 50 mg/min, mixed only with normal saline.'},
+    {n:'Carbamazepine (Tegretol)', d:'Level 4-12 mcg/mL. Blood dyscrasias, low sodium, and serious rash. Also for trigeminal neuralgia.'},
+    {n:'Valproic acid (Valproate, Depakene, Depakote)', d:'Level 50-100 mcg/mL. Hepatotoxicity, pancreatitis, thrombocytopenia, and neural tube defects.'},
+    {n:'Levetiracetam (Keppra)', d:'Cleared by the kidneys, so the dose is lowered in renal impairment. Few interactions. Can cause irritability and mood changes. Also IV.'},
+    {n:'Phenobarbital', d:'A barbiturate. Level 15-40 mcg/mL. Heavy sedation, respiratory depression, and dependence.'},
+    {n:'Topiramate (Topamax)', d:'Kidney stones (push fluids), cognitive slowing and word-finding trouble, weight loss, and acute angle-closure glaucoma.'}
+  ]
+}),
+mg: abxCard('Myasthenia gravis: cholinesterase inhibitor', {
+  src:NEURO_SRC,
+  sfx:'-stigmine.',
+  how:'In myasthenia gravis, antibodies block acetylcholine receptors at the neuromuscular junction, so muscles weaken. These drugs block acetylcholinesterase, the enzyme that breaks down acetylcholine, so more acetylcholine stays available and muscle strength improves.',
+  use:'Myasthenia gravis. Neostigmine also reverses nondepolarizing neuromuscular blockers after surgery and treats postoperative urinary retention.',
+  contra:'Mechanical obstruction of the bowel or bladder. Caution with asthma, bradycardia, and peptic ulcer disease.',
+  ae:'Cholinergic (SLUDGE) effects: salivation, lacrimation, urination, diarrhea, GI cramping, emesis, plus sweating, bradycardia, bronchospasm, and increased bronchial secretions. Too much drug causes cholinergic crisis.',
+  admin:'Give exactly on schedule, 30 to 60 minutes before meals so chewing and swallowing are strongest. Keep atropine available as the antidote for cholinergic crisis.',
+  mon:'Muscle strength, ptosis, swallowing and gag reflex, respiratory status and vital capacity, heart rate, and signs of cholinergic or myasthenic crisis.',
+  differs:[
+    {n:'Pyridostigmine (Mestinon)', d:'Longer acting, the usual oral maintenance drug, including an extended-release form.'},
+    {n:'Neostigmine (Prostigmin)', d:'Shorter acting. Also used to reverse neuromuscular blockade after surgery.'},
+    {n:'Versus donepezil', d:'Same drug class, but these act on muscle outside the brain, while donepezil crosses into the brain.'}
+  ]
+}),
+parkinsons: abxCard('Parkinson’s disease', {
+  src:NEURO_SRC,
+  how:'Parkinson’s is a loss of dopamine-producing neurons, which leaves acetylcholine unopposed: tremor, rigidity, slow movement, and postural instability. Treatment restores the balance, either by adding dopamine activity or by blocking acetylcholine.',
+  use:'Parkinson’s disease. Benztropine also treats drug-induced extrapyramidal symptoms. Amantadine is also an antiviral.',
+  contra:'Carbidopa-levodopa: nonselective MAOIs and narrow-angle glaucoma; caution with a history of melanoma. Benztropine: narrow-angle glaucoma, urinary retention or enlarged prostate, and bowel obstruction; caution in older adults.',
+  ae:'Carbidopa-levodopa: orthostatic hypotension, nausea, dark urine or sweat, and long term, dyskinesias, on-off phenomenon, hallucinations. Amantadine: dizziness, orthostatic hypotension, confusion, and mottled skin (livedo reticularis). Benztropine: anticholinergic effects (dry mouth, constipation, urinary retention, blurred vision, confusion, decreased sweating).',
+  admin:'Change positions slowly and use fall precautions. Do not stop abruptly. Take carbidopa-levodopa away from high-protein meals, which reduce absorption. Benztropine: avoid overheating, since it reduces sweating.',
+  mon:'Tremor, rigidity, and movement; orthostatic blood pressure; mental status and hallucinations; dyskinesias; and bowel and bladder function with benztropine. Renal function with amantadine.',
+  differs:[
+    {n:'Carbidopa-levodopa (Sinemet)', d:'Levodopa crosses into the brain and becomes dopamine. Carbidopa keeps it from breaking down in the body first, so more reaches the brain with less nausea.'},
+    {n:'Amantadine (Symmetrel)', d:'An antiviral that increases dopamine release. Can also calm levodopa dyskinesias. Dose lowered in renal impairment.'},
+    {n:'Benztropine (Cogentin)', d:'An anticholinergic that blocks acetylcholine. Best for tremor. Also treats the extrapyramidal effects of drugs like metoclopramide (Exam 1).'}
+  ]
+}),
+alzheimers: abxCard('Alzheimer’s disease: cholinesterase inhibitor', {
+  src:NEURO_SRC,
+  how:'Blocks acetylcholinesterase in the brain so more acetylcholine is available for memory and thinking. It slows decline but does not cure or stop the disease.',
+  use:'Mild to severe Alzheimer’s dementia.',
+  contra:'Caution with heart block or bradycardia, peptic ulcers or GI bleeding risk (including with NSAIDs), asthma or COPD, and seizure disorders.',
+  ae:'Nausea, vomiting, diarrhea, poor appetite and weight loss, bradycardia, dizziness or fainting, and insomnia or vivid dreams.',
+  admin:'Once daily, usually at bedtime. Benefits take weeks to appear. Do not stop abruptly. Teach the family that the goal is to slow decline, not reverse it.',
+  mon:'Memory, thinking, and daily function; heart rate; weight; and GI effects.',
+  differs:[
+    {n:'Donepezil (Aricept)', d:'The only Alzheimer’s drug on your guide.'},
+    {n:'Versus the myasthenia gravis drugs', d:'Same class (cholinesterase inhibitor), but donepezil works in the brain.'}
+  ]
+}),
+sedhyp: abxCard('Sedative-hypnotic', {
+  how:'Benzodiazepines depress CNS activity in the hypothalamic, thalamic, and limbic systems by acting at benzodiazepine receptors linked to GABA. They do not suppress REM sleep as much as barbiturates, and they do not increase the metabolism of other drugs. At low doses sedatives calm; at high doses they cause sleep. Suvorexant instead blocks orexin (hypocretin), a signal that promotes wakefulness.',
+  use:'Benzodiazepines: sedation, sleep, skeletal muscle relaxation, anxiety, anxiety-related depression, acute seizures, alcohol withdrawal, agitation, balanced anesthesia, and moderate (conscious) sedation. Nonbenzodiazepines and suvorexant: sleep.',
+  contra:'Drug allergy, narrow-angle glaucoma, and pregnancy.',
+  ae:'Usually mild: headache, drowsiness, dizziness, cognitive impairment, vertigo, lethargy, a "hangover" effect or daytime sleepiness, and falls in older adults. Overdose: somnolence, confusion, diminished reflexes, and coma. They do not cause hypotension or respiratory depression unless combined with other CNS depressants.',
+  admin:'Fall precautions, especially in older adults. No driving or alertness-requiring activities until the effect is known. Allow a full night: eszopiclone needs 8 hours, and hypnotics should not be taken if the patient must wake in less than 6 to 8 hours. Midazolam is a high-alert medication.',
+  inter:'Raised levels with azole antifungals, verapamil, diltiazem, protease inhibitors, macrolide antibiotics, and grapefruit juice. Dangerous with other CNS depressants, especially alcohol and opioids. Also olanzapine and rifampin.',
+  mon:'Level of consciousness, respiratory status (especially with opioids), and fall risk. Overdose treatment is supportive, and flumazenil is the antidote for benzodiazepines.',
+  differs:[
+    {n:'Diazepam (Valium)', d:'The first benzodiazepine. Anxiety, procedural sedation, seizures, and muscle spasms. Oral, rectal, and injectable.'},
+    {n:'Midazolam (Versed)', d:'A benzodiazepine for preop and moderate sedation. Causes amnesia and reduces anxiety. Injected in adults; oral liquid for children. High-alert.'},
+    {n:'Zolpidem (Ambien)', d:'A short-acting nonbenzodiazepine with less daytime sleepiness. Ambien CR has two drug reservoirs. Watch for sleepwalking.'},
+    {n:'Eszopiclone (Lunesta)', d:'A nonbenzodiazepine and the first hypnotic approved for long-term use. Designed for a full 8 hours of sleep.'},
+    {n:'Suvorexant (Belsomra)', d:'The first orexin receptor antagonist. Its 12-hour half-life means daytime sleepiness and unconscious nighttime behaviors. Raises cholesterol. Side effects are more common in women.'}
+  ]
+}),
+musclerelax: abxCard('Muscle relaxant', {
+  how:'Relieve pain from skeletal muscle spasms. Most are centrally acting: they work in the CNS and resemble other CNS depressants. Baclofen is structurally similar to GABA. (Your slide lists "closely resemble GABA" under direct-acting relaxants; standard references call baclofen centrally acting and dantrolene the direct-acting one.)',
+  use:'Painful musculoskeletal conditions and muscle spasms, and spasticity from severe chronic disorders such as multiple sclerosis and cerebral palsy. They work best combined with physical therapy.',
+  contra:'Caution with other CNS depressants. Baclofen is cleared by the kidneys, so use caution in renal impairment (not in your slides).',
+  ae:'Extensions of their CNS and muscle effects: euphoria, lightheadedness, dizziness, drowsiness, fatigue, and muscle weakness.',
+  admin:'No driving or alertness-requiring activities until the effect is known. Avoid alcohol. Do not stop baclofen abruptly: withdrawal can cause seizures and hallucinations (not in your slides).',
+  inter:'Other CNS depressants, especially benzodiazepines and alcohol.',
+  mon:'Sedation, muscle spasm and pain relief, and fall risk. Overdose affects mainly the CNS: there is no antidote, so treatment is supportive. With other CNS depressants, maintain the airway, monitor the EKG, and give fluids to avoid crystalluria.',
+  differs:[
+    {n:'Baclofen (Lioresal)', d:'For chronic spastic conditions. Oral and injectable, including an implantable intrathecal pump after a test dose confirms it works.'},
+    {n:'Cyclobenzaprine (Flexeril)', d:'The most commonly used muscle relaxant. Centrally acting, oral and extended release (Amrix). Can cause marked sedation.'}
+  ]
+}),
+adhd: abxCard('ADHD and narcolepsy', {
+  how:'CNS stimulants act on areas of the brain tied to mental alertness: mood elevation, more alertness and capacity for work, less fatigue, and prolonged wakefulness. They also relax bronchial smooth muscle, increase respiration, and dilate the pulmonary arteries. Atomoxetine is a nonstimulant; standard references say it blocks norepinephrine reuptake (not in your slides).',
+  use:'ADHD (the most common psychiatric disorder in children; drug therapy is the same for children and adults), narcolepsy (sudden sleep attacks, often with cataplexy, sudden muscle weakness), and obesity. Modafinil is also for shift work sleep disorder.',
+  contra:'Drug allergy, structural heart abnormalities, and recent MAOI use.',
+  ae:'They "speed up" the body: palpitations, tachycardia, hypertension, angina, dysrhythmias, nervousness, restlessness, anxiety, insomnia, nausea, vomiting, diarrhea, dry mouth, and urinary frequency. Atomoxetine carries a warning for suicidal thinking in adolescents.',
+  admin:'Not in your slides: give stimulants in the morning or early afternoon to avoid insomnia, swallow extended-release forms whole, and store securely because stimulants have abuse potential.',
+  mon:'Heart rate and blood pressure, sleep, appetite and weight (growth in children), and mood.',
+  differs:[
+    {n:'Methylphenidate (Ritalin, Concerta)', d:'A stimulant and the first prescription drug for ADHD. Also used for narcolepsy. Extended-release forms include Ritalin SR, Concerta, and Metadate CD.'},
+    {n:'Mixed amphetamine salts (Adderall)', d:'A stimulant amphetamine.'},
+    {n:'Atomoxetine (Strattera)', d:'The nonstimulant. Approved for children older than 6 and adults. Warning for suicidal thinking in adolescents.'},
+    {n:'Modafinil (Provigil)', d:'A nonamphetamine stimulant for wakefulness in narcolepsy and shift work sleep disorder. Less abuse potential: Schedule IV.'}
+  ]
+}),
+migraine: abxCard('Antimigraine', {
+  sfx:'-triptan.',
+  how:'Triptans stimulate serotonin (5-HT1) receptors in the cerebral arteries, causing vasoconstriction, and reduce the release of inflammatory neuropeptides. Ergot alkaloids also narrow the blood vessels in the brain. Both are abortive therapy.',
+  use:'Moderate to severe migraines, which last 4 to 72 hours, pulse with each heartbeat, are usually on one side, and bring nausea, vomiting, photophobia, phonophobia, and sometimes an aura. Triptans relieve most within 2 hours. Ergots are also used for prevention, though less often now.',
+  contra:'Not in your slides: coronary artery disease, uncontrolled hypertension, and a history of stroke, because these drugs constrict blood vessels. Do not use a triptan and an ergot within 24 hours of each other. Ergots are avoided in pregnancy.',
+  ae:'Triptans: vasoconstriction, irritation at the injection site, tingling, and flushing. Ergots: nausea and vomiting, cold or clammy hands and feet, muscle pain, and dizziness.',
+  admin:'Take at the first sign of a migraine. Triptans come as oral and sublingual tablets, subcutaneous self-injections, and nasal sprays. Dihydroergotamine is injectable or a nasal spray.',
+  mon:'Headache relief, blood pressure, and chest pain or tightness (not in your slides).',
+  differs:[
+    {n:'Sumatriptan (Imitrex)', d:'The original triptan. The seven triptans differ slightly but work about the same.'},
+    {n:'Dihydroergotamine (Migranal)', d:'An ergot alkaloid, injectable or nasal spray. Nausea, vomiting, and cold, clammy hands and feet.'}
+  ]
+})
+
+};
+Object.assign(INFO, CNS_INFO);
+
+const CNS = {
+  title:'Neuro and CNS drugs',
+  exam:4,
+  sub:'Every drug on the Exam 4 study guide: anti-seizure, myasthenia gravis, Parkinson’s, Alzheimer’s, sedative-hypnotics, muscle relaxants, ADHD, and migraine.',
+  accent:'#4A3F8C',
+  accentSoft:'#ECE9F7',
+  principles:'cns_core',
+  note:'Boxes follow the study guide’s categories. Sedative-hypnotic, muscle relaxant, ADHD, and migraine facts come from your CNS depressants and stimulants slides. The anti-seizure, myasthenia gravis, Parkinson’s, and Alzheimer’s slides were not uploaded, so those four cards come from standard references and say so; send the slides and I will match them. Vyvanse is in the slides but not on the guide, so it is in the notes rather than a tile.',
+  bins:[
+    {id:'antiseizure', name:'Anti-seizure', items:[
+      {g:'Phenytoin', b:'Dilantin', f:'Level 10-20 mcg/mL. Gingival hyperplasia. IV max 50 mg/min, saline only.'},
+      {g:'Carbamazepine', b:'Tegretol', f:'Level 4-12 mcg/mL. Blood dyscrasias, low sodium, serious rash.'},
+      {g:'Valproic acid', b:'Valproate, Depakene, Depakote', f:'Level 50-100 mcg/mL. Liver toxicity, pancreatitis, birth defects.'},
+      {g:'Levetiracetam', b:'Keppra', f:'Renal dosing. Few interactions. Irritability and mood changes.'},
+      {g:'Phenobarbital', b:'', f:'A barbiturate. Level 15-40 mcg/mL. Sedation and respiratory depression.'},
+      {g:'Topiramate', b:'Topamax', f:'Kidney stones, cognitive slowing, angle-closure glaucoma.'}
+    ]},
+    {id:'mg', name:'Myasthenia gravis', items:[
+      {g:'Neostigmine', b:'Prostigmin', f:'Shorter acting. Also reverses neuromuscular blockade.'},
+      {g:'Pyridostigmine', b:'Mestinon', f:'Longer acting maintenance drug. Give 30-60 min before meals.'}
+    ]},
+    {id:'parkinsons', name:'Parkinson’s', items:[
+      {g:'Carbidopa-levodopa', b:'Sinemet', f:'Long term: dyskinesias and on-off. Orthostatic hypotension.'},
+      {g:'Amantadine', b:'Symmetrel', f:'Increases dopamine release. Renal dosing. Dizziness.'},
+      {g:'Benztropine', b:'Cogentin', f:'Anticholinergic: dry mouth, urinary retention, no narrow-angle glaucoma.'}
+    ]},
+    {id:'alzheimers', name:'Alzheimer’s', items:[
+      {g:'Donepezil', b:'Aricept', f:'Slows decline but does not cure. Nausea, diarrhea, bradycardia.'}
+    ]},
+    {id:'sedhyp', name:'Sedative-hypnotic', items:[
+      {g:'Diazepam', b:'Valium', f:'Benzodiazepine for anxiety, seizures, spasms. Oral, rectal, IV.'},
+      {g:'Midazolam', b:'Versed', f:'Benzodiazepine for procedural sedation. Amnesia. High-alert.'},
+      {g:'Zolpidem', b:'Ambien', f:'Short-acting nonbenzodiazepine. Watch for sleepwalking.'},
+      {g:'Eszopiclone', b:'Lunesta', f:'First hypnotic approved for long-term use. Allow a full 8 hours.'},
+      {g:'Suvorexant', b:'Belsomra', f:'Orexin antagonist. 12-hour half-life: daytime sleepiness.'}
+    ]},
+    {id:'musclerelax', name:'Muscle relaxant', items:[
+      {g:'Baclofen', b:'Lioresal', f:'Chronic spasticity. Oral, injectable, or intrathecal pump.'},
+      {g:'Cyclobenzaprine', b:'Flexeril', f:'Most commonly used. Marked sedation: no driving.'}
+    ]},
+    {id:'adhd', name:'ADHD and narcolepsy', items:[
+      {g:'Methylphenidate', b:'Ritalin, Concerta', f:'First Rx drug for ADHD. Also narcolepsy.'},
+      {g:'Mixed amphetamine salts', b:'Adderall', f:'Stimulant: tachycardia, hypertension, insomnia.'},
+      {g:'Atomoxetine', b:'Strattera', f:'Nonstimulant. Over age 6. Suicidal thinking warning in teens.'},
+      {g:'Modafinil', b:'Provigil', f:'Wakefulness in narcolepsy and shift work. Schedule IV.'}
+    ]},
+    {id:'migraine', name:'Migraine', items:[
+      {g:'Sumatriptan', b:'Imitrex', f:'5-HT1 agonist: constricts cerebral arteries. Relief within 2 hr.'},
+      {g:'Dihydroergotamine', b:'Migranal', f:'Ergot alkaloid. Injectable or nasal spray. Cold, clammy hands.'}
+    ]}
+  ]
+};
+
+const CNSNUM = {
+  title:'Neuro numbers',
+  exam:4,
+  sub:'Drug levels, the IV phenytoin rules, and the timing numbers from your study guide and slides. Drop each value onto its card.',
+  accent:'#2E5C7A',
+  accentSoft:'#E3EDF3',
+  unit:'card',
+  dockTitle:'Drag each value onto the right card',
+  note:'The anti-seizure levels, the IV phenytoin rules, the 5-minute status epilepticus line, and the myasthenia gravis timing are not in your slides; they come from standard references. Every level here is in <b>mcg/mL</b>.',
+  items:[
+    {id:'n_phenytoin', name:'Phenytoin', sub:'Dilantin', info:'antiseizure',
+      slots:[{l:'Therapeutic level', v:'10-20 mcg/mL'},{l:'Max IV rate in adults', v:'50 mg/min'},{l:'Mix IV doses with', v:'Normal saline only'}],
+      why:'Nystagmus is the first sign of toxicity, then ataxia, slurred speech, and confusion. Too fast IV causes hypotension and dysrhythmias. It precipitates in dextrose. (Not in your slides.)'},
+    {id:'n_carb', name:'Carbamazepine', sub:'Tegretol', info:'antiseizure',
+      slots:[{l:'Therapeutic level', v:'4-12 mcg/mL'}],
+      why:'Toxicity: ataxia, nystagmus, drowsiness, nausea. Also watch CBC and sodium. (Not in your slides.)'},
+    {id:'n_vpa', name:'Valproic acid', sub:'Valproate, Depakene, Depakote', info:'antiseizure',
+      slots:[{l:'Therapeutic level', v:'50-100 mcg/mL'}],
+      why:'Some references list up to 125. Watch liver function and platelets. (Not in your slides.)'},
+    {id:'n_pheno', name:'Phenobarbital', sub:'Barbiturate', info:'antiseizure',
+      slots:[{l:'Therapeutic level', v:'15-40 mcg/mL'}],
+      why:'Toxicity: heavy sedation, ataxia, respiratory depression. (Not in your slides.)'},
+    {id:'n_status', name:'Status epilepticus', sub:'First line: IV benzodiazepine', info:'cns_core',
+      slots:[{l:'Seizure lasting longer than', v:'5 minutes'}],
+      why:'Or repeated seizures without regaining consciousness between them. A medical emergency. (Not in your slides.)'},
+    {id:'n_mg', name:'Myasthenia gravis dosing', sub:'Pyridostigmine, neostigmine', info:'mg',
+      slots:[{l:'Give before meals by', v:'30-60 minutes'}],
+      why:'So chewing and swallowing are strongest at mealtime. Give doses exactly on time. (Not in your slides.)'},
+    {id:'n_eszop', name:'Hypnotic sleep time', sub:'Eszopiclone (Lunesta)', info:'sedhyp',
+      slots:[{l:'Sleep time to allot', v:'8 hours'},{l:'Do not take if waking in less than', v:'6-8 hours'}],
+      why:'Eszopiclone is designed for a full 8 hours of sleep. From your slides.'},
+    {id:'n_suvo', name:'Suvorexant half-life', sub:'Belsomra', info:'sedhyp',
+      slots:[{l:'Half-life', v:'12 hours'}],
+      why:'The long half-life is why daytime sleepiness and unconscious nighttime behaviors are safety concerns. From your slides.'},
+    {id:'n_migraine', name:'Migraine and triptans', sub:'Sumatriptan (Imitrex)', info:'migraine',
+      slots:[{l:'A migraine usually lasts', v:'4-72 hours'},{l:'Triptans relieve most migraines within', v:'2 hours'}],
+      why:'Triptans are abortive therapy, taken once the migraine starts. From your slides.'},
+    {id:'n_atomox', name:'Atomoxetine age', sub:'Strattera', info:'adhd',
+      slots:[{l:'Approved for children older than', v:'6 years'}],
+      why:'Also approved for adults. Carries a warning for suicidal thinking in adolescents. From your slides.'}
+  ]
+};
+
+Object.assign(KEY, {
+  antiseizure:['Calm overactive neurons. Never stop abruptly: risk of status epilepticus.',
+               'Levels: phenytoin 10-20, carbamazepine 4-12, valproic acid 50-100, phenobarbital 15-40 mcg/mL.',
+               'Watch CBC (blood dyscrasias), liver, rash, and mood. Many make birth control pills fail.'],
+  mg:['Block acetylcholinesterase so more acetylcholine reaches the muscles.',
+      'Too much drug: cholinergic crisis with SLUDGE signs and bradycardia; atropine is the antidote.',
+      'Give on time, 30-60 min before meals. Assess swallowing and breathing.'],
+  parkinsons:['Restore the dopamine and acetylcholine balance.',
+              'Carbidopa-levodopa long term: dyskinesias, on-off phenomenon, hallucinations.',
+              'Orthostatic hypotension: rise slowly. Benztropine is anticholinergic: avoid in narrow-angle glaucoma.'],
+  alzheimers:['Cholinesterase inhibitor that raises acetylcholine in the brain.',
+              'Not a cure: the goal is to slow decline and keep function.',
+              'Nausea, diarrhea, weight loss, bradycardia. Usually given at bedtime.'],
+  sedhyp:['Benzodiazepines enhance GABA; suvorexant blocks orexin, which keeps you awake.',
+          'Dangerous with opioids and alcohol: respiratory depression. Flumazenil reverses benzodiazepines.',
+          'Contraindicated in narrow-angle glaucoma and pregnancy. Falls and daytime drowsiness.'],
+  musclerelax:['Relieve skeletal muscle spasm; most act in the CNS.',
+               'Drowsiness, dizziness, weakness: no driving, no alcohol.',
+               'No antidote for overdose: support the airway.'],
+  adhd:['Stimulants increase alertness; atomoxetine is the nonstimulant.',
+        'Contraindicated with structural heart problems and recent MAOI use.',
+        'They speed up the body: tachycardia, hypertension, insomnia, anxiety.'],
+  migraine:['Triptans stimulate 5-HT1 receptors: cerebral vasoconstriction.',
+            'Abortive therapy: take at the first sign. Relief within 2 hours.',
+            'Triptans: tingling, flushing. Ergots: nausea, cold clammy hands and feet.']
+});
+
+HINTFAM.cns = [
+  {n:'the drugs for neurologic disorders (seizures, myasthenia gravis, Parkinson’s, Alzheimer’s)', ids:['antiseizure','mg','parkinsons','alzheimers']},
+  {n:'the CNS depressants and stimulants', ids:['sedhyp','musclerelax','adhd','migraine']}
+];
+
+ROUNDS.cns = CNS;
+ROUNDS.cnsnum = CNSNUM;
+ORDER.push('cns','cnsnum');
 
 
 /* ============================================================
@@ -2624,6 +3003,7 @@ function startRound(key, only){
   $('#btn-principles').hidden = !R.principles;
   $('#btn-principles').textContent = R.principlesLabel || 'Study guide: things to know';
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', String(t.dataset.round===key)));
+  showExam(examOf(key));
   $('#btn-counts').style.display = S.kind==='class' ? '' : 'none';
   S.speed = speedMode && S.kind==='class' && !reviewMode && !flashMode;
   $('#btn-speed').style.display = S.kind==='class' ? '' : 'none';
@@ -3567,7 +3947,22 @@ new ResizeObserver(()=>{
   document.documentElement.style.setProperty('--head-h', $('header').offsetHeight+'px');
 }).observe($('header'));
 
-startRound('endocrine');
+function showExam(n){
+  document.querySelectorAll('.tab').forEach(t=>{ t.hidden = examOf(t.dataset.round)!==n; });
+  document.querySelectorAll('.exams button').forEach(b=>b.setAttribute('aria-pressed', String(+b.dataset.exam===n)));
+}
+document.querySelectorAll('.exams button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const n = +b.dataset.exam;
+    if(S && examOf(S.key)===n) return;
+    const first = ORDER.find(k=>examOf(k)===n && !(flashMode && isSlotRound(k)));
+    $('#overlay').hidden = true; closeInfo();
+    if(first) startRound(first);
+  });
+});
+
+/* open on the newest exam */
+startRound(ORDER.filter(k=>!isSlotRound(k)).reduce((best,k)=>examOf(k)>examOf(best)?k:best));
 </script>
 </body>
 </html>
