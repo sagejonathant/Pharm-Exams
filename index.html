@@ -491,6 +491,27 @@ body.review .switch,body.flash .switch{display:none}
 .tile.speedwrong{animation:shake .3s ease;border-color:var(--bad)!important;background:var(--bad-bg)}
 .tile.speedwrong .g,.tile.speedwrong .b{color:var(--bad)}
 .bin.speedok{border-color:var(--ok-line);background:var(--ok-bg)}
+/* purpose boxes with drug-class rows inside */
+.subrows{display:flex;flex-direction:column;gap:7px}
+.subrow{
+  border:1px solid var(--line-soft);border-radius:8px;background:var(--panel-2);
+  padding:6px 8px 7px;transition:border-color .12s,background .12s,box-shadow .12s;
+}
+.subrow:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.subhead{display:flex;align-items:baseline;gap:6px;margin-bottom:5px}
+.subname{font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.25}
+.subcount{margin-left:auto;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.subrow .bindrop{min-height:30px}
+.subrow .emptyhint{padding:5px 4px;font-size:12px}
+.subrow.over{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.subrow.rejecting{animation:binbad .3s ease}
+.subrow.solved{border-color:var(--ok-line);background:var(--panel)}
+.subrow.solved .subname{color:var(--ok)}
+.subrow.speedok{border-color:var(--ok-line);background:var(--ok-bg)}
+.subrow.hinted{outline:2px dashed var(--accent);outline-offset:2px}
+.bin.has-sub.solved .subrow{background:var(--panel)}
+.missgroup{margin:0 0 6px;font-size:13.5px;font-weight:700}
+.missgroup span{font-weight:400;color:var(--muted)}
 
 /* ---------- flashcards ---------- */
 body.flash .dock{display:none}
@@ -2719,12 +2740,12 @@ antiseizure: abxCard('Anti-seizure (antiepileptic)', {
   inter:'Phenytoin, carbamazepine, and phenobarbital speed up liver enzymes and lower the effect of birth control pills, warfarin, and many other drugs. Levetiracetam has the fewest interactions.',
   mon:'Seizure activity, drug levels (phenytoin 10-20, carbamazepine 4-12, valproic acid 50-100, phenobarbital 15-40 mcg/mL), CBC, liver and renal function, sodium with carbamazepine, skin, and mood.',
   differs:[
-    {n:'Phenytoin (Dilantin)', d:'Level 10-20 mcg/mL; nystagmus is the first sign of toxicity. Gingival hyperplasia. IV no faster than 50 mg/min, mixed only with normal saline.'},
-    {n:'Carbamazepine (Tegretol)', d:'Level 4-12 mcg/mL. Blood dyscrasias, low sodium, and serious rash. Also for trigeminal neuralgia.'},
-    {n:'Valproic acid (Valproate, Depakene, Depakote)', d:'Level 50-100 mcg/mL. Hepatotoxicity, pancreatitis, thrombocytopenia, and neural tube defects.'},
-    {n:'Levetiracetam (Keppra)', d:'Cleared by the kidneys, so the dose is lowered in renal impairment. Few interactions. Can cause irritability and mood changes. Also IV.'},
+    {n:'Phenytoin (Dilantin)', d:'Hydantoin. Level 10-20 mcg/mL; nystagmus is the first sign of toxicity. Gingival hyperplasia. IV no faster than 50 mg/min, mixed only with normal saline.'},
+    {n:'Carbamazepine (Tegretol)', d:'Iminostilbene. Level 4-12 mcg/mL. Blood dyscrasias, low sodium, and serious rash. Also for trigeminal neuralgia.'},
+    {n:'Valproic acid (Valproate, Depakene, Depakote)', d:'Miscellaneous class. Level 50-100 mcg/mL. Hepatotoxicity, pancreatitis, thrombocytopenia, and neural tube defects.'},
+    {n:'Levetiracetam (Keppra)', d:'Miscellaneous class. Cleared by the kidneys, so the dose is lowered in renal impairment. Few interactions. Can cause irritability and mood changes. Also IV.'},
     {n:'Phenobarbital', d:'A barbiturate. Level 15-40 mcg/mL. Heavy sedation, respiratory depression, and dependence.'},
-    {n:'Topiramate (Topamax)', d:'Kidney stones (push fluids), cognitive slowing and word-finding trouble, weight loss, and acute angle-closure glaucoma.'}
+    {n:'Topiramate (Topamax)', d:'Miscellaneous class. Kidney stones (push fluids), cognitive slowing and word-finding trouble, weight loss, and acute angle-closure glaucoma.'}
   ]
 }),
 mg: abxCard('Myasthenia gravis: cholinesterase inhibitor', {
@@ -2807,7 +2828,8 @@ adhd: abxCard('ADHD and narcolepsy', {
   mon:'Heart rate and blood pressure, sleep, appetite and weight (growth in children), and mood.',
   differs:[
     {n:'Methylphenidate (Ritalin, Concerta)', d:'A stimulant and the first prescription drug for ADHD. Also used for narcolepsy. Extended-release forms include Ritalin SR, Concerta, and Metadate CD.'},
-    {n:'Mixed amphetamine salts (Adderall)', d:'A stimulant amphetamine.'},
+    {n:'Mixed amphetamine salts (Adderall)', d:'An amphetamine stimulant.'},
+    {n:'Why methylphenidate is grouped with amphetamines', d:'Your corrected slide lists it under amphetamines. Chemically it is amphetamine-like rather than a true amphetamine, but it acts the same way and carries the same cautions.'},
     {n:'Atomoxetine (Strattera)', d:'The nonstimulant. Approved for children older than 6 and adults. Warning for suicidal thinking in adolescents.'},
     {n:'Modafinil (Provigil)', d:'A nonamphetamine stimulant for wakefulness in narcolepsy and shift work sleep disorder. Less abuse potential: Schedule IV.'}
   ]
@@ -2832,52 +2854,52 @@ Object.assign(INFO, CNS_INFO);
 const CNS = {
   title:'Neuro and CNS drugs',
   exam:4,
-  sub:'Every drug on the Exam 4 study guide: anti-seizure, myasthenia gravis, Parkinson’s, Alzheimer’s, sedative-hypnotics, muscle relaxants, ADHD, and migraine.',
+  sub:'Drop each drug into its drug class, inside the box for what it treats. A miss tells you which part you got wrong: the purpose or the class.',
   accent:'#4A3F8C',
   accentSoft:'#ECE9F7',
   principles:'cns_core',
-  note:'Boxes follow the study guide’s categories. Sedative-hypnotic, muscle relaxant, ADHD, and migraine facts come from your CNS depressants and stimulants slides. The anti-seizure, myasthenia gravis, Parkinson’s, and Alzheimer’s slides were not uploaded, so those four cards come from standard references and say so; send the slides and I will match them. Vyvanse is in the slides but not on the guide, so it is in the notes rather than a tile.',
+  note:'Boxes are the study guide\u2019s categories (what the drug is for); the rows inside are drug classes (what it is). Myasthenia gravis and Alzheimer\u2019s share the same class on purpose: both drugs are cholinesterase inhibitors. Sedative-hypnotic, muscle relaxant, ADHD, and migraine facts and classes come from your CNS depressants and stimulants slides. The anti-seizure, myasthenia gravis, Parkinson\u2019s, and Alzheimer\u2019s slides were not uploaded, so those classes (including hydantoin, iminostilbene, and barbiturate) come from standard references; send the slides and I will match them. Vyvanse is in the slides but not on the guide, so it is in the notes rather than a tile.',
   bins:[
-    {id:'antiseizure', name:'Anti-seizure', items:[
-      {g:'Phenytoin', b:'Dilantin', f:'Level 10-20 mcg/mL. Gingival hyperplasia. IV max 50 mg/min, saline only.'},
-      {g:'Carbamazepine', b:'Tegretol', f:'Level 4-12 mcg/mL. Blood dyscrasias, low sodium, serious rash.'},
-      {g:'Valproic acid', b:'Valproate, Depakene, Depakote', f:'Level 50-100 mcg/mL. Liver toxicity, pancreatitis, birth defects.'},
-      {g:'Levetiracetam', b:'Keppra', f:'Renal dosing. Few interactions. Irritability and mood changes.'},
-      {g:'Phenobarbital', b:'', f:'A barbiturate. Level 15-40 mcg/mL. Sedation and respiratory depression.'},
-      {g:'Topiramate', b:'Topamax', f:'Kidney stones, cognitive slowing, angle-closure glaucoma.'}
+    {id:'antiseizure', name:'Anti-seizure', treats:'seizures', classes:[{id:'hyd', n:'Hydantoin'}, {id:'imino', n:'Iminostilbene'}, {id:'barb', n:'Barbiturate'}, {id:'misc', n:'Other (miscellaneous)'}], items:[
+      {c:'hyd', g:'Phenytoin', b:'Dilantin', f:'Level 10-20 mcg/mL. Gingival hyperplasia. IV max 50 mg/min, saline only.'},
+      {c:'imino', g:'Carbamazepine', b:'Tegretol', f:'Level 4-12 mcg/mL. Blood dyscrasias, low sodium, serious rash.'},
+      {c:'misc', g:'Valproic acid', b:'Valproate, Depakene, Depakote', f:'Level 50-100 mcg/mL. Liver toxicity, pancreatitis, birth defects.'},
+      {c:'misc', g:'Levetiracetam', b:'Keppra', f:'Renal dosing. Few interactions. Irritability and mood changes.'},
+      {c:'barb', g:'Phenobarbital', b:'', f:'A barbiturate. Level 15-40 mcg/mL. Sedation and respiratory depression.'},
+      {c:'misc', g:'Topiramate', b:'Topamax', f:'Kidney stones, cognitive slowing, angle-closure glaucoma.'}
     ]},
-    {id:'mg', name:'Myasthenia gravis', items:[
-      {g:'Neostigmine', b:'Prostigmin', f:'Shorter acting. Also reverses neuromuscular blockade.'},
-      {g:'Pyridostigmine', b:'Mestinon', f:'Longer acting maintenance drug. Give 30-60 min before meals.'}
+    {id:'mg', name:'Myasthenia gravis', treats:'myasthenia gravis', classes:[{id:'che', n:'Cholinesterase inhibitor'}], items:[
+      {c:'che', g:'Neostigmine', b:'Prostigmin', f:'Shorter acting. Also reverses neuromuscular blockade.'},
+      {c:'che', g:'Pyridostigmine', b:'Mestinon', f:'Longer acting maintenance drug. Give 30-60 min before meals.'}
     ]},
-    {id:'parkinsons', name:'Parkinson’s', items:[
-      {g:'Carbidopa-levodopa', b:'Sinemet', f:'Long term: dyskinesias and on-off. Orthostatic hypotension.'},
-      {g:'Amantadine', b:'Symmetrel', f:'Increases dopamine release. Renal dosing. Dizziness.'},
-      {g:'Benztropine', b:'Cogentin', f:'Anticholinergic: dry mouth, urinary retention, no narrow-angle glaucoma.'}
+    {id:'parkinsons', name:'Parkinson’s', treats:'Parkinson\u2019s', classes:[{id:'dprec', n:'Dopamine precursor'}, {id:'drel', n:'Dopamine releaser'}, {id:'achol', n:'Anticholinergic'}], items:[
+      {c:'dprec', g:'Carbidopa-levodopa', b:'Sinemet', f:'Long term: dyskinesias and on-off. Orthostatic hypotension.'},
+      {c:'drel', g:'Amantadine', b:'Symmetrel', f:'Increases dopamine release. Renal dosing. Dizziness.'},
+      {c:'achol', g:'Benztropine', b:'Cogentin', f:'Anticholinergic: dry mouth, urinary retention, no narrow-angle glaucoma.'}
     ]},
-    {id:'alzheimers', name:'Alzheimer’s', items:[
-      {g:'Donepezil', b:'Aricept', f:'Slows decline but does not cure. Nausea, diarrhea, bradycardia.'}
+    {id:'alzheimers', name:'Alzheimer’s', treats:'Alzheimer\u2019s', classes:[{id:'che', n:'Cholinesterase inhibitor'}], items:[
+      {c:'che', g:'Donepezil', b:'Aricept', f:'Slows decline but does not cure. Nausea, diarrhea, bradycardia.'}
     ]},
-    {id:'sedhyp', name:'Sedative-hypnotic', items:[
-      {g:'Diazepam', b:'Valium', f:'Benzodiazepine for anxiety, seizures, spasms. Oral, rectal, IV.'},
-      {g:'Midazolam', b:'Versed', f:'Benzodiazepine for procedural sedation. Amnesia. High-alert.'},
-      {g:'Zolpidem', b:'Ambien', f:'Short-acting nonbenzodiazepine. Watch for sleepwalking.'},
-      {g:'Eszopiclone', b:'Lunesta', f:'First hypnotic approved for long-term use. Allow a full 8 hours.'},
-      {g:'Suvorexant', b:'Belsomra', f:'Orexin antagonist. 12-hour half-life: daytime sleepiness.'}
+    {id:'sedhyp', name:'Sedative-hypnotic', treats:'sleep and sedation', classes:[{id:'benzo', n:'Benzodiazepine'}, {id:'nonbenzo', n:'Nonbenzodiazepine'}, {id:'orexin', n:'Orexin receptor antagonist'}], items:[
+      {c:'benzo', g:'Diazepam', b:'Valium', f:'Benzodiazepine for anxiety, seizures, spasms. Oral, rectal, IV.'},
+      {c:'benzo', g:'Midazolam', b:'Versed', f:'Benzodiazepine for procedural sedation. Amnesia. High-alert.'},
+      {c:'nonbenzo', g:'Zolpidem', b:'Ambien', f:'Short-acting nonbenzodiazepine. Watch for sleepwalking.'},
+      {c:'nonbenzo', g:'Eszopiclone', b:'Lunesta', f:'First hypnotic approved for long-term use. Allow a full 8 hours.'},
+      {c:'orexin', g:'Suvorexant', b:'Belsomra', f:'Orexin antagonist. 12-hour half-life: daytime sleepiness.'}
     ]},
-    {id:'musclerelax', name:'Muscle relaxant', items:[
-      {g:'Baclofen', b:'Lioresal', f:'Chronic spasticity. Oral, injectable, or intrathecal pump.'},
-      {g:'Cyclobenzaprine', b:'Flexeril', f:'Most commonly used. Marked sedation: no driving.'}
+    {id:'musclerelax', name:'Muscle relaxant', treats:'muscle spasm', classes:[{id:'central', n:'Centrally acting'}], items:[
+      {c:'central', g:'Baclofen', b:'Lioresal', f:'Chronic spasticity. Oral, injectable, or intrathecal pump.'},
+      {c:'central', g:'Cyclobenzaprine', b:'Flexeril', f:'Most commonly used. Marked sedation: no driving.'}
     ]},
-    {id:'adhd', name:'ADHD and narcolepsy', items:[
-      {g:'Methylphenidate', b:'Ritalin, Concerta', f:'First Rx drug for ADHD. Also narcolepsy.'},
-      {g:'Mixed amphetamine salts', b:'Adderall', f:'Stimulant: tachycardia, hypertension, insomnia.'},
-      {g:'Atomoxetine', b:'Strattera', f:'Nonstimulant. Over age 6. Suicidal thinking warning in teens.'},
-      {g:'Modafinil', b:'Provigil', f:'Wakefulness in narcolepsy and shift work. Schedule IV.'}
+    {id:'adhd', name:'ADHD and narcolepsy', treats:'ADHD or narcolepsy', classes:[{id:'amph', n:'Amphetamine stimulant'}, {id:'nonamph', n:'Nonamphetamine stimulant'}, {id:'nonstim', n:'Nonstimulant'}], items:[
+      {c:'amph', g:'Methylphenidate', b:'Ritalin, Concerta', f:'First Rx drug for ADHD. Also narcolepsy.'},
+      {c:'amph', g:'Mixed amphetamine salts', b:'Adderall', f:'Stimulant: tachycardia, hypertension, insomnia.'},
+      {c:'nonstim', g:'Atomoxetine', b:'Strattera', f:'Nonstimulant. Over age 6. Suicidal thinking warning in teens.'},
+      {c:'nonamph', g:'Modafinil', b:'Provigil', f:'Wakefulness in narcolepsy and shift work. Schedule IV.'}
     ]},
-    {id:'migraine', name:'Migraine', items:[
-      {g:'Sumatriptan', b:'Imitrex', f:'5-HT1 agonist: constricts cerebral arteries. Relief within 2 hr.'},
-      {g:'Dihydroergotamine', b:'Migranal', f:'Ergot alkaloid. Injectable or nasal spray. Cold, clammy hands.'}
+    {id:'migraine', name:'Migraine', treats:'migraine', classes:[{id:'triptan', n:'Triptan (serotonin agonist)'}, {id:'ergot', n:'Ergot alkaloid'}], items:[
+      {c:'triptan', g:'Sumatriptan', b:'Imitrex', f:'5-HT1 agonist: constricts cerebral arteries. Relief within 2 hr.'},
+      {c:'ergot', g:'Dihydroergotamine', b:'Migranal', f:'Ergot alkaloid. Injectable or nasal spray. Cold, clammy hands.'}
     ]}
   ]
 };
@@ -3059,18 +3081,37 @@ function buildClassRound(R, only){
     el.setAttribute('role','button');
     const items = only ? bin.items.filter(i=>only.has(i.g)) : bin.items;
     el.dataset.need = items.length;
-    el.innerHTML =
+    const head =
       '<div class="binhead"><span class="binname">'+bin.name+'</span>'+
       '<span class="bincount" data-count>'+(showCounts? '0/'+items.length : '')+'</span>'+
-      '<button type="button" class="infodot" data-info="'+bin.id+'" aria-label="Notes on '+bin.name+'">i</button></div>'+
-      '<div class="bindrop"><div class="emptyhint">Drop here</div></div>';
+      '<button type="button" class="infodot" data-info="'+bin.id+'" aria-label="Notes on '+bin.name+'">i</button></div>';
+    if(bin.classes){
+      el.classList.add('has-sub');
+      el.removeAttribute('role');
+      el.innerHTML = head + '<div class="subrows">' +
+        bin.classes.map(c=>{
+          const n = items.filter(i=>i.c===c.id).length;
+          if(!n) return '';
+          return '<div class="subrow" tabindex="0" role="button" data-bin="'+bin.id+'" data-sub="'+c.id+'" data-need="'+n+'"'+
+                 ' data-full="'+bin.name+': '+c.n+'" data-cname="'+c.n+'" aria-label="'+bin.name+', '+c.n+'">'+
+                 '<div class="subhead"><span class="subname">'+c.n+'</span>'+
+                 '<span class="subcount" data-count>'+(showCounts? '0/'+n : '')+'</span></div>'+
+                 '<div class="bindrop"><div class="emptyhint">Drop here</div></div></div>';
+        }).join('') + '</div>';
+      items.forEach(it=>{
+        const c = bin.classes.find(x=>x.id===it.c);
+        tiles.push({...it, bin:bin.id, binName:bin.name, sub:it.c, subName:c ? c.n : '', fam:bin.treats});
+      });
+    } else {
+      el.innerHTML = head + '<div class="bindrop"><div class="emptyhint">Drop here</div></div>';
+      items.forEach(it=> tiles.push({...it, bin:bin.id, binName:bin.name}));
+    }
     board.appendChild(el);
-    items.forEach(it=> tiles.push({...it, bin:bin.id, binName:bin.name}));
   });
 
   S.total = tiles.length;
   shuffle(tiles).forEach(t=>pool.appendChild(makeTile(t)));
-  $('#dock-title').textContent = 'Drag a drug into its class';
+  $('#dock-title').textContent = R.bins.some(b=>b.classes) ? 'Drag each drug to its class, inside the right box' : 'Drag a drug into its class';
   refreshDock();
 }
 
@@ -3082,6 +3123,7 @@ function makeTile(t){
   b.dataset.g = t.g;
   b.dataset.fact = t.f || '';
   b.dataset.binName = t.binName;
+  if(t.sub){ b.dataset.sub = t.sub; b.dataset.subName = t.subName; b.dataset.treats = t.fam || ''; }
   if(!t.b) b.setAttribute('data-nobrand','');
   const tag = t.x ? '<span class="bonus-tag">bonus</span>' : '';
   b.innerHTML = '<span class="g">'+t.g+tag+'</span>'+(t.b?'<span class="b">'+t.b+tag+'</span>':'');
@@ -3175,7 +3217,10 @@ function makeVTile(v){
    ============================================================ */
 
 function correctTarget(tile, target){
-  if(S.kind==='class') return tile.dataset.bin === target.dataset.bin;
+  if(S.kind==='class'){
+    if(target.dataset.sub) return tile.dataset.bin === target.dataset.bin && tile.dataset.sub === target.dataset.sub;
+    return tile.dataset.bin === target.dataset.bin;
+  }
   const ins = slotItem(target.dataset.ins);
   if(!ins) return false;
   if(target.classList.contains('filled')) return false;
@@ -3211,10 +3256,10 @@ function place(tile, target){
       drop.appendChild(f);
     }
     const have = drop.querySelectorAll('.tile').length;
-    const need = +target.dataset.need;
-    const c = target.querySelector('[data-count]');
-    if(showCounts) c.textContent = have+'/'+need;
-    if(have===need) target.classList.add('solved');
+    if(have === +target.dataset.need) target.classList.add('solved');
+    const box = target.closest('.bin');
+    if(box !== target && box.querySelectorAll('.bindrop .tile').length === +box.dataset.need) box.classList.add('solved');
+    refreshCounts();
   } else {
     target.classList.add('filled');
     target.querySelector('.val').textContent = tile.dataset.val;
@@ -3235,15 +3280,45 @@ function place(tile, target){
 function missed(tile, target){
   S.misses++;
   const k = S.kind==='class' ? tile.dataset.g : tile.dataset.val;
-  const rec = S.errors.get(k) || {n:0, label:k, right: S.kind==='class' ? tile.dataset.binName : ownerOf(tile.dataset.val), wrong:new Set()};
+  const twoLevel = S.kind==='class' && !!tile.dataset.sub;
+  const rec = S.errors.get(k) || {n:0, label:k,
+    right: S.kind==='class' ? (twoLevel ? tile.dataset.binName+': '+tile.dataset.subName : tile.dataset.binName) : ownerOf(tile.dataset.val),
+    wrong:new Set(), wrongPurpose:new Set(), wrongClass:new Set(), triedRows:new Set()};
   rec.n++;
-  rec.wrong.add(S.kind==='class' ? target.querySelector('.binname').textContent
-                                 : target.closest('.icard').querySelector('.ihead h3').textContent+', '+target.querySelector('.lbl').textContent.toLowerCase());
+  let line = '';
+  if(twoLevel && target.dataset.sub){
+    const sameBox = target.dataset.bin === tile.dataset.bin;
+    if(sameBox){
+      rec.wrongClass.add(target.dataset.cname);
+      rec.triedRows.add(target.dataset.sub);
+      rec.last = 'class';
+      const cname = target.dataset.cname;
+      const what = /^Other/.test(cname) ? 'in the other (miscellaneous) group'
+                 : (/^[AEIOU]/.test(cname) ? 'an ' : 'a ')+cname.toLowerCase();
+      line = 'Right purpose, wrong class. '+tile.dataset.g+' is used for '+tile.dataset.treats+', but it is not '+what+'.';
+    } else {
+      rec.wrongPurpose.add(target.dataset.full);
+      rec.last = 'purpose';
+      const tb = (S.R.bins.find(b=>b.id===target.dataset.bin)||{}).treats || target.dataset.bin;
+      line = 'Wrong purpose. '+tile.dataset.g+' is not used for '+tb+'.';
+    }
+    rec.wrong.add(target.dataset.full);
+  } else {
+    rec.wrong.add(S.kind==='class' ? (target.dataset.full || target.querySelector('.binname').textContent)
+                                   : target.closest('.icard').querySelector('.ihead h3').textContent+', '+target.querySelector('.lbl').textContent.toLowerCase());
+  }
   S.errors.set(k, rec);
+  target.classList.remove('rejecting'); void target.offsetWidth;
   target.classList.add('rejecting');
   setTimeout(()=>target.classList.remove('rejecting'),320);
-  if(rec.n >= 2) giveHint(tile);
+  if(rec.n >= 2) giveHint(tile, line, rec);
+  else if(line) showMissLine(line);
   updateStats();
+}
+function showMissLine(line){
+  clearHint();
+  const bar = $('#hintbar'); bar.textContent = line; bar.hidden = false;
+  hintTextTimer = setTimeout(()=>{ bar.hidden = true; }, 6000);
 }
 
 let hintTimer = null, hintTextTimer = null;
@@ -3252,14 +3327,19 @@ function clearHint(){
   document.querySelectorAll('#board .hinted').forEach(el=>el.classList.remove('hinted'));
   const bar = $('#hintbar'); bar.hidden = true; bar.textContent = '';
 }
-function giveHint(tile){
+function giveHint(tile, line, rec){
   clearHint();
   let boxes = [], msg = '';
-  if(S.kind==='class'){
+  if(S.kind==='class' && rec && rec.last==='class'){
+    /* knows the purpose: narrow the class rows by elimination */
+    boxes = [...document.querySelectorAll('#board .subrow[data-bin="'+tile.dataset.bin+'"]')]
+      .filter(r=>!rec.triedRows.has(r.dataset.sub));
+    msg = (line ? line+' ' : '')+'Hint: it is one of the outlined rows.';
+  } else if(S.kind==='class'){
     const fam = (HINTFAM[S.key]||[]).find(f=>f.ids.includes(tile.dataset.bin));
-    if(!fam) return;
+    if(!fam){ if(line) showMissLine(line); return; }
     boxes = fam.ids.map(id=>document.querySelector('#board .bin[data-bin="'+id+'"]')).filter(Boolean);
-    msg = 'Hint: '+tile.dataset.g+' is one of '+fam.n+'. Those boxes are outlined.';
+    msg = (line ? line+' ' : '')+'Hint: '+tile.dataset.g+' is one of '+fam.n+'. Those boxes are outlined.';
   } else {
     const v = tile.dataset.val;
     boxes = [...document.querySelectorAll('#board .icard')].filter(c=>{
@@ -3278,6 +3358,14 @@ function ownerOf(val){
   return S.R.items.flatMap(i=>slotsOf(i).filter(x=>x.v===val).map(x=>i.name+', '+x.l.toLowerCase())).join(' or ');
 }
 
+function refreshCounts(){
+  document.querySelectorAll('#board [data-count]').forEach(c=>{
+    const owner = c.closest('.subrow') || c.closest('.bin');
+    if(!owner) return;
+    const have = owner.querySelectorAll('.bindrop .tile').length;
+    c.textContent = showCounts ? have+'/'+owner.dataset.need : '';
+  });
+}
 function updateStats(){
   $('#s-placed').textContent=S.placed;
   $('#s-miss').textContent=S.misses;
@@ -3300,7 +3388,23 @@ function refreshDock(){
 let drag = null;
 let scrollRAF = null;
 
-function targetsSelector(){ return S.kind==='class' ? '.bin' : '.slot'; }
+function targetsSelector(){ return S.kind==='class' ? '.subrow, .bin' : '.slot'; }
+/* a box that holds class rows is not itself a drop target: the rows are */
+function dropTarget(el){
+  const t = el && el.closest ? el.closest(targetsSelector()) : null;
+  return (t && t.classList.contains('has-sub')) ? null : t;
+}
+function onHeaderOfSubBox(el){
+  const t = el && el.closest ? el.closest(targetsSelector()) : null;
+  return !!(t && t.classList.contains('has-sub'));
+}
+function nudgeRows(){
+  const bar = $('#hintbar');
+  clearTimeout(hintTextTimer);
+  bar.textContent = 'Drop it on one of the class rows inside the box.';
+  bar.hidden = false;
+  hintTextTimer = setTimeout(()=>{ bar.hidden = true; }, 3500);
+}
 
 function attachDrag(el){
   el.addEventListener('pointerdown', onDown);
@@ -3393,7 +3497,8 @@ function onMove(e){
 
   const hx = e.clientX, hy = e.clientY - lift;
   const under = document.elementFromPoint(hx, hy);
-  const t = under && under.closest ? under.closest(targetsSelector()) : null;
+  const t = dropTarget(under);
+  drag.overHeader = onHeaderOfSubBox(under);
   if(t !== drag.over){
     if(drag.over) drag.over.classList.remove('over');
     drag.over = (t && !(t.classList.contains('filled'))) ? t : null;
@@ -3459,6 +3564,7 @@ function onUp(){
     d.ghost.classList.add('wrong');
     setTimeout(flyHome, 320);
   } else {
+    if(d.overHeader) nudgeRows();
     setTimeout(flyHome, 30);
   }
 }
@@ -3506,24 +3612,38 @@ function speedChoose(bin){
 }
 document.addEventListener('click', e=>{
   if(!S || !S.speed || S.done) return;
-  const bin = e.target.closest && e.target.closest('#board .bin');
+  if(e.target.closest && e.target.closest('.infodot')) return;
+  const bin = e.target.closest && e.target.closest('#board') ? dropTarget(e.target) : null;
   if(bin) speedChoose(bin);
+  else if(onHeaderOfSubBox(e.target)) nudgeRows();
 });
 document.addEventListener('keydown', e=>{
   if(!S || !S.speed || S.done) return;
   if(e.key!=='Enter' && e.key!==' ') return;
   const el = document.activeElement;
-  const bin = el && el.closest ? el.closest('#board .bin') : null;
+  const bin = el && el.closest && el.closest('#board') ? dropTarget(el) : null;
   if(!bin || el.classList.contains('infodot')) return;
   e.preventDefault();
   speedChoose(bin);
 });
 
+/* keyboard: Enter on a focused class row or box places the selected drug */
+document.addEventListener('keydown', e=>{
+  if(!S || !S.selected || (e.key!=='Enter' && e.key!==' ')) return;
+  const el = document.activeElement;
+  if(!el || !el.closest || !el.closest('#board') || el.classList.contains('infodot')) return;
+  const t = dropTarget(el);
+  if(!t) return;
+  e.preventDefault();
+  t.click();
+});
+
 /* click-to-place fallback */
 document.addEventListener('click', e=>{
   if(!S || !S.selected) return;
-  const t = e.target.closest(targetsSelector());
-  if(!t) return;
+  if(e.target.closest('.infodot')) return;
+  const t = dropTarget(e.target);
+  if(!t){ if(onHeaderOfSubBox(e.target)) nudgeRows(); return; }
   if(S.kind==='insulin' && t.classList.contains('filled')) return;
   const tile = S.selected;
   if(correctTarget(tile,t)){ tile.classList.remove('selected'); S.selected=null; buzz(14); place(tile,t); }
@@ -3580,15 +3700,32 @@ function finish(){
     $('#r-drill').style.display='none';
   } else {
     $('#r-drill').style.display='';
-    const ul=document.createElement('ul');
-    ul.className='misslist';
-    [...S.errors.values()].sort((a,b)=>b.n-a.n).forEach(r=>{
-      const li=document.createElement('li');
-      li.innerHTML='<b>'+r.label+'</b> belongs in <b>'+r.right+'</b><br><span>You tried: '+[...r.wrong].join(', ')+'</span>';
-      ul.appendChild(li);
-    });
     body.innerHTML='';
-    body.appendChild(ul);
+    const recs = [...S.errors.values()].sort((a,b)=>b.n-a.n);
+    const twoLevel = S.kind==='class' && S.R.bins.some(b=>b.classes);
+    const addList = (list, pick, head, note)=>{
+      if(!list.length) return;
+      if(head){
+        const h=document.createElement('p'); h.className='missgroup';
+        h.innerHTML=head+' <span>'+note+'</span>';
+        body.appendChild(h);
+      }
+      const ul=document.createElement('ul'); ul.className='misslist';
+      list.forEach(r=>{
+        const li=document.createElement('li');
+        li.innerHTML='<b>'+r.label+'</b> belongs in <b>'+r.right+'</b><br><span>You tried: '+[...pick(r)].join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      body.appendChild(ul);
+    };
+    if(twoLevel){
+      const P = recs.filter(r=>r.wrongPurpose && r.wrongPurpose.size);
+      const C = recs.filter(r=>r.wrongClass && r.wrongClass.size);
+      addList(P, r=>r.wrongPurpose, 'Wrong purpose ('+P.length+')', 'Review what these drugs treat.');
+      addList(C, r=>[...r.wrongClass].map(x=>r.right.split(': ')[0]+': '+x), 'Right purpose, wrong class ('+C.length+')', 'Review how these drugs work.');
+    } else {
+      addList(recs, r=>r.wrong);
+    }
   }
   $('#r-keybox').hidden = true;
   $('#r-keybox').innerHTML = '';
@@ -3603,7 +3740,11 @@ function buildKey(){
   let html = '<h3>Answer key</h3><dl>';
   if(S.kind==='class'){
     S.R.bins.forEach(b=>{
-      html += '<dt>'+b.name+'</dt><dd>'+b.items.map(i=>i.g+(i.b?' ('+i.b+')':'')).join(' &middot; ')+'</dd>';
+      const fmtI = i=>i.g+(i.b?' ('+i.b+')':'');
+      const dd = b.classes
+        ? b.classes.map(c=>c.n+': '+b.items.filter(i=>i.c===c.id).map(fmtI).join(', ')).join('<br>')
+        : b.items.map(fmtI).join(' &middot; ');
+      html += '<dt>'+b.name+'</dt><dd>'+dd+'</dd>';
     });
   } else {
     S.R.items.forEach(i=>{
@@ -3627,8 +3768,10 @@ function fillEverything(){
   const board = $('#board'), pool = $('#pool');
   if(S.kind==='class'){
     [...pool.querySelectorAll('.tile')].forEach(t=>{
-      const bin = board.querySelector('.bin[data-bin="'+t.dataset.bin+'"]');
-      if(bin) place(t, bin);
+      const home = t.dataset.sub
+        ? board.querySelector('.subrow[data-bin="'+t.dataset.bin+'"][data-sub="'+t.dataset.sub+'"]')
+        : board.querySelector('.bin[data-bin="'+t.dataset.bin+'"]');
+      if(home) place(t, home);
     });
   } else {
     board.querySelectorAll('.slot').forEach(sl=>{
@@ -3723,7 +3866,10 @@ const bestTimes = {};
 let F = null;
 
 function deckFor(key){
-  return ROUNDS[key].bins.flatMap(b=>b.items.map(it=>({...it, bin:b.id, binName:b.name})));
+  return ROUNDS[key].bins.flatMap(b=>b.items.map(it=>{
+    const c = b.classes && b.classes.find(x=>x.id===it.c);
+    return {...it, bin:b.id, binName: c ? b.name+': '+c.n : b.name};
+  }));
 }
 
 function startFlash(key, subset){
@@ -3900,10 +4046,7 @@ $('#btn-counts').addEventListener('click',e=>{
   showCounts=!showCounts;
   e.currentTarget.setAttribute('aria-pressed',String(showCounts));
   e.currentTarget.textContent = showCounts?'Hide counts':'Show counts';
-  document.querySelectorAll('.bin').forEach(b=>{
-    const have=b.querySelectorAll('.bindrop .tile').length;
-    b.querySelector('[data-count]').textContent = showCounts ? have+'/'+b.dataset.need : '';
-  });
+  refreshCounts();
 });
 $('#r-again').addEventListener('click',()=>{ $('#overlay').hidden=true; startRound(S.key); });
 function nextRoundKey(k){
