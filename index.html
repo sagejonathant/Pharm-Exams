@@ -2656,67 +2656,87 @@ ORDER.push('pain','painnum','eedc');
 /* ============================================================
    EXAM 4: NEURO DRUGS, CNS DEPRESSANTS, AND CNS STIMULANTS
    Drugs and categories follow the Exam 4 study guide.
-   Sedative-hypnotics, muscle relaxants, ADHD/narcolepsy, and
-   migraine facts come from the CNS depressants and stimulants
-   slides. The anti-seizure, myasthenia gravis, Parkinson's, and
-   Alzheimer's slides were not uploaded, so those cards come from
-   the study guide plus standard nursing pharmacology references
-   and say so at the top.
+   Facts come from two slide sets: seizure, MG, Parkinson's, and
+   Alzheimer's drugs; and CNS depressants and stimulants.
+   Anything from other references says "not in your slides".
    ============================================================ */
-const NEURO_SRC = 'Your study guide plus standard nursing pharmacology references. The slides for this topic were not uploaded, so check these against your notes.';
 
 const CNS_INFO = {
 
 cns_core:{
   t:'Exam 4 study guide: things to know',
   sections:[
-    {h:'Where these answers come from', p:'Answers about sedatives, muscle relaxants, ADHD drugs, and migraine drugs come from your CNS depressants and stimulants slides. The slides for anti-seizure, myasthenia gravis, Parkinson’s, and Alzheimer’s drugs were not uploaded, so those answers come from standard nursing pharmacology references and are marked "not in your slides."'},
+    {h:'Where these answers come from', p:'Every answer comes from your slides: the seizure, myasthenia gravis, Parkinson’s, and Alzheimer’s drugs slides, and the CNS depressants and stimulants slides. Anything added from other references is marked "not in your slides."'},
 
-    {h:'The main problem in the brain during a seizure (not in your slides)', p:'A seizure is a sudden burst of abnormal, excessive, synchronized electrical activity in a group of neurons. Normally excitatory signals (such as glutamate) and inhibitory signals (GABA) stay in balance; in a seizure, excitation wins. Anti-seizure drugs work by calming that firing: blocking sodium or calcium channels so neurons cannot fire as rapidly, or boosting GABA, the brain’s main inhibitory neurotransmitter.'},
-    {h:'Status epilepticus and its first-line drug', p:'Status epilepticus is a seizure lasting longer than 5 minutes, or repeated seizures without regaining consciousness in between. It is a medical emergency because prolonged seizures cause brain injury, hypoxia, and death. First line is an IV benzodiazepine: lorazepam IV, or diazepam IV or rectally, or midazolam IM or intranasally if there is no IV. Benzodiazepines bind benzodiazepine receptors linked to GABA, strengthening GABA’s inhibitory effect and stopping the firing (your CNS slides list treating acute seizures as a benzodiazepine indication and tie them to GABA; the rest is not in your slides). A longer-acting drug such as phenytoin, fosphenytoin, levetiracetam, or valproic acid then follows to keep seizures from returning. Abruptly stopping an anti-seizure drug is a common trigger.'},
-    {h:'Assessing a patient starting a new anti-seizure drug (not in your slides)', items:[
-      {n:'Seizures', d:'Baseline frequency, type, and triggers, and how well the drug controls them. Seizure precautions.'},
-      {n:'Levels and labs', d:'Drug levels for phenytoin, carbamazepine, valproic acid, and phenobarbital. CBC for blood dyscrasias, liver function, renal function, and sodium with carbamazepine.'},
-      {n:'Skin', d:'Any rash, especially with carbamazepine or phenytoin, can be the start of Stevens-Johnson syndrome.'},
-      {n:'Mood', d:'All anti-seizure drugs carry a warning for suicidal thoughts and behavior.'},
-      {n:'CNS effects', d:'Drowsiness, dizziness, and unsteady gait (fall risk).'},
-      {n:'Everything else', d:'Pregnancy status and contraception, other medications (many interactions), and understanding that the drug is never stopped abruptly.'}
+    {h:'The main problem in the brain during a seizure', p:'Abnormal electric discharges from cerebral neurons, which can cause loss of consciousness and convulsive movements. The cause is often unknown; seizures can also follow trauma, anoxia, infection, or stroke, and isolated seizures can come from fever or an electrolyte or acid-base imbalance. Anti-seizure drugs are CNS depressants that stabilize nerve cell membranes and suppress the abnormal impulses in the cerebral cortex. They work three ways: sodium channel blockers reduce the nerve’s ability to be stimulated, calcium channel blockers suppress transmission of impulses from one nerve to the next, and GABA enhancers slow impulse conduction. They treat and prevent seizures but do not cure them.'},
+    {h:'Types of seizures', items:[
+      {n:'Generalized', d:'Neurons fire abnormally on both sides of the brain.'},
+      {n:'Partial (focal)', d:'Neurons fire abnormally on one side.'},
+      {n:'Secondary generalization', d:'A partial seizure spreads and becomes generalized.'},
+      {n:'Tonic-clonic movements', d:'Tonic: the muscles stiffen and the person loses consciousness. Clonic: rhythmic jerking of the arms and legs. May start with an aura or prodrome.'}
     ]},
-    {h:'Blood dyscrasias (not in your slides)', p:'A blood dyscrasia is an abnormality of the blood cells or bone marrow: agranulocytosis or leukopenia (low white cells), thrombocytopenia (low platelets), or aplastic anemia (all cell lines down). Carbamazepine, phenytoin, valproic acid, and phenobarbital can cause them. Assess with a baseline and periodic CBC, and watch for the signs: fever, sore throat, and mouth sores (infection), easy bruising, petechiae, bleeding gums, or nosebleeds (low platelets), and fatigue and pallor (anemia). Teach the patient to report these right away.'},
-    {h:'Gingival hyperplasia (not in your slides)', p:'An overgrowth of gum tissue, a classic effect of long-term phenytoin. The gums swell, cover part of the teeth, and bleed easily. Teach meticulous oral hygiene: brush and floss daily, massage the gums, use a soft brush, see the dentist regularly, and tell the dentist about phenytoin.'},
-    {h:'Angle-closure glaucoma symptoms', p:'Sudden, severe eye pain, headache, blurred vision, halos around lights, a red eye, nausea and vomiting, and a fixed, mid-dilated pupil. It is an emergency (Exam 3: IV mannitol). In this unit, topiramate can trigger it, benzodiazepines are contraindicated with narrow-angle glaucoma (your slides), and anticholinergics such as benztropine are avoided in it. The symptom list and the topiramate and benztropine links are not in your slides.'},
-    {h:'Anti-seizure drugs and oral contraceptives (not in your slides)', p:'Phenytoin, carbamazepine, phenobarbital, and topiramate at higher doses speed up liver enzymes (CYP450) that break down hormones, so birth control pills can fail. Many anti-seizure drugs, especially valproic acid, also cause birth defects. Teach a nonhormonal or more reliable method, such as an IUD or barrier methods, and to plan pregnancies with the provider.'},
-    {h:'IV phenytoin nursing interventions (not in your slides)', items:[
-      {n:'Rate', d:'Give slowly: no faster than 50 mg per minute in adults. Too fast causes hypotension, dysrhythmias, and cardiovascular collapse.'},
-      {n:'Mix', d:'With normal saline only. It precipitates in dextrose. Flush the line with normal saline before and after, and use an in-line filter.'},
-      {n:'Site', d:'A large vein. It is highly irritating; check the site often, since extravasation can cause severe tissue damage (purple glove syndrome).'},
-      {n:'Monitor', d:'Continuous cardiac monitoring and blood pressure during the infusion, and the serum level afterward. Fosphenytoin is the gentler IV alternative.'}
+    {h:'Status epilepticus and its first-line drug', p:'A medical emergency: continuous seizures lasting more than 5 minutes, a second seizure before the person fully regains consciousness from the first, or a single seizure lasting longer than 30 minutes. It can cause hypotension, hypoxia, brain damage, and death. First line is an IV benzodiazepine (lorazepam, diazepam, or midazolam), which enhances GABA to break the seizure. It must be given IV; with no IV access, lorazepam IM. Benzodiazepines wear off quickly, so another anticonvulsant is given during or right after. Barbiturates can also be used. IV levetiracetam (Keppra) or IV fosphenytoin (Cerebyx), a precursor of phenytoin, prevents more seizures.'},
+    {h:'Assessing a patient starting a new anti-seizure drug', items:[
+      {n:'Seizures', d:'A baseline of how often and what kind, then whether they decrease or stop. Teach the patient to keep a journal of seizures and how they respond to the drug.'},
+      {n:'Levels and labs', d:'Blood levels as ordered (phenytoin, valproic acid, phenobarbital). CBC for blood dyscrasias. Liver enzymes with valproic acid. Kidney function with levetiracetam, which needs dose adjustment.'},
+      {n:'Neuro and mood', d:'Drowsiness, which many of these drugs cause. Changes in mental status, mood, level of consciousness, or sensorium. All carry a 2008 black box warning for suicidal thoughts and behavior.'},
+      {n:'Eyes and skin', d:'Eye problems and visual disorders (nystagmus, diplopia). Rash: phenytoin can cause Stevens-Johnson syndrome, and carbamazepine causes rash and photosensitivity.'},
+      {n:'Other drugs', d:'A full drug history. Interactions are numerous, these drugs interact with each other, and many speed up liver metabolism so other drugs work less well.'},
+      {n:'Pregnancy and birth control', d:'Most are teratogenic, and they interfere with birth control.'}
     ]},
-    {h:'Therapeutic levels and toxicity (not in your slides)', items:[
-      {n:'Phenytoin: 10-20 mcg/mL', d:'Toxicity: nystagmus first, then ataxia, slurred speech, confusion, and lethargy.'},
-      {n:'Carbamazepine: 4-12 mcg/mL', d:'Toxicity: ataxia, nystagmus, drowsiness, dizziness, nausea, and vomiting.'},
-      {n:'Valproic acid: 50-100 mcg/mL', d:'Toxicity: somnolence, tremor, and in severe cases coma. Ranges vary slightly by reference; some list up to 125.'},
-      {n:'Phenobarbital: 15-40 mcg/mL', d:'Toxicity: heavy sedation, ataxia, respiratory depression, and coma.'},
-      {n:'No routine level', d:'Levetiracetam and topiramate.'}
+    {h:'Blood dyscrasias', p:'An abnormality of the blood cells, such as low white cells, red cells, or platelets (this definition is not in your slides). In your slides: phenytoin causes thrombocytopenia; carbamazepine causes leukopenia, anemia, and thrombocytopenia; and carbidopa-levodopa can cause agranulocytosis. Monitor the CBC. Teach the patient to call the provider for a sore throat or fever. Not in your slides: bruising, petechiae, and bleeding gums signal low platelets, and fatigue and pallor signal anemia.'},
+    {h:'Gingival hyperplasia', p:'An overgrowth of the gums, which bleed easily, caused by phenytoin. Teach frequent oral hygiene, regular dental checkups, and a soft toothbrush to prevent gum irritation and bleeding.'},
+    {h:'Angle-closure glaucoma symptoms', p:'In your slides: topiramate can cause angle-closure glaucoma, and carbidopa-levodopa and benzodiazepines are contraindicated in narrow-angle glaucoma. Not in your slides: the symptoms are sudden severe eye pain, headache, blurred vision, halos around lights, a red eye, nausea and vomiting, and a fixed, mid-dilated pupil. It is an emergency (Exam 3: IV mannitol). Anticholinergics such as benztropine are also generally avoided in it.'},
+    {h:'Anti-seizure drugs, birth control, and pregnancy', p:'Anti-seizure drugs interfere with birth control: many speed up liver metabolism, which lowers the effect of other drugs. Phenytoin and carbamazepine both interact with oral contraceptives, so teach an alternative form of birth control. In pregnancy, seizure episodes increase by 25%, and the hypoxia of a seizure puts both the patient and the fetus at risk. Yet most anticonvulsants are teratogenic (phenytoin is contraindicated in pregnancy), and they increase folate loss.'},
+    {h:'IV phenytoin nursing interventions', items:[
+      {n:'Rate', d:'No faster than 50 mg per minute. Not in your slides: faster can cause hypotension and dysrhythmias.'},
+      {n:'Mix', d:'Give only with normal saline, because it has many IV incompatibilities. Use a filter.'},
+      {n:'Site', d:'A large peripheral catheter, 20 gauge or larger. Assess often for infiltration: the drug is very caustic, and extravasation causes severe tissue damage.'},
+      {n:'Monitor', d:'Vital signs during the infusion, and serum levels afterward.'}
     ]},
-    {h:'Renal and liver adjustments and labs (not in your slides)', items:[
-      {n:'Dose adjusted for kidney function', d:'Levetiracetam, topiramate, and amantadine are cleared by the kidneys. Baclofen is too. Monitor BUN and creatinine.'},
-      {n:'Monitor the liver', d:'Valproic acid is the big one (hepatotoxicity; avoid in liver disease). Also carbamazepine, phenytoin, and phenobarbital, and atomoxetine, which carries a liver injury warning.'},
-      {n:'Lower doses with liver disease', d:'Benzodiazepines, zolpidem, and modafinil. Sumatriptan is avoided in severe liver impairment.'}
+    {h:'Therapeutic levels and toxicity', items:[
+      {n:'Phenytoin: 10-20 mcg/mL', d:'Toxic at 20-25 mcg/mL or more. Toxicity starts with nystagmus and ataxia, then diplopia and lethargy; later hypotension, unresponsive pupils, and coma.'},
+      {n:'Valproic acid: 50-100 mcg/mL', d:'Also monitor liver enzymes.'},
+      {n:'Phenobarbital: 10-40 mcg/mL', d:'Risks are sedation and tolerance.'},
+      {n:'Carbamazepine (not in your slides)', d:'Your slides give no level; standard references list 4-12 mcg/mL. In your slides: nystagmus and ataxia, and grapefruit raises the risk of toxicity.'},
+      {n:'Any patient on these drugs', d:'Sleepiness and slowness, then confusion and unsteadiness, suggest toxicity: reassess promptly and report. Do not just reduce the next dose or wait.'}
     ]},
+    {h:'Renal and liver adjustments and labs', items:[
+      {n:'Kidneys', d:'Levetiracetam is renally eliminated, so the dose is adjusted in renal dysfunction. Not in your slides: topiramate, amantadine, and baclofen are also cleared by the kidneys.'},
+      {n:'Liver', d:'Valproic acid causes hepatotoxicity: use caution in liver disorders and monitor liver enzymes. Carbidopa-levodopa is contraindicated in severe cardiac, renal, or hepatic disease. Not in your slides: atomoxetine carries a liver injury warning.'},
+      {n:'Lower doses with liver disease (not in your slides)', d:'Benzodiazepines, zolpidem, and modafinil. Sumatriptan is avoided in severe liver impairment.'}
+    ]},
+    {h:'Carbamazepine vs phenytoin (slide recap)', items:[
+      {n:'Phenytoin only', d:'Harmless pinkish-red or brown urine. Interacts with evening primrose. Needs frequent dental checkups. IV only with normal saline.'},
+      {n:'Carbamazepine only', d:'Avoid grapefruit and grapefruit juice.'},
+      {n:'Both', d:'Blood dyscrasias.'},
+      {n:'Can grapefruit juice be taken 4 hours after carbamazepine?', d:'No. Your slides say to avoid it because it raises the risk of toxicity. Not in your slides: grapefruit blocks the enzyme that breaks the drug down for a day or more, so spacing them apart does not help.'}
+    ]},
+    {h:'Febrile seizures', p:'Usually in children 6 months to 6 years old, and they can run in families. They are caused by whatever led to the fever, not by the fever itself. A seizure with a fever above 40.5 (Celsius) is not a febrile seizure. Valproic acid is not given to children under 2 because of possible hepatotoxicity.'},
 
-    {h:'Myasthenia gravis: myasthenic vs cholinergic crisis (not in your slides)', items:[
-      {n:'Both', d:'Severe muscle weakness that can reach the breathing muscles, so both are emergencies. Respiratory support comes first.'},
-      {n:'Myasthenic crisis (too little drug, or the disease flaring)', d:'Weakness without cholinergic signs: ptosis, double vision, trouble swallowing, tachycardia, and hypertension. It improves with more anticholinesterase drug.'},
-      {n:'Cholinergic crisis (too much drug)', d:'Weakness plus signs of excess acetylcholine (SLUDGE): salivation, lacrimation, urination, diarrhea, GI cramping, emesis, plus sweating, bradycardia, constricted pupils, heavy bronchial secretions, and muscle twitching (fasciculations). The drug is held, and atropine is the antidote.'},
-      {n:'How the provider tells them apart', d:'An edrophonium (Tensilon) test: strength improves in myasthenic crisis and worsens in cholinergic crisis.'}
+    {h:'Myasthenia gravis: myasthenic vs cholinergic crisis', items:[
+      {n:'Both', d:'Severe muscle weakness that can lead to respiratory paralysis and arrest.'},
+      {n:'Myasthenic crisis (too little drug)', d:'From a new diagnosis or underdosing of the cholinesterase inhibitor. Drugs can trigger it too: aminoglycosides, fluoroquinolones, beta blockers, and phenytoin. Treatment: neostigmine, which is fast acting.'},
+      {n:'Cholinergic crisis (too much drug)', d:'From overdosing, typically 30 to 60 minutes after a dose. Weakness plus cholinergic signs: abdominal cramping, drooling, increased tearing, sweating, bradycardia, and fasciculations (twitching). Excessive salivation and diarrhea point to cholinergic crisis. Treatment: atropine.'},
+      {n:'Edrophonium (Tensilon)', d:'A short-acting cholinesterase inhibitor used to diagnose myasthenia gravis. Not in your slides: the same test can tell the two crises apart, since strength improves in myasthenic crisis and worsens in cholinergic crisis.'}
     ]},
-    {h:'Key assessments when starting myasthenia gravis drugs (not in your slides)', p:'Baseline and ongoing muscle strength, ptosis, and double vision; swallowing, chewing, and gag reflex (aspiration risk); respiratory rate, depth, breath sounds, and vital capacity; heart rate (bradycardia); and cholinergic side effects that signal too much drug. Give doses exactly on time, and 30 to 60 minutes before meals so chewing and swallowing are strongest.'},
-    {h:'When myasthenia gravis drugs do not work (not in your slides)', p:'Immunosuppressants such as corticosteroids (prednisone) and azathioprine, plasmapheresis (plasma exchange) to remove the antibodies, IV immunoglobulin (IVIG), and thymectomy (removing the thymus). In crisis, intubation and mechanical ventilation.'},
+    {h:'Key assessments when starting myasthenia gravis drugs', p:'A drug history, to catch interactions. Baseline vital signs. Signs of myasthenic crisis: muscle weakness with trouble breathing and swallowing. Then ongoing: respiratory status and breathing pattern, heart rate (bradycardia), swallowing ability, and speech clarity. Give doses on time, before meals if possible, keep atropine available, and encourage medical ID. Not in your slides: ptosis, double vision, gag reflex, and vital capacity.'},
+    {h:'When myasthenia gravis drugs do not work', p:'Plasmapheresis (plasma exchange) to remove the antibodies, prednisone to reduce immune activity, and IVIG (pooled antibodies) to reduce the harmful antibodies. Not in your slides: thymectomy, other immunosuppressants such as azathioprine, and intubation and mechanical ventilation in crisis.'},
 
-    {h:'Long-term carbidopa-levodopa (not in your slides)', p:'Over years the drug becomes less predictable. Dyskinesias (involuntary writhing or jerking movements) and the "on-off" phenomenon (sudden swings between good control and freezing) develop, along with "wearing off" before the next dose. Hallucinations, confusion, and psychosis can also appear. Other effects: orthostatic hypotension, nausea, and dark urine or sweat.'},
-    {h:'Dizziness when getting out of bed', p:'This is orthostatic hypotension, common with carbidopa-levodopa, amantadine, and the CNS depressants in this unit. Teach the patient to change positions slowly: sit up, dangle the legs at the edge of the bed for a minute, then stand with support. Call for help before getting up, use fall precautions (bed low, call light in reach, nonskid socks), keep hydrated, and check orthostatic vital signs. Your slides list dizziness and falls in older adults as benzodiazepine effects; the teaching steps are not in your slides.'},
-    {h:'Is Alzheimer’s disease curable? (not in your slides)', p:'No. Donepezil and the other drugs do not stop or reverse the disease. The goal is to slow the decline in memory and thinking, keep the patient functioning independently as long as possible, and improve quality of life for the patient and family.'},
+    {h:'Long-term carbidopa-levodopa', p:'It takes 1 to 2 months to reach full effect. Long-term therapy causes dyskinesias: facial grimacing, rhythmic jerking movements, head bobbing, and chewing and smacking movements. Other effects include orthostatic hypotension, palpitations and dysrhythmias, nausea and vomiting, psychosis and severe depression, and agranulocytosis. Not in your slides: the "on-off" phenomenon, sudden swings between good control and freezing.'},
+    {h:'Dizziness when getting out of bed', p:'This is orthostatic hypotension. Your slides list it with carbidopa-levodopa and say to monitor for it with dopamine agonists such as amantadine; benzodiazepines also cause dizziness and falls in older adults. Not in your slides: the teaching. Change positions slowly: sit up, dangle the legs for a minute, then stand with support. Call for help before getting up, use fall precautions (bed low, call light in reach, nonskid socks), stay hydrated, and check orthostatic vital signs.'},
+    {h:'Is Alzheimer’s disease curable?', p:'No. Your slides call it an incurable, chronic, progressive dementia. Donepezil and rivastigmine allow more acetylcholine at the neuron receptors to improve cognitive function in mild to moderate disease, but they do not stop or reverse it. Not in your slides: the goal is to keep the patient functioning as long as possible and support quality of life for the patient and family.'},
+    {h:'Slide recap questions, answered', items:[
+      {n:'Valproic acid', d:'Can cause alopecia; do not use in children under 2.'},
+      {n:'Levetiracetam', d:'Adverse effect: unexplained anger.'},
+      {n:'Lorazepam', d:'Given IV to treat status epilepticus.'},
+      {n:'Phenobarbital', d:'Therapeutic range 10-40.'},
+      {n:'Topiramate', d:'Adverse effect: angle-closure glaucoma.'},
+      {n:'Which Parkinson’s drugs act on dopamine?', d:'Dopaminergics (carbidopa-levodopa) and dopamine agonists (amantadine).'},
+      {n:'Contraindicated in narrow-angle glaucoma', d:'Carbidopa-levodopa.'},
+      {n:'Anti-SLUD effects', d:'Benztropine.'},
+      {n:'Can turn urine brown', d:'Dopamine agonists such as amantadine (urine and sweat). Phenytoin can also turn urine pinkish-red or brown.'}
+    ]},
 
     {h:'Too much CNS depressant, opioid, or muscle relaxant', p:'Priority assessment: airway and breathing. Respiratory rate, depth, oxygen saturation, and level of consciousness. Priority intervention: maintain the airway and support breathing (positioning, oxygen, bag-valve mask or intubation if needed), then give the antidote if there is one: naloxone for opioids, flumazenil for benzodiazepines. Muscle relaxants have no antidote. From your slides: muscle relaxant overdose is treated supportively; with other CNS depressants, maintain the airway, monitor the EKG, and give fluids to avoid crystalluria.'},
     {h:'Benzodiazepine plus an opioid', p:'From your slides: benzodiazepines alone rarely cause hypotension or respiratory depression, but they do when taken with other CNS depressants such as opioids and alcohol. Together the effects add up: profound sedation, respiratory depression, coma, and death. This is why both drugs carry an FDA boxed warning against combining them (the boxed warning is not in your slides).'},
@@ -2726,68 +2746,65 @@ cns_core:{
     {h:'Alcohol with diphenhydramine', p:'From your slides: over-the-counter sleep aids contain antihistamines such as diphenhydramine, which depress the CNS. Adding alcohol, another CNS depressant, can cause respiratory depression or respiratory arrest.'},
     {h:'How sumatriptan works', p:'From your slides: triptans stimulate serotonin (5-HT1) receptors in the cerebral arteries, which constricts the swollen vessels and reduces the headache. They also reduce the release of inflammatory neuropeptides. They are abortive therapy, taken to stop a migraine once it starts, and relieve a moderate to severe migraine within 2 hours in most patients.'},
 
-    {h:'In your slides but not on the study guide', p:'Lisdexamfetamine (Vyvanse), a prodrug of dextroamphetamine; armodafinil (Nuvigil); the other triptans (almotriptan, eletriptan, naratriptan, rizatriptan, zolmitriptan, frovatriptan); ergotamine with caffeine (Cafergot); IV dantrolene for malignant hyperthermia; and the OTC sleep aids doxylamine (Unisom) and melatonin. The study guide is the blueprint, so these are background, not drill tiles.'}
+    {h:'In your slides but not on the study guide', p:'Lisdexamfetamine (Vyvanse), a prodrug of dextroamphetamine; armodafinil (Nuvigil); the other triptans (almotriptan, eletriptan, naratriptan, rizatriptan, zolmitriptan, frovatriptan); ergotamine with caffeine (Cafergot); IV dantrolene for malignant hyperthermia; and the OTC sleep aids doxylamine (Unisom) and melatonin. From the seizure, MG, Parkinson’s, and Alzheimer’s slides: lorazepam (IV first line for status epilepticus, IM if no IV), fosphenytoin (Cerebyx, an IV precursor of phenytoin), divalproex (Depakote, the oral valproic acid derivative), edrophonium (Tensilon, a short-acting cholinesterase inhibitor used to diagnose myasthenia gravis), atropine (the cholinergic crisis antidote), and rivastigmine (Exelon, an Alzheimer’s cholinesterase inhibitor taken twice daily). The study guide is the blueprint, so these are background, not drill tiles.'}
   ]
 },
 
 antiseizure: abxCard('Anti-seizure (antiepileptic)', {
-  src:NEURO_SRC,
-  how:'Calm overactive neurons so seizures do not start or spread. Phenytoin and carbamazepine block sodium channels; phenobarbital boosts GABA; valproic acid and topiramate work several ways, including both; levetiracetam binds a protein (SV2A) that controls neurotransmitter release.',
-  use:'Seizure disorders. Carbamazepine also treats trigeminal neuralgia and bipolar disorder; valproic acid also treats bipolar disorder and prevents migraines; topiramate also prevents migraines.',
-  contra:'Drug allergy. Valproic acid: liver disease and pregnancy (neural tube defects). Carbamazepine: bone marrow depression and recent MAOI use. IV phenytoin: sinus bradycardia and heart block. Phenobarbital: severe respiratory disease.',
-  ae:'Drowsiness, dizziness, and ataxia; blood dyscrasias; rash that can progress to Stevens-Johnson syndrome; liver toxicity; suicidal thoughts (warning for all of them); and birth defects. Phenytoin adds gingival hyperplasia, hirsutism, and nystagmus with toxicity.',
-  admin:'Take at the same times every day and never stop abruptly, which can cause status epilepticus. Avoid alcohol. No driving until seizures are controlled. Wear medical ID. Use a nonhormonal backup to birth control pills. Phenytoin: meticulous oral hygiene; IV no faster than 50 mg/min, normal saline only.',
-  inter:'Phenytoin, carbamazepine, and phenobarbital speed up liver enzymes and lower the effect of birth control pills, warfarin, and many other drugs. Levetiracetam has the fewest interactions.',
-  mon:'Seizure activity, drug levels (phenytoin 10-20, carbamazepine 4-12, valproic acid 50-100, phenobarbital 15-40 mcg/mL), CBC, liver and renal function, sodium with carbamazepine, skin, and mood.',
+  how:'CNS depressants that stabilize nerve cell membranes and suppress abnormal electrical impulses in the cerebral cortex by blocking sodium channels, blocking calcium channels, or enhancing GABA. Phenytoin blocks sodium and calcium channels. Carbamazepine suppresses high-frequency discharge in and around the seizure focus. Valproic acid’s action is unclear, but it blocks sodium and calcium channels and boosts GABA. Levetiracetam may block sodium, potassium, or calcium channels. Phenobarbital directly stimulates GABA receptors. Topiramate’s action is unknown.',
+  use:'Preventing and controlling seizures, long-term maintenance for chronic recurring seizures, and acute convulsions and status epilepticus. They treat but do not cure. Carbamazepine also treats bipolar disorder and trigeminal and glossopharyngeal neuralgias; valproic acid also treats headaches and bipolar disorder.',
+  contra:'Phenytoin: pregnancy. Valproic acid: caution in liver disorders; not established in children under 2. Most anticonvulsants are teratogenic.',
+  ae:'Numerous and drug specific, and often the reason the medication is changed. Drowsiness; mental status, mood, and consciousness changes; eye and vision problems; and blood dyscrasias. Black box warning (2008) for suicidal thoughts and behavior.',
+  admin:'Long-term therapy. Take at the same time every day; do not miss doses or stop abruptly. Take with meals to reduce GI upset. Avoid alcohol. Follow driving recommendations and wear a medical alert ID. Keep a journal of seizures and drug response. Do not crush, chew, or open extended-release forms. If NPO for a procedure, contact the prescriber. IV forms: give slowly, monitor vital signs, and avoid extravasation, since many are caustic.',
+  inter:'Numerous. They interact with each other, speed up liver metabolism (lowering the effect of other drugs), and interfere with birth control. Levetiracetam has the fewest and does not interact with other anti-seizure drugs.',
+  mon:'Decreased or absent seizures, blood levels (phenytoin 10-20, valproic acid 50-100, phenobarbital 10-40 mcg/mL), CBC, liver enzymes with valproic acid, mental status and mood, and signs of toxicity.',
   differs:[
-    {n:'Phenytoin (Dilantin)', d:'Hydantoin. Level 10-20 mcg/mL; nystagmus is the first sign of toxicity. Gingival hyperplasia. IV no faster than 50 mg/min, mixed only with normal saline.'},
-    {n:'Carbamazepine (Tegretol)', d:'Iminostilbene. Level 4-12 mcg/mL. Blood dyscrasias, low sodium, and serious rash. Also for trigeminal neuralgia.'},
-    {n:'Valproic acid (Valproate, Depakene, Depakote)', d:'Miscellaneous class. Level 50-100 mcg/mL. Hepatotoxicity, pancreatitis, thrombocytopenia, and neural tube defects.'},
-    {n:'Levetiracetam (Keppra)', d:'Miscellaneous class. Cleared by the kidneys, so the dose is lowered in renal impairment. Few interactions. Can cause irritability and mood changes. Also IV.'},
-    {n:'Phenobarbital', d:'A barbiturate. Level 15-40 mcg/mL. Heavy sedation, respiratory depression, and dependence.'},
-    {n:'Topiramate (Topamax)', d:'Miscellaneous class. Kidney stones (push fluids), cognitive slowing and word-finding trouble, weight loss, and acute angle-closure glaucoma.'}
+    {n:'Phenytoin (Dilantin)', d:'Hydantoin, often first line. Level 10-20 mcg/mL, toxic at 20-25 or more; nystagmus is an early sign of toxicity. Gingival hyperplasia, thrombocytopenia, Stevens-Johnson syndrome, and harmless pinkish-red or brown urine. Effect raised by cimetidine and sulfonamides; lowered by folic acid, antacids, calcium, and sucralfate. Evening primrose and borage lower the seizure threshold; ginkgo lowers its effect. IV: normal saline only, a filter, 20 gauge or larger, no faster than 50 mg/min.'},
+    {n:'Carbamazepine (Tegretol)', d:'Iminostilbene. Nystagmus and ataxia; leukopenia, anemia, and thrombocytopenia; birth defects; rash and photosensitivity. Avoid grapefruit completely. Interacts with warfarin, oral contraceptives, phenytoin, and phenobarbital.'},
+    {n:'Valproic acid (Valproate, Depakene) and divalproex (Depakote)', d:'Valproic acid derivatives. Valproic acid comes IV and PO; Depakote is PO only. Level 50-100 mcg/mL. Hepatotoxicity (monitor liver enzymes), pancreatitis, alopecia, and GI upset. Not for children under 2.'},
+    {n:'Levetiracetam (Keppra)', d:'No class named in your slides. Renally eliminated, so the dose is adjusted in renal dysfunction. Lethargy, vertigo, headaches, and unexplained anger, but much milder than other anti-seizure drugs, with fewer interactions. IV for status epilepticus.'},
+    {n:'Phenobarbital', d:'Barbiturate. Directly stimulates GABA receptors. Level 10-40 mcg/mL. Sedation and tolerance. Stop gradually to avoid seizures returning.'},
+    {n:'Topiramate (Topamax)', d:'No class named in your slides. Add-on therapy for focal and generalized tonic-clonic seizures. Action unknown. CNS effects and angle-closure glaucoma.'}
   ]
 }),
-mg: abxCard('Myasthenia gravis: cholinesterase inhibitor', {
-  src:NEURO_SRC,
+mg: abxCard('Myasthenia gravis: AChE (cholinesterase) inhibitor', {
   sfx:'-stigmine.',
-  how:'In myasthenia gravis, antibodies block acetylcholine receptors at the neuromuscular junction, so muscles weaken. These drugs block acetylcholinesterase, the enzyme that breaks down acetylcholine, so more acetylcholine stays available and muscle strength improves.',
-  use:'Myasthenia gravis. Neostigmine also reverses nondepolarizing neuromuscular blockers after surgery and treats postoperative urinary retention.',
-  contra:'Mechanical obstruction of the bowel or bladder. Caution with asthma, bradycardia, and peptic ulcer disease.',
-  ae:'Cholinergic (SLUDGE) effects: salivation, lacrimation, urination, diarrhea, GI cramping, emesis, plus sweating, bradycardia, bronchospasm, and increased bronchial secretions. Too much drug causes cholinergic crisis.',
-  admin:'Give exactly on schedule, 30 to 60 minutes before meals so chewing and swallowing are strongest. Keep atropine available as the antidote for cholinergic crisis.',
-  mon:'Muscle strength, ptosis, swallowing and gag reflex, respiratory status and vital capacity, heart rate, and signs of cholinergic or myasthenic crisis.',
+  how:'In myasthenia gravis, antibodies attack the nicotinic acetylcholine receptors on skeletal muscle, causing fluctuating weakness and rapid fatigue. These drugs reversibly bind and inactivate acetylcholinesterase, the enzyme that breaks down acetylcholine, so more acetylcholine is available to transmit impulses and contract the muscles.',
+  use:'Controlling and treating myasthenia gravis. Pyridostigmine is the most commonly used. Neostigmine treats myasthenic crisis.',
+  contra:'Anticholinergic therapy.',
+  ae:'GI disturbances (nausea, vomiting, diarrhea, cramps), increased salivation, tearing, miosis, blurred vision, and bradycardia. Too much drug causes cholinergic crisis; too little causes myasthenic crisis.',
+  admin:'Give doses on time, before meals if possible. Keep atropine available for cholinergic crisis. Encourage medical ID.',
+  mon:'Effectiveness and muscle strength, respiratory status and breathing pattern, heart rate (bradycardia), swallowing and speech clarity, and signs of either crisis.',
   differs:[
-    {n:'Pyridostigmine (Mestinon)', d:'Longer acting, the usual oral maintenance drug, including an extended-release form.'},
-    {n:'Neostigmine (Prostigmin)', d:'Shorter acting. Also used to reverse neuromuscular blockade after surgery.'},
-    {n:'Versus donepezil', d:'Same drug class, but these act on muscle outside the brain, while donepezil crosses into the brain.'}
+    {n:'Pyridostigmine (Mestinon)', d:'Intermediate acting and the most commonly used drug for myasthenia gravis.'},
+    {n:'Neostigmine (Prostigmin)', d:'Short acting and fast. The treatment for myasthenic crisis.'},
+    {n:'Versus donepezil', d:'Same drug class. Here the extra acetylcholine strengthens skeletal muscle; with donepezil it improves cognition.'}
   ]
 }),
 parkinsons: abxCard('Parkinson’s disease', {
-  src:NEURO_SRC,
-  how:'Parkinson’s is a loss of dopamine-producing neurons, which leaves acetylcholine unopposed: tremor, rigidity, slow movement, and postural instability. Treatment restores the balance, either by adding dopamine activity or by blocking acetylcholine.',
-  use:'Parkinson’s disease. Benztropine also treats drug-induced extrapyramidal symptoms. Amantadine is also an antiviral.',
-  contra:'Carbidopa-levodopa: nonselective MAOIs and narrow-angle glaucoma; caution with a history of melanoma. Benztropine: narrow-angle glaucoma, urinary retention or enlarged prostate, and bowel obstruction; caution in older adults.',
-  ae:'Carbidopa-levodopa: orthostatic hypotension, nausea, dark urine or sweat, and long term, dyskinesias, on-off phenomenon, hallucinations. Amantadine: dizziness, orthostatic hypotension, confusion, and mottled skin (livedo reticularis). Benztropine: anticholinergic effects (dry mouth, constipation, urinary retention, blurred vision, confusion, decreased sweating).',
-  admin:'Change positions slowly and use fall precautions. Do not stop abruptly. Take carbidopa-levodopa away from high-protein meals, which reduce absorption. Benztropine: avoid overheating, since it reduces sweating.',
-  mon:'Tremor, rigidity, and movement; orthostatic blood pressure; mental status and hallucinations; dyskinesias; and bowel and bladder function with benztropine. Renal function with amantadine.',
+  how:'Dopamine-producing neurons degenerate (the cause is unknown), so acetylcholine is unopposed, and the excess acetylcholine activity causes the movement symptoms. Drugs either increase dopamine (dopaminergics convert to dopamine; dopamine agonists stimulate dopamine receptors) or block acetylcholine (anticholinergics).',
+  use:'Parkinson’s disease. Carbidopa-levodopa is the gold standard, usually taken several times a day. Amantadine is used early, alone or with Sinemet or an anticholinergic. Benztropine reduces rigidity and some of the tremor.',
+  contra:'Carbidopa-levodopa: narrow-angle glaucoma, and severe cardiac, renal, or hepatic disease.',
+  ae:'Carbidopa-levodopa: fatigue, insomnia, anticholinergic effects, blurred vision, orthostatic hypotension, palpitations, dysrhythmias, nausea, vomiting, psychosis, severe depression, agranulocytosis, and long term, dyskinesias. Amantadine: dyskinesia and GI upset. Benztropine: tachycardia and anti-SLUD effects (dry mouth, dry eyes and blurred vision, urinary retention, constipation, and inability to sweat).',
+  admin:'Dopamine agonists: give with low-protein foods, avoid alcohol and other depressants, do not stop abruptly, and expect harmless brown urine and sweat. Benztropine: more fluids, fiber, and exercise for constipation; ice chips, hard candy, or sugarless gum for dry mouth.',
+  inter:'Antipsychotics, antidepressants, and benzodiazepines decrease the effect of levodopa.',
+  mon:'Symptom response, orthostatic hypotension, and involuntary movements. Benztropine: vital signs and urine output (urinary retention).',
   differs:[
-    {n:'Carbidopa-levodopa (Sinemet)', d:'Levodopa crosses into the brain and becomes dopamine. Carbidopa keeps it from breaking down in the body first, so more reaches the brain with less nausea.'},
-    {n:'Amantadine (Symmetrel)', d:'An antiviral that increases dopamine release. Can also calm levodopa dyskinesias. Dose lowered in renal impairment.'},
-    {n:'Benztropine (Cogentin)', d:'An anticholinergic that blocks acetylcholine. Best for tremor. Also treats the extrapyramidal effects of drugs like metoclopramide (Exam 1).'}
+    {n:'Carbidopa-levodopa (Sinemet)', d:'Dopaminergic. Levodopa is a dopamine precursor that stimulates D2 receptors; carbidopa keeps levodopa from breaking down so more reaches them. Takes 1 to 2 months for full effect.'},
+    {n:'Amantadine (Symmetrel)', d:'Dopamine agonist: stimulates dopamine receptors. Used early, alone or combined. Dyskinesia and GI upset. Your slides call it a dopamine agonist, so the game does too; standard references describe it as an antiviral that increases dopamine release (not in your slides).'},
+    {n:'Benztropine (Cogentin)', d:'Anticholinergic: inhibits acetylcholine. Tachycardia and anti-SLUD effects. Also treats the extrapyramidal effects of drugs like metoclopramide (Exam 1; not in these slides).'}
   ]
 }),
-alzheimers: abxCard('Alzheimer’s disease: cholinesterase inhibitor', {
-  src:NEURO_SRC,
-  how:'Blocks acetylcholinesterase in the brain so more acetylcholine is available for memory and thinking. It slows decline but does not cure or stop the disease.',
-  use:'Mild to severe Alzheimer’s dementia.',
-  contra:'Caution with heart block or bradycardia, peptic ulcers or GI bleeding risk (including with NSAIDs), asthma or COPD, and seizure disorders.',
-  ae:'Nausea, vomiting, diarrhea, poor appetite and weight loss, bradycardia, dizziness or fainting, and insomnia or vivid dreams.',
-  admin:'Once daily, usually at bedtime. Benefits take weeks to appear. Do not stop abruptly. Teach the family that the goal is to slow decline, not reverse it.',
-  mon:'Memory, thinking, and daily function; heart rate; weight; and GI effects.',
+alzheimers: abxCard('Alzheimer’s disease: AChE (cholinesterase) inhibitor', {
+  how:'Alzheimer’s is an incurable, chronic, progressive dementia with plaques between brain cells, neurofibrillary tangles inside neurons, and a cholinergic neurotransmitter abnormality. AChE inhibitors allow more acetylcholine at the neuron receptors, which increases cognitive function.',
+  use:'Mild to moderate Alzheimer’s disease. It does not cure the disease.',
+  ae:'Diarrhea, nausea, and vomiting.',
+  admin:'Donepezil is taken once daily. Not in your slides: benefits take weeks to appear, and the family should know the goal is to slow decline, not reverse it.',
+  mon:'Memory, confusion, communication, and behavior, plus GI effects. Not in your slides: heart rate (bradycardia) and weight.',
   differs:[
-    {n:'Donepezil (Aricept)', d:'The only Alzheimer’s drug on your guide.'},
-    {n:'Versus the myasthenia gravis drugs', d:'Same class (cholinesterase inhibitor), but donepezil works in the brain.'}
+    {n:'Donepezil (Aricept)', d:'Once daily. The only Alzheimer’s drug on your guide.'},
+    {n:'Rivastigmine (Exelon)', d:'In your slides but not on the guide: the same class, taken twice daily.'},
+    {n:'Versus the myasthenia gravis drugs', d:'Same class. Here the extra acetylcholine improves cognition; in myasthenia gravis it strengthens skeletal muscle.'}
   ]
 }),
 sedhyp: abxCard('Sedative-hypnotic', {
@@ -2799,8 +2816,8 @@ sedhyp: abxCard('Sedative-hypnotic', {
   inter:'Raised levels with azole antifungals, verapamil, diltiazem, protease inhibitors, macrolide antibiotics, and grapefruit juice. Dangerous with other CNS depressants, especially alcohol and opioids. Also olanzapine and rifampin.',
   mon:'Level of consciousness, respiratory status (especially with opioids), and fall risk. Overdose treatment is supportive, and flumazenil is the antidote for benzodiazepines.',
   differs:[
-    {n:'Diazepam (Valium)', d:'The first benzodiazepine. Anxiety, procedural sedation, seizures, and muscle spasms. Oral, rectal, and injectable.'},
-    {n:'Midazolam (Versed)', d:'A benzodiazepine for preop and moderate sedation. Causes amnesia and reduces anxiety. Injected in adults; oral liquid for children. High-alert.'},
+    {n:'Diazepam (Valium)', d:'The first benzodiazepine. Anxiety, procedural sedation, seizures, and muscle spasms. Oral, rectal, and injectable. Your seizure slides list it, with lorazepam and midazolam, as IV first line for status epilepticus.'},
+    {n:'Midazolam (Versed)', d:'A benzodiazepine for preop and moderate sedation. Causes amnesia and reduces anxiety. Injected in adults; oral liquid for children. High-alert. Your seizure slides also list it as IV first line for status epilepticus.'},
     {n:'Zolpidem (Ambien)', d:'A short-acting nonbenzodiazepine with less daytime sleepiness. Ambien CR has two drug reservoirs. Watch for sleepwalking.'},
     {n:'Eszopiclone (Lunesta)', d:'A nonbenzodiazepine and the first hypnotic approved for long-term use. Designed for a full 8 hours of sleep.'},
     {n:'Suvorexant (Belsomra)', d:'The first orexin receptor antagonist. Its 12-hour half-life means daytime sleepiness and unconscious nighttime behaviors. Raises cholesterol. Side effects are more common in women.'}
@@ -2858,30 +2875,30 @@ const CNS = {
   accent:'#4A3F8C',
   accentSoft:'#ECE9F7',
   principles:'cns_core',
-  note:'Boxes are the study guide\u2019s categories (what the drug is for); the rows inside are drug classes (what it is). Myasthenia gravis and Alzheimer\u2019s share the same class on purpose: both drugs are cholinesterase inhibitors. Sedative-hypnotic, muscle relaxant, ADHD, and migraine facts and classes come from your CNS depressants and stimulants slides. The anti-seizure, myasthenia gravis, Parkinson\u2019s, and Alzheimer\u2019s slides were not uploaded, so those classes (including hydantoin, iminostilbene, and barbiturate) come from standard references; send the slides and I will match them. Vyvanse is in the slides but not on the guide, so it is in the notes rather than a tile.',
+  note:'Boxes are the study guide’s categories (what the drug is for); the rows inside are drug classes (what it is), named the way your slides name them. Myasthenia gravis and Alzheimer’s share the same class on purpose: both drugs are AChE (cholinesterase) inhibitors. Your slides give no class for levetiracetam or topiramate, so they share the Other row. Diazepam and midazolam stay in the sedative-hypnotic box where the guide puts them, though your seizure slides also use them for status epilepticus. Lorazepam, rivastigmine, edrophonium, fosphenytoin, and Vyvanse are in your slides but not on the guide, so they are in the notes rather than tiles.',
   bins:[
-    {id:'antiseizure', name:'Anti-seizure', treats:'seizures', classes:[{id:'hyd', n:'Hydantoin'}, {id:'imino', n:'Iminostilbene'}, {id:'barb', n:'Barbiturate'}, {id:'misc', n:'Other (miscellaneous)'}], items:[
-      {c:'hyd', g:'Phenytoin', b:'Dilantin', f:'Level 10-20 mcg/mL. Gingival hyperplasia. IV max 50 mg/min, saline only.'},
-      {c:'imino', g:'Carbamazepine', b:'Tegretol', f:'Level 4-12 mcg/mL. Blood dyscrasias, low sodium, serious rash.'},
-      {c:'misc', g:'Valproic acid', b:'Valproate, Depakene, Depakote', f:'Level 50-100 mcg/mL. Liver toxicity, pancreatitis, birth defects.'},
-      {c:'misc', g:'Levetiracetam', b:'Keppra', f:'Renal dosing. Few interactions. Irritability and mood changes.'},
-      {c:'barb', g:'Phenobarbital', b:'', f:'A barbiturate. Level 15-40 mcg/mL. Sedation and respiratory depression.'},
-      {c:'misc', g:'Topiramate', b:'Topamax', f:'Kidney stones, cognitive slowing, angle-closure glaucoma.'}
+    {id:'antiseizure', name:'Anti-seizure', treats:'seizures', classes:[{id:'hyd', n:'Hydantoin'}, {id:'imino', n:'Iminostilbene'}, {id:'vpa', n:'Valproic acid derivative'}, {id:'barb', n:'Barbiturate'}, {id:'misc', n:'Other (no class in your slides)'}], items:[
+      {c:'hyd', g:'Phenytoin', b:'Dilantin', f:'Level 10-20 mcg/mL. Gingival hyperplasia. IV: saline only, max 50 mg/min.'},
+      {c:'imino', g:'Carbamazepine', b:'Tegretol', f:'Avoid grapefruit. Blood dyscrasias, rash, birth defects.'},
+      {c:'vpa', g:'Valproic acid', b:'Valproate, Depakene, Depakote', f:'Level 50-100 mcg/mL. Hepatotoxicity, pancreatitis, alopecia. Not under age 2.'},
+      {c:'misc', g:'Levetiracetam', b:'Keppra', f:'Renal dosing. Milder side effects, few interactions. Unexplained anger.'},
+      {c:'barb', g:'Phenobarbital', b:'', f:'Directly stimulates GABA. Level 10-40 mcg/mL. Sedation, tolerance; taper slowly.'},
+      {c:'misc', g:'Topiramate', b:'Topamax', f:'Add-on therapy. CNS effects and angle-closure glaucoma.'}
     ]},
-    {id:'mg', name:'Myasthenia gravis', treats:'myasthenia gravis', classes:[{id:'che', n:'Cholinesterase inhibitor'}], items:[
-      {c:'che', g:'Neostigmine', b:'Prostigmin', f:'Shorter acting. Also reverses neuromuscular blockade.'},
-      {c:'che', g:'Pyridostigmine', b:'Mestinon', f:'Longer acting maintenance drug. Give 30-60 min before meals.'}
+    {id:'mg', name:'Myasthenia gravis', treats:'myasthenia gravis', classes:[{id:'che', n:'AChE (cholinesterase) inhibitor'}], items:[
+      {c:'che', g:'Neostigmine', b:'Prostigmin', f:'Short acting and fast. Treats myasthenic crisis.'},
+      {c:'che', g:'Pyridostigmine', b:'Mestinon', f:'Intermediate acting. The most commonly used drug for MG.'}
     ]},
-    {id:'parkinsons', name:'Parkinson’s', treats:'Parkinson\u2019s', classes:[{id:'dprec', n:'Dopamine precursor'}, {id:'drel', n:'Dopamine releaser'}, {id:'achol', n:'Anticholinergic'}], items:[
-      {c:'dprec', g:'Carbidopa-levodopa', b:'Sinemet', f:'Long term: dyskinesias and on-off. Orthostatic hypotension.'},
-      {c:'drel', g:'Amantadine', b:'Symmetrel', f:'Increases dopamine release. Renal dosing. Dizziness.'},
-      {c:'achol', g:'Benztropine', b:'Cogentin', f:'Anticholinergic: dry mouth, urinary retention, no narrow-angle glaucoma.'}
+    {id:'parkinsons', name:'Parkinson’s', treats:'Parkinson’s', classes:[{id:'dopa', n:'Dopaminergic'}, {id:'dagon', n:'Dopamine agonist'}, {id:'achol', n:'Anticholinergic'}], items:[
+      {c:'dopa', g:'Carbidopa-levodopa', b:'Sinemet', f:'Gold standard. 1-2 months to full effect. Agranulocytosis. No narrow-angle glaucoma.'},
+      {c:'dagon', g:'Amantadine', b:'Symmetrel', f:'Give with low-protein foods. Harmless brown urine and sweat.'},
+      {c:'achol', g:'Benztropine', b:'Cogentin', f:'Reduces rigidity and tremor. Tachycardia and anti-SLUD effects.'}
     ]},
-    {id:'alzheimers', name:'Alzheimer’s', treats:'Alzheimer\u2019s', classes:[{id:'che', n:'Cholinesterase inhibitor'}], items:[
-      {c:'che', g:'Donepezil', b:'Aricept', f:'Slows decline but does not cure. Nausea, diarrhea, bradycardia.'}
+    {id:'alzheimers', name:'Alzheimer’s', treats:'Alzheimer’s', classes:[{id:'che', n:'AChE (cholinesterase) inhibitor'}], items:[
+      {c:'che', g:'Donepezil', b:'Aricept', f:'Once daily. Mild to moderate disease; not a cure. Nausea, diarrhea.'}
     ]},
     {id:'sedhyp', name:'Sedative-hypnotic', treats:'sleep and sedation', classes:[{id:'benzo', n:'Benzodiazepine'}, {id:'nonbenzo', n:'Nonbenzodiazepine'}, {id:'orexin', n:'Orexin receptor antagonist'}], items:[
-      {c:'benzo', g:'Diazepam', b:'Valium', f:'Benzodiazepine for anxiety, seizures, spasms. Oral, rectal, IV.'},
+      {c:'benzo', g:'Diazepam', b:'Valium', f:'Benzodiazepine for anxiety, spasms, and IV for status epilepticus.'},
       {c:'benzo', g:'Midazolam', b:'Versed', f:'Benzodiazepine for procedural sedation. Amnesia. High-alert.'},
       {c:'nonbenzo', g:'Zolpidem', b:'Ambien', f:'Short-acting nonbenzodiazepine. Watch for sleepwalking.'},
       {c:'nonbenzo', g:'Eszopiclone', b:'Lunesta', f:'First hypnotic approved for long-term use. Allow a full 8 hours.'},
@@ -2907,31 +2924,43 @@ const CNS = {
 const CNSNUM = {
   title:'Neuro numbers',
   exam:4,
-  sub:'Drug levels, the IV phenytoin rules, and the timing numbers from your study guide and slides. Drop each value onto its card.',
+  sub:'Drug levels, the IV phenytoin rules, and the timing numbers from your slides. Drop each value onto its card.',
   accent:'#2E5C7A',
   accentSoft:'#E3EDF3',
   unit:'card',
   dockTitle:'Drag each value onto the right card',
-  note:'The anti-seizure levels, the IV phenytoin rules, the 5-minute status epilepticus line, and the myasthenia gravis timing are not in your slides; they come from standard references. Every level here is in <b>mcg/mL</b>.',
+  note:'Every number comes from your slides except the carbamazepine level, which your slides do not give. Every drug level here is in <b>mcg/mL</b>.',
   items:[
     {id:'n_phenytoin', name:'Phenytoin', sub:'Dilantin', info:'antiseizure',
-      slots:[{l:'Therapeutic level', v:'10-20 mcg/mL'},{l:'Max IV rate in adults', v:'50 mg/min'},{l:'Mix IV doses with', v:'Normal saline only'}],
-      why:'Nystagmus is the first sign of toxicity, then ataxia, slurred speech, and confusion. Too fast IV causes hypotension and dysrhythmias. It precipitates in dextrose. (Not in your slides.)'},
+      slots:[{l:'Therapeutic level', v:'10-20 mcg/mL'},{l:'Toxic level', v:'20-25 mcg/mL or more'},{l:'Max IV rate', v:'50 mg/min'},{l:'IV catheter size', v:'20 gauge or larger'},{l:'Mix IV doses with', v:'Normal saline only'}],
+      why:'Nystagmus and ataxia are the first signs of toxicity. Use a filter and watch for infiltration: it is very caustic. From your slides.'},
     {id:'n_carb', name:'Carbamazepine', sub:'Tegretol', info:'antiseizure',
       slots:[{l:'Therapeutic level', v:'4-12 mcg/mL'}],
-      why:'Toxicity: ataxia, nystagmus, drowsiness, nausea. Also watch CBC and sodium. (Not in your slides.)'},
+      why:'Not in your slides: they give no carbamazepine level, so this comes from standard references. From your slides: watch for nystagmus and ataxia, and no grapefruit.'},
     {id:'n_vpa', name:'Valproic acid', sub:'Valproate, Depakene, Depakote', info:'antiseizure',
-      slots:[{l:'Therapeutic level', v:'50-100 mcg/mL'}],
-      why:'Some references list up to 125. Watch liver function and platelets. (Not in your slides.)'},
+      slots:[{l:'Therapeutic level', v:'50-100 mcg/mL'},{l:'Not established for children younger than', v:'2 years'}],
+      why:'Because of hepatotoxicity. Monitor liver enzymes. From your slides.'},
     {id:'n_pheno', name:'Phenobarbital', sub:'Barbiturate', info:'antiseizure',
-      slots:[{l:'Therapeutic level', v:'15-40 mcg/mL'}],
-      why:'Toxicity: heavy sedation, ataxia, respiratory depression. (Not in your slides.)'},
+      slots:[{l:'Therapeutic level', v:'10-40 mcg/mL'}],
+      why:'Risks are sedation and tolerance. Stop it gradually so seizures do not return. From your slides.'},
     {id:'n_status', name:'Status epilepticus', sub:'First line: IV benzodiazepine', info:'cns_core',
-      slots:[{l:'Seizure lasting longer than', v:'5 minutes'}],
-      why:'Or repeated seizures without regaining consciousness between them. A medical emergency. (Not in your slides.)'},
-    {id:'n_mg', name:'Myasthenia gravis dosing', sub:'Pyridostigmine, neostigmine', info:'mg',
-      slots:[{l:'Give before meals by', v:'30-60 minutes'}],
-      why:'So chewing and swallowing are strongest at mealtime. Give doses exactly on time. (Not in your slides.)'},
+      slots:[{l:'Continuous seizures lasting more than', v:'5 minutes'},{l:'Or a single seizure lasting longer than', v:'30 minutes'}],
+      why:'Or a second seizure before the person fully regains consciousness from the first. A medical emergency. From your slides.'},
+    {id:'n_febrile', name:'Febrile seizures', sub:'Children', info:'cns_core',
+      slots:[{l:'Usual age range', v:'6 months-6 years'},{l:'A seizure with a fever above this is not febrile', v:'40.5 °C'}],
+      why:'Caused by whatever led to the fever, not the fever itself. Your slide gives 40.5 without a unit; it is a Celsius temperature (about 105 °F).'},
+    {id:'n_preg', name:'Seizures in pregnancy', sub:'Anticonvulsants and pregnancy', info:'cns_core',
+      slots:[{l:'Seizure episodes increase by', v:'25%'}],
+      why:'Seizure hypoxia endangers the patient and the fetus, yet most anticonvulsants are teratogenic and increase folate loss. From your slides.'},
+    {id:'n_mg', name:'Cholinergic crisis', sub:'Too much pyridostigmine or neostigmine', info:'mg',
+      slots:[{l:'Typically starts this long after a dose', v:'30-60 minutes'}],
+      why:'Treated with atropine. Your slide says "after taking anticholinergic drugs," but this crisis comes from too much cholinesterase inhibitor, so it most likely means after a dose of that drug. Worth confirming with your instructor.'},
+    {id:'n_sinemet', name:'Carbidopa-levodopa', sub:'Sinemet', info:'parkinsons',
+      slots:[{l:'Time to full effect', v:'1-2 months'}],
+      why:'Long-term therapy brings dyskinesias. From your slides.'},
+    {id:'n_donep', name:'Donepezil', sub:'Aricept', info:'alzheimers',
+      slots:[{l:'How often it is taken', v:'Once daily'}],
+      why:'Rivastigmine (Exelon), in your slides but not on the guide, is taken twice daily. From your slides.'},
     {id:'n_eszop', name:'Hypnotic sleep time', sub:'Eszopiclone (Lunesta)', info:'sedhyp',
       slots:[{l:'Sleep time to allot', v:'8 hours'},{l:'Do not take if waking in less than', v:'6-8 hours'}],
       why:'Eszopiclone is designed for a full 8 hours of sleep. From your slides.'},
@@ -2948,18 +2977,18 @@ const CNSNUM = {
 };
 
 Object.assign(KEY, {
-  antiseizure:['Calm overactive neurons. Never stop abruptly: risk of status epilepticus.',
-               'Levels: phenytoin 10-20, carbamazepine 4-12, valproic acid 50-100, phenobarbital 15-40 mcg/mL.',
-               'Watch CBC (blood dyscrasias), liver, rash, and mood. Many make birth control pills fail.'],
-  mg:['Block acetylcholinesterase so more acetylcholine reaches the muscles.',
-      'Too much drug: cholinergic crisis with SLUDGE signs and bradycardia; atropine is the antidote.',
-      'Give on time, 30-60 min before meals. Assess swallowing and breathing.'],
-  parkinsons:['Restore the dopamine and acetylcholine balance.',
-              'Carbidopa-levodopa long term: dyskinesias, on-off phenomenon, hallucinations.',
-              'Orthostatic hypotension: rise slowly. Benztropine is anticholinergic: avoid in narrow-angle glaucoma.'],
-  alzheimers:['Cholinesterase inhibitor that raises acetylcholine in the brain.',
-              'Not a cure: the goal is to slow decline and keep function.',
-              'Nausea, diarrhea, weight loss, bradycardia. Usually given at bedtime.'],
+  antiseizure:['Stabilize nerve membranes: block sodium or calcium channels, or enhance GABA. They treat but do not cure.',
+               'Levels: phenytoin 10-20, valproic acid 50-100, phenobarbital 10-40 mcg/mL. Never stop abruptly.',
+               'Watch CBC, mood (suicide warning), and drowsiness. They interfere with birth control.'],
+  mg:['Block acetylcholinesterase so more acetylcholine reaches skeletal muscle.',
+      'Too little drug: myasthenic crisis (neostigmine). Too much: cholinergic crisis (atropine).',
+      'Give on time, before meals. Watch breathing, swallowing, and heart rate.'],
+  parkinsons:['Too little dopamine leaves acetylcholine unopposed.',
+              'Carbidopa-levodopa is the gold standard: 1-2 months to full effect, dyskinesias long term.',
+              'Orthostatic hypotension. Benztropine causes anti-SLUD effects.'],
+  alzheimers:['AChE inhibitor: more acetylcholine, better cognitive function.',
+              'Incurable: used for mild to moderate disease.',
+              'Donepezil once daily. Nausea, vomiting, diarrhea.'],
   sedhyp:['Benzodiazepines enhance GABA; suvorexant blocks orexin, which keeps you awake.',
           'Dangerous with opioids and alcohol: respiratory depression. Flumazenil reverses benzodiazepines.',
           'Contraindicated in narrow-angle glaucoma and pregnancy. Falls and daytime drowsiness.'],
@@ -3293,7 +3322,7 @@ function missed(tile, target){
       rec.triedRows.add(target.dataset.sub);
       rec.last = 'class';
       const cname = target.dataset.cname;
-      const what = /^Other/.test(cname) ? 'in the other (miscellaneous) group'
+      const what = /^Other/.test(cname) ? 'in the Other row'
                  : (/^[AEIOU]/.test(cname) ? 'an ' : 'a ')+cname.toLowerCase();
       line = 'Right purpose, wrong class. '+tile.dataset.g+' is used for '+tile.dataset.treats+', but it is not '+what+'.';
     } else {
